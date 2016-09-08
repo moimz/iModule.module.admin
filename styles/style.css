@@ -1,0 +1,88 @@
+/**
+ * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodule.kr)
+ *
+ * 사이트관리자 화면구성을 위한 스타일을 정의한다.
+ * 
+ * @file /modules/admin/styles/style.css
+ * @author Arzz (arzz@arzz.com)
+ * @license MIT License
+ * @version 3.0.0.160831
+ */
+html {width:100%; height:100%; -webkit-font-smoothing:antialiased;}
+header {background:#2d3845; height:52px; font-size:0px;}
+header > h1 {display:inline-block; width:230px; height:52px; line-height:52px; font-size:16px; font-weight:bold; padding-left:35px; font-family:OpenSans; color:#fff; letter-spacing:-1px; vertical-align:middle;background:#333f4d url(//www.moimz.com/iModule/emblem.png) no-repeat 10px 50%; background-size:20px;}
+header > h1 > i {color:#4cb9f3; margin-right:8px;}
+header > h1 > small {font-size:15px; font-weight:300; color:#aeb3b8; letter-spacing:0px;}
+header > ul {list-style:none; display:inline-block; vertical-align:middle; font-size:0px;}
+header > ul > li {display:inline-block; height:52px; border-bottom:2px solid transparent;}
+header > ul > li > a {display:block; height:50px; line-height:52px; font-size:15px; padding:0px 18px; color:#aeb3b8; text-decoration:none;}
+header > ul > li > a > i {margin-right:5px; font-size:14px;}
+header > ul > li:hover {background:#000;}
+header > ul > li.selected {border-color:#4cb9f3; background:#000;}
+header > ul > li.selected > a {color:#fff;}
+header > ul > li.selected > a > i {color:#4cb9f3;}
+
+aside > ul {list-style:none; display:block; vertical-align:middle; font-size:0px;}
+aside > ul > li {display:block; background:#f4f4f4;}
+aside > ul > li > a {border-top:1px solid #fff; border-bottom:1px solid #e5e5e5; display:block; padding:0px 10px; height:45px; line-height:43px; font-size:13px; text-decoration:none; color:#666;}
+aside > ul > li > a > i {width:20px; color:#de425c; font-size:12px; text-align:center; margin-right:5px;}
+aside > ul > li.selected {background:#fff; border-left:2px solid #5db8f2;}
+aside > ul > li.selected > a {color:#222;}
+
+footer {background:#343f4d; height:25px; line-height:25px; color:#aeb3b8; text-align:right; font-size:10px; font-family:OpenSans; padding-right:10px;}
+
+/* ExtJS 스타일시트 추가 */
+.im-icon-default div[data-ref=innerCt] {border:1px solid #ccc; background:#fff; width:100%; height:118px; line-height:118px; text-align:center; border-radius:5px;}
+.im-icon-default div[data-ref=innerCt] i.fa {font-size:64px; vertical-align:middle;}
+.im-icon-default div[data-ref=innerCt] i.fa-spin {font-size:14px !important;}
+
+.x-grid-cell-inner > i.icon {width:20px; height:20px; display:inline-block; line-height:20px; background-repeat:no-repeat; background-size:contain; background-position:50% 50%; margin-right:5px; vertical-align:middle;}
+.x-grid-cell-inner > i.icon.fa, .x-grid-cell-inner > i.icon.xi, .x-grid-cell-inner > i.icon.xi2 {width:auto;}
+
+.x-grid-button {height:100% !important; vertical-align:middle !important;}
+.x-grid-button .x-grid-cell-inner {padding:2px !important;}
+.x-grid-button .x-grid-cell-inner:before {border:0px !important;}
+.x-grid-button .x-grid-cell-inner button {background:#6aa0dc; height:28px; color:#fff; cursor:pointer; width:100%; border:1px solid rgba(0,0,0,0.1);}
+.x-grid-button .x-grid-cell-inner button:hover {background:#6193ca;}
+.x-grid-button .x-grid-cell-inner button[disabled] {background:#90b3da !important; cursor:not-allowed;}
+.x-grid-button .x-grid-cell-inner button.orange {background:#eaad52;}
+.x-grid-button .x-grid-cell-inner button.orange:hover {background:#e69729;}
+.x-grid-button .x-grid-cell-inner button.orange[disabled] {background:#f0c586 !important;}
+.x-grid-button .x-grid-cell-inner button.red {background:#d35051}
+.x-grid-button .x-grid-cell-inner button.red:hover {background:#c32a31;}
+.x-grid-button .x-grid-cell-inner button.red[disabled] {background:#e08485 !important;}
+
+.x-form-item-label-inner i.required {display:inline-block; line-height:1; font-size:14px; color:red; font-style:normal; vertical-align:middle; margin-top:-8px; margin-right:3px;}
+.x-legend-panel .x-panel-body-default {border-color:#fff !important;}
+.x-small-header .x-panel-header {padding:6px 8px !important;}
+.x-small-header .x-panel-header .x-panel-header-title-default {font-size:13px !important;}
+.x-grid-cell-button .x-grid-cell-inner {padding:0px !important;}
+.x-column-header-align-center {text-align:left !important;}
+.x-column-header-align-right {text-align:left !important;}
+.x-column-header-align-right .x-column-header-text {margin-right:0px !important;}
+.x-grid-row-summary .x-grid-cell {background-color:#e9e9e9 !important; color:#222; font-weight:700;}
+.x-toolbar-default {background:#fcfcfc;}
+.x-column-header {background:#f4f4f4;}
+.x-column-header-checkbox {border-color:#d1d1d0;}
+.x-grid-cell-inner a {color:#5070be; text-decoration:none;}
+.x-grid-cell-row-checker {vertical-align:top !important;}
+
+.x-grid-cell-button .x-grid-cell-inner button {border:1px solid transparent; border-bottom:1px solid transparent; text-overflow:ellipsis; white-space:nowrap; overflow:hidden; width:calc(100% - 2px); height:30px; margin:1px 1px; box-sizing:border-box; font-weight:normal; text-align:center; display:block; font-size:12px; cursor:pointer; box-shadow:rgba(255, 255, 255, 0.2) 0px 1px 0px 0px inset; border-color:rgba(0, 0, 0, 0.1);}
+.x-grid-cell-button .x-grid-cell-inner button[disabled] {opacity:0.4; cursor:not-allowed; background-image:none !important;}
+.grid .bodyPanel ul.row li:last-child.button button {border-right:0px;}
+.x-grid-cell-button .x-grid-cell-inner button.button {background-color:rgb(232, 232, 232); background-image:linear-gradient(rgba(255, 255, 255, 0.901961) 10%, rgba(255, 255, 255, 0.298039) 100%); text-shadow:rgba(255, 255, 255, 0.4) 0px -1px 0px; color:rgb(102, 102, 102);}
+.x-grid-cell-button .x-grid-cell-inner button.button:hover {background-color:rgb(215, 215, 215);}
+.x-grid-cell-button .x-grid-cell-inner button.button[disabled] {background:rgb(232, 232, 232) !important;}
+.x-grid-cell-button .x-grid-cell-inner button.primary {background-color:rgb(36, 137, 204); background-image:linear-gradient(rgba(255, 255, 255, 0.298039) 1%, rgba(255, 255, 255, 0.14902) 100%); text-shadow:rgba(0, 0, 0, 0.4) 0px -1px 0px; color:#fff;}
+.x-grid-cell-button .x-grid-cell-inner button.primary:hover {background-color:rgb(32, 119, 178);}
+.x-grid-cell-button .x-grid-cell-inner button.primary[disabled] {background:rgb(36, 137, 204) !important;}
+.x-grid-cell-button .x-grid-cell-inner button.danger {background-color:rgb(219, 63, 38); background-image:linear-gradient(rgba(255, 255, 255, 0.298039) 1%, rgba(255, 255, 255, 0.14902) 100%); text-shadow:rgba(0, 0, 0, 0.4) 0px -1px 0px; color:#fff;}
+.x-grid-cell-button .x-grid-cell-inner button.danger:hover {background-color:rgb(193, 55, 32);}
+.x-grid-cell-button .x-grid-cell-inner button.danger[disabled] {background-color:rgb(219, 63, 38) !important;}
+.x-grid-cell-right {text-align:right !important;}
+
+.x-main-panel .x-panel-header-default {background:#48535f; border:1px solid #2d3844;}
+.x-main-panel .x-panel-header-title-default {color:#adb3b8;}
+.x-menu-title {height:36px; line-height:36px; background:#48535f; color:#fff; font-size:12px; padding:0px 10px; font-weight:bold; cursor:default; min-width:150px; margin:-1px; border-bottom:1px solid #d0d0d0;}
+.x-form-help {margin-top:5px; line-height:1.6; font-size:11px; color:#666;}
+.helpBlock {border:1px solid #e0d0bc; background:#fffeeb; padding:8px; font-size:12px; line-height:1.6;}

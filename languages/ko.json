@@ -1,0 +1,281 @@
+{
+	"menus":{
+		"dashboard":"대시보드",
+		"modules":"모듈",
+		"addons":"애드온",
+		"widgets":"위젯",
+		"configs":"사이트설정"
+	},
+	"pages":{
+		"dashboard":[
+			{"page":"dashboard","icon":"fa-dashboard","title":"대시보드"}
+		],
+		"modules":{
+			"lists":"모듈관리"
+		},
+		"addon":[
+			{"page":"list","icon":"fa-cubes","title":"에드온관리"}
+		],
+		"configs":{
+			"sites":"사이트관리",
+			"sitemap":"사이트맵관리"
+		}
+	},
+	"modules":{
+		"lists":{
+			"columns":{
+				"title":"모듈명",
+				"version":"버전",
+				"description":"모듈설명",
+				"author":"제작자",
+				"status":"상태",
+				"updated":"정상설치",
+				"need_update":"업데이트필요",
+				"need_install":"설치필요",
+				"db_size":"DB용량",
+				"attachment_size":"첨부파일용량",
+				"installed":"현재 설치된 모듈",
+				"not_installed":"설치되지 않았으나, 모듈폴더에 존재하는 모듈"
+			},
+			"window":{
+				"info":"모듈정보",
+				"install":"모듈설치",
+				"update":"모듈 업데이트",
+				"config":"모듈설정"
+			},
+			"updateSize":"사용용량 업데이트",
+			"installing":"모듈을 설치(또는 업데이트)하고 있습니다.",
+			"installComplete":"모듈을 성공적으로 설치(또는 업데이트)하였습니다."
+		},
+		"show":{
+			"default":"모듈기본정보",
+			"version":"현재버전",
+			"author":"제작자",
+			"homepage":"홈페이지",
+			"language":"기본언어",
+			"description":"상세설명",
+			"functions":"모듈속성",
+			"global":"전역모듈",
+			"context":"컨텍스트 있음",
+			"article":"통합게시물 지원",
+			"admin":"관리자 지원",
+			"dependencies":"모듈설치조건",
+			"installed":"설치됨",
+			"update":"업데이트",
+			"install":"모듈설치",
+			"setting":"모듈설정"
+		}
+	},
+	"addon":{
+		"list":{
+			"columns":{
+				"title":"에드온명",
+				"version":"버전",
+				"description":"에드온설명",
+				"author":"제작자",
+				"status":"상태",
+				"updated":"정상설치",
+				"need_update":"업데이트필요",
+				"need_install":"설치필요",
+				"active":"활성화여부",
+				"db_size":"DB용량",
+				"attachment_size":"첨부파일용량",
+				"installed":"현재 설치된 에드온",
+				"not_installed":"설치되지 않았으나, 에드온폴더에 존재하는 모듈"
+			},
+			"window":{
+				"info":"에드온정보",
+				"install":"에드온설치",
+				"update":"에드온 업데이트",
+				"config":"에드온설정"
+			},
+			"active":{
+				"TRUE":"활성화중",
+				"FALSE":"비활성화"
+			},
+			"updateSize":"사용용량 업데이트",
+			"installing":"에드온을 설치(또는 업데이트)하고 있습니다.",
+			"installComplete":"에드온을 성공적으로 설치(또는 업데이트)하였습니다."
+		}
+	},
+	"configs":{
+		"sites":{
+			"columns":{
+				"domain":"도메인",
+				"alias":"연결도메인",
+				"language":"언어",
+				"title":"사이트명",
+				"description":"사이트소개",
+				"templet":"템플릿"
+			},
+			"member":{
+				"MERGE":"통합회원",
+				"UNIQUE":"회원분리"
+			},
+			"window":{
+				"add":"사이트 추가",
+				"modify":"사이트 수정"
+			},
+			"form":{
+				"siteConfig":"사이트 정보(같은 도메인을 사용중인 언어별 사이트에 적용됩니다.)",
+				"domain":"도메인",
+				"alias":"별칭도메인",
+				"alias_help":"별칭도메인으로 접속시 메인 도메인으로 리다이렉트됩니다.",
+				"member":{
+					"label":"회원로그인",
+					"MERGE":"사이트관리에 등록된 다른 사이트와 통합로그인을 사용합니다.",
+					"UNIQUE":"현 사이트만 독립적으로 로그인을 사용합니다."
+				},
+				"languageConfig":"언어별 설정(현재 언어별 사이트에만 적용됩니다.)",
+				"applyAllSite":"동일도메인 전체적용",
+				"applyAllTemplet":"동일템플릿 전체적용",
+				"language":"언어코드",
+				"language_search":"언어코드검색",
+				"language_help":"언어코드 2자리(예 : en)",
+				"is_default":"기본언어",
+				"templet":"사이트템플릿",
+				"title":"사이트명",
+				"description":"사이트소개",
+				"selectFile":"파일선택",
+				"resetFile":"파일초기화",
+				"defaultFile":"기본파일사용",
+				"logoDefault":"기본로고",
+				"logoDefault_help":"사이트상단 로고이미지 (PNG권장)",
+				"logoFooter":"하단로고",
+				"logoFooter_help":"사이트하단 로고이미지 (PNG권장)",
+				"emblem":"엠블럼",
+				"emblem_help":"정사각형(300px) 형태의 이미지파일",
+				"favicon":"파비콘",
+				"favicon_help":"정사각형(16px ~ 128px) 형태의 아이콘파일(.ico)",
+				"maskicon":"마스크아이콘",
+				"maskicon_help":"정사각형형태의 벡터이미지파일(.svg)",
+				"maskicon_color":"아이콘색상",
+				"image":"사이트이미지",
+				"image_help":"직사각형 형태의 이미지파일",
+				"templetConfigs":"템플릿 설정"
+			},
+			"addSite":"사이트추가"
+		},
+		"sitemap":{
+			"columns":{
+				"menu":"메뉴코드",
+				"menuTitle":"메뉴명",
+				"page":"페이지코드",
+				"pageTitle":"페이지명",
+				"type":"종류",
+				"context":"컨텍스트 속성"
+			},
+			"form":{
+				"default":"기본설정",
+				"context":"컨텍스트설정",
+				"menu":"메뉴코드",
+				"menu_help":"해당메뉴의 접근주소에 사용될 코드를 영어소문자로만 입력하여 주십시오.",
+				"page":"페이지코드",
+				"page_help":"해당페이지의 접근주소에 사용될 코드를 영어소문자로만 입력하여 주십시오.",
+				"menuTitle":"메뉴타이틀",
+				"pageTitle":"페이지타이틀",
+				"icon":"타이틀아이콘",
+				"icon_type":"아이콘종류",
+				"icon_search":"아이콘검색",
+				"icon_help":"아이콘 종류를 먼저 선택하여 주세요.",
+				"icon_fa_help":"폰트어썸 클래스명(예:fa-bars)을 입력하세요.",
+				"icon_xi_help":"XEICON v1.x 클래스명(예:xi-bars)을 입력하세요.",
+				"icon_xi2_help":"XEICON v2.x 클래스명의 xi를 xi2로 변경하여(예:xi2-bars) 입력하세요.",
+				"icon_image_help":"아이콘이미지 경로를 입력하세요.",
+				"is_footer":"하단메뉴",
+				"is_footer_help":"현재 메뉴(페이지)를 사이트 하단메뉴에 추가합니다.",
+				"is_hide":"숨김메뉴",
+				"is_hide_help":"사이트 메뉴에서 해당 메뉴를 보이지 않게 설정합니다.",
+				"description":"페이지설명",
+				"type":"컨텍스트 종류",
+				"type_help":"해당 메뉴 또는 페이지에 나타날 컨텍스트 종류를 선택하여 주십시오.",
+				"module":"모듈선택",
+				"context":"컨텍스트선택",
+				"layout":"페이지레이아웃",
+				"external":"외부페이지",
+				"external_help":"외부페이지를 페이지에 삽입하려면 /externals 또는 /templets/사용템플릿/externals 폴더에 삽입할 PHP파일을 업로드하신 후 시용하세요.",
+				"subpage":"서브페이지코드",
+				"subpage_help":"해당 메뉴에 접근시 해당 메뉴의 하위 2차 페이지로 자동연결하고자 할 경우 설정하세요.",
+				"subpage_create":"서브페이지생성",
+				"subpage_code":"페이지코드",
+				"subpage_code_help":"해당 페이지코드를 가진 서브페이지를 생성합니다. 메뉴 생성 또는 수정후 생성된 페이지를 설정할 수 있습니다.",
+				"widget":"위젯코드",
+				"widget_help":"위젯코드는 위젯배치마법사를 통해 쉽게 설정할 수 있습니다.",
+				"link":"연결될 주소",
+				"link_target":{
+					"_self":"현재창",
+					"_blank":"새창"
+				},
+				"loadTarget":"불러올 대상",
+				"loadSite":"불러올 사이트",
+				"loadMenu":"불러올 메뉴",
+				"loadPage":"불러올 페이지",
+				"loadOptions":"불러오기 옵션",
+				"includePages":"하위 2차 페이지도 함께 불러옵니다."
+			},
+			"type":{
+				"MODULE":"모듈",
+				"EXTERNAL":"외부페이지",
+				"LINK":"링크",
+				"WIDGET":"위젯",
+				"PAGE":"서브페이지",
+				"EMPTY":"빈페이지"
+			},
+			"window":{
+				"add":"메뉴/페이지 추가",
+				"modify":"메뉴/페이지 수정"
+			},
+			"siteList":"사이트",
+			"siteHelp":"먼저 사이트를 선택하세요.",
+			"menuList":"1차메뉴",
+			"pageList":"2차페이지",
+			"addMenu":"메뉴추가",
+			"loadMenu":"메뉴불러오기",
+			"addPage":"페이지추가",
+			"loadPage":"페이지불러오기"
+		}
+	},
+	"permission":{
+		"preset":{
+			"true":"전체유저",
+			"{$member.type} != 'GUEST'":"회원권한 이상",
+			"{$member.type} == 'MODERATOR'":"모더레이터권한 이상",
+			"{$member.type} == 'ADMINISTRATOR'":"최고관리자만",
+			"{$member.level} >= 10":"회원레벨 10이상"
+		},
+		"etc":"사용자정의"
+	},
+	"button":{
+		"confirm":"확인",
+		"cancel":"취소",
+		"close":"닫기"
+	},
+	"alert":{
+		"info":"안내",
+		"error":"에러"
+	},
+	"action":{
+		"wait":"잠시만 기다려주십시오.",
+		"loading":"데이터를 불러오고 있습니다.",
+		"saving":"데이터를 저장하고 있습니다.",
+		"saved":"데이터를 성공적으로 저장하였습니다.",
+		"working":"요청한 작업을 처리중입니다.",
+		"worked":"성공적으로 처리하였습니다."
+	},
+	"error":{
+		"form":"입력내용에 오류가 있습니다.<br>입력내용을 다시 한번 확인하여 주십시오.",
+		"save":"데이터를 저장할 수 없습니다.<br>입력내용에 오류가 있거나, 잠시 후 다시 시도하여 주십시오.",
+		"load":"데이터를 불러올 수 없습니다.<br>잠시 후 다시 시도하여 주십시오.",
+		"duplicated":"기존에 등록되어 있는 값과 중복됩니다.",
+		"sortNotSelected":"순서를 변경할 아이템을 먼저 선택하여 주십시오.",
+		"alphabetOnly":"영어소문자만 입력가능합니다.",
+		"required":"필수입력항목입니다.",
+		"notFound":"데이터를 찾을 수 없습니다.",
+		"languageCode":"언어코드는 2자리의 영어소문자만 입력가능합니다.",
+		"notFoundTemplet":"해당 템플릿을 찾을 수 없습니다.",
+		"notFoundContexts":"모듈이 설치되지 않았거나 컨텍스트를 찾을 수 없습니다.",
+		"notFoundSubPages":"해당 메뉴의 서브페이지가 없습니다. 서브페이지를 생성하여 주십시오.",
+		"notAllowModuleInMenu":"1차 메뉴에 모듈을 넣을 수 없습니다. 해당 모듈을 사용중인 서브페이지를 연결하여 사용하세요.",
+		"notAllowSubPageInPage":"2차 페이지에는 서브페이지를 연결할 수 없습니다."
+	}
+}

@@ -1,0 +1,32 @@
+/**
+ * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodule.kr)
+ *
+ * 사이트관리자 로그인페이지를 위한 스타일을 정의한다.
+ * 
+ * @file /modules/admin/styles/login.css
+ * @author Arzz (arzz@arzz.com)
+ * @license GPLv3
+ * @version 3.0.0.160903
+ */
+* {padding:0px; margin:0px; -webkit-font-smoothing:antialiased;}
+html, body {width:100%; height:100%; overflow:hidden;}
+body {overflow:auto; background:url(../images/login.png) !important; background-size:cover;}
+
+#iModuleWrapper {width:100%; height:100%; min-height:300px; display:flex; flex-direction:row; justify-content:center; align-items:center;}
+#iModuleWrapper > form > main {flex-basis:300px; margin:20px;}
+#iModuleWrapper > form > main > h1 {height:100px; display:block; color:#fff; text-shadow:1px 1px 1px rgba(0,0,0,0.3); text-align:center; font-size:24px; font-family:OpenSans; font-weight:300; letter-spacing:-1px;}
+#iModuleWrapper > form > main > h1 > i {display:block !important; text-align:center; height:60px; line-height:50px; font-size:50px !important;}
+
+#iModuleWrapper > form > main > .inputbox {height:92px; position:relative; border-radius:5px; margin:10px 0px;}
+#iModuleWrapper > form > main > .inputbox > input {display:block; width:100%; height:45px; line-height:25px; padding:10px; background:rgba(255,255,255,0.9); border:1px solid rgba(0,0,0,0.6); outline:none; font-family:OpenSans; font-size:16px; box-sizing:border-box;}
+#iModuleWrapper > form > main > .inputbox > input:focus {border-color:#377cf8;}
+#iModuleWrapper > form > main > .inputbox > input[type=email] {border-bottom:0px; border-radius:5px 5px 0px 0px;}
+#iModuleWrapper > form > main > .inputbox > input[type=password] {border-radius:0px 0px 5px 5px; padding-right:50px; height:46px;}
+#iModuleWrapper > form > main > .inputbox > button {position:absolute; bottom:10px; right:9px; cursor:pointer; border:1px solid rgba(0,0,0,0.6); background:transparent; width:28px; height:28px; border-radius:50%; z-index:10; color:rgba(0,0,0,0.6); font-size:12px; padding-left:1px; text-align:center;}
+#iModuleWrapper > form > main > .inputbox > button:hover {color:#377cf8; border-color:#377cf8;}
+#iModuleWrapper > form > main.error > .inputbox {box-shadow:0px 0px 5px 5px rgba(255,0,0,0.3);}
+#iModuleWrapper > form > main.error > .inputbox > input {border-color:#ff0000;}
+#iModuleWrapper > form > main.error > .inputbox > button {border-color:#ff0000; color:#ff0000;}
+
+#iModuleWrapper > form > main > label {display:block; width:280px; height:40px; line-height:40px; text-align:center; margin:0 auto; color:#fff; font-size:13px; font-family:OpenSans;}
+#iModuleWrapper > form > main > label > input {vertical-align:middle; margin-right:5px;}
