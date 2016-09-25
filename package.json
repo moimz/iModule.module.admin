@@ -27,6 +27,7 @@
 	"context":false,
 	"global":false,
 	"article":false,
+	"widget":true,
 	"databases":{
 		"admin_log_table":{
 			"columns":{

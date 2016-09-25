@@ -43,9 +43,15 @@
 				"update":"모듈 업데이트",
 				"config":"모듈설정"
 			},
-			"updateSize":"사용용량 업데이트",
+			"update_size":"사용용량 업데이트",
 			"installing":"모듈을 설치(또는 업데이트)하고 있습니다.",
-			"installComplete":"모듈을 성공적으로 설치(또는 업데이트)하였습니다."
+			"installed":"모듈을 성공적으로 설치(또는 업데이트)하였습니다."
+		},
+		"menus":{
+			"detail":"모듈상세정보",
+			"install":"모듈설치",
+			"update":"모듈업데이트",
+			"config":"모듈설정"
 		},
 		"show":{
 			"default":"모듈기본정보",
@@ -244,6 +250,9 @@
 			"{$member.level} >= 10":"회원레벨 10이상"
 		},
 		"etc":"사용자정의"
+	},
+	"text":{
+		"gridHelp":"항목 더블클릭 : 상세정보 / 항목 우클릭 : 메뉴"
 	},
 	"button":{
 		"confirm":"확인",

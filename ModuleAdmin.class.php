@@ -12,7 +12,7 @@
  */
 class ModuleAdmin {
 	/**
-	 * iModule core 와 Module core 클래스
+	 * iModule 및 Module 코어클래스
 	 */
 	private $IM;
 	private $Module;
@@ -55,16 +55,26 @@ class ModuleAdmin {
 	/**
 	 * class 선언
 	 *
-	 * @param iModule $IM iModule core class
-	 * @param Module $Module Module core class
+	 * @param iModule $IM iModule 코어클래스
+	 * @param Module $Module Module 코어클래스
 	 * @see /classes/iModule.class.php
 	 * @see /classes/Module.class.php
 	 */
 	function __construct($IM,$Module) {
 		global $_CONFIGS, $_ADMINS;
 		
+		/**
+		 * iModule 및 Module 코어 선언
+		 */
 		$this->IM = $IM;
 		$this->Module = $Module;
+		
+		/**
+		 * 모듈에서 사용하는 DB 테이블 별칭 정의
+		 * @see 모듈폴더의 package.json 의 databases 참고
+		 */
+		$this->table = new stdClass();
+		$this->table->log = 'admin_log_table';
 		
 		/**
 		 * 사이트관리자 언어셋을 지정한다.
@@ -214,7 +224,7 @@ class ModuleAdmin {
 		/**
 		 * 사이트관리자를 위한 자바스크립트를 호출한다.
 		 */
-		$this->IM->addHeadResource('script',$this->Module->getDir().'/scripts/admin.js');
+		$this->IM->addHeadResource('script',$this->Module->getDir().'/scripts/script.js');
 		
 		/**
 		 * 헤더 PHP 파일에서 iModule 코어클래스에 접근하기 위한 변수 선언
@@ -253,19 +263,14 @@ class ModuleAdmin {
 	/**
 	 * 사이트관리자 로그인화면을 구성한다.
 	 *
-	 * @return string $context 로그인 HTML
+	 * @return string $html 로그인 HTML
 	 */
 	function getLoginContext() {
 		/**
 		 * 로그인관련 스타일시트와 언어셋에 따라 웹폰트를 불러온다.
 		 */
 		$this->IM->addHeadResource('style',$this->Module->getDir().'/styles/login.css');
-		if ($this->IM->language == 'ko') {
-			$this->IM->loadWebFont('NanumGothic',true);
-			$this->IM->loadWebFont('OpenSans');
-		} else {
-			$this->IM->loadWebFont('OpenSans',true);
-		}
+		$this->IM->loadFont();
 		
 		/**
 		 * 컨텍스트 PHP 파일에서 iModule 코어클래스 및 관리자클래스에 접근하기 위한 변수 선언
@@ -279,16 +284,16 @@ class ModuleAdmin {
 		INCLUDE $this->Module->getPath().'/includes/login.php';
 		
 		echo PHP_EOL.'</form>'.PHP_EOL.'<script>$("#ModuleAdminLoginForm").inits(Admin.login.submit);</script>'.PHP_EOL;
-		$context = ob_get_contents();
+		$html = ob_get_contents();
 		ob_end_clean();
 		
-		return $context;
+		return $html;
 	}
 	
 	/**
 	 * 사이트관리자 화면을 구성한다.
 	 *
-	 * @return string $context 관리자화면 HTML
+	 * @return string $html 관리자화면 HTML
 	 */
 	function getAdminContext() {
 		/**
@@ -301,12 +306,11 @@ class ModuleAdmin {
 		 * 관리자화면의 스타일시트와 언어셋에 따라 웹폰트를 불러온다.
 		 */
 		$this->IM->addHeadResource('style',$this->Module->getDir().'/styles/style.css');
-		if ($this->IM->language == 'ko') {
-			$this->IM->loadWebFont('NanumBarunGothic',true);
-			$this->IM->loadWebFont('OpenSans');
-		} else {
-			$this->IM->loadWebFont('OpenSans',true);
-		}
+		$this->IM->loadFont();
+		
+		$this->IM->loadWebFont('FontAwesome');
+		$this->IM->loadWebFont('XEIcon');
+		$this->IM->loadWebFont('XEIcon2');
 		
 		/**
 		 * 관리자메뉴를 구성한다.
@@ -345,10 +349,10 @@ class ModuleAdmin {
 		ob_start();
 		
 		INCLUDE $this->Module->getPath().'/includes/index.php';
-		$context = ob_get_contents();
+		$html = ob_get_contents();
 		ob_end_clean();
 		
-		return $context;
+		return $html;
 	}
 	
 	/**
@@ -357,6 +361,8 @@ class ModuleAdmin {
 	 * @return string $panel 관리패널 스크립트
 	 */
 	function getPanelContext() {
+		$panel = '';
+		
 		/**
 		 * 1차 메뉴가 configs 일 경우
 		 */
@@ -762,139 +768,6 @@ class ModuleAdmin {
 		 */
 		if (is_file($this->Module->getPath().'/process/'.$action.'.php') == true) {
 			INCLUDE $this->Module->getPath().'/process/'.$action.'.php';
-		}
-		
-		if ($action == '@getModuleList') {
-			$lists = array();
-			$modulesPath = @opendir(__IM_PATH__.'/modules');
-			while ($module = @readdir($modulesPath)) {
-				if ($module != '.' && $module != '..' && is_dir(__IM_PATH__.'/modules/'.$module) == true) {
-					$package = $this->Module->getPackage($module);
-					
-					if ($package !== null) {
-						$item = array(
-							'id'=>$package->id,
-							'module'=>$module,
-							'title'=>$this->Module->GetTitle($module),
-							'version'=>$package->version,
-							'description'=>$this->Module->getDescription($module),
-							'hash'=>$this->Module->getHash($module)
-						);
-						
-						$item['author'] = '';
-						if (isset($package->author->name) == true) $item['author'].= $package->author->name;
-						
-						if ($this->Module->isInstalled($module) == true) {
-							$installed = $this->Module->getInstalled($module);
-							$item['installed'] = 'TRUE';
-							$item['installed_hash'] = $installed->hash;
-							$item['db_size'] = 0;
-							$item['attachment_size'] = 0;
-						} else {
-							$item['installed'] = 'FALSE';
-							$item['installed_hash'] = $item['hash'];
-							$item['db_size'] = 0;
-							$item['attachment_size'] = 0;
-						}
-						
-						$lists[] = $item;
-					}
-				}
-			}
-			@closedir($modulesPath);
-			
-			$results->success = true;
-			$results->lists = $lists;
-			$results->total = count($lists);
-		}
-		
-		if ($action == '@getModuleConfig') {
-			$target = Request('target');
-			$package = $this->Module->getPackage($target);
-			$configs = $this->Module->isInstalled($target) == true ? json_decode($this->Module->getInstalled($target)->configs) : new stdClass();
-			
-			$data = isset($package->configs) == true ? $package->configs : new stdClass();
-			foreach ($data as $key=>$type) {
-				if (isset($configs->$key) == false) $data->$key = $type->value;
-				else $data->$key = $configs->$key;
-				
-				if ($type->type == 'array') $data->$key = implode(',',$data->$key);
-			}
-			$results->success = true;
-			$results->data = $data;
-		}
-		
-		if ($action == '@installModule') {
-			$target = Request('target');
-			$configs = new stdClass();
-			foreach ($_POST as $key=>$value) {
-				if (in_array($key,array('target')) == true) continue;
-				$configs->$key = $value;
-			}
-			$installed = $this->IM->Module->install($target,$configs);
-			if ($installed === true) {
-				$results->success = true;
-			} else {
-				$results->success = false;
-				$results->message = $installed;
-			}
-		}
-		
-		if ($action == '@getAddonList') {
-			$lists = array();
-			$addonsPath = @opendir(__IM_PATH__.'/addons');
-			while ($addon = @readdir($addonsPath)) {
-				if ($addon != '.' && $addon != '..' && is_dir(__IM_PATH__.'/addons/'.$addon) == true) {
-					$package = $this->Addon->getPackage($addon);
-					
-					if ($package !== null) {
-						$item = array(
-							'id'=>$package->id,
-							'addon'=>$addon,
-							'title'=>$this->Addon->GetTitle($addon),
-							'version'=>$package->version,
-							'description'=>$this->Addon->getDescription($addon),
-							'hash'=>$this->Addon->getHash($addon)
-						);
-						
-						$item['author'] = '';
-						if (isset($package->author->name) == true) $item['author'].= $package->author->name;
-						
-						if ($this->Addon->isInstalled($addon) == true) {
-							$installed = $this->Addon->getInstalled($addon);
-							$item['installed'] = 'TRUE';
-							$item['installed_hash'] = $installed->hash;
-							$item['db_size'] = 0;
-							$item['active'] = $installed->active;
-						} else {
-							$item['installed'] = 'FALSE';
-							$item['installed_hash'] = $item['hash'];
-							$item['db_size'] = 0;
-							$item['attachment_size'] = 0;
-							$item['active'] = 'FALSE';
-						}
-						
-						$lists[] = $item;
-					}
-				}
-			}
-			@closedir($addonsPath);
-			
-			$results->success = true;
-			$results->lists = $lists;
-			$results->total = count($lists);
-		}
-		
-		if ($action == '@installAddon') {
-			$target = Request('target');
-			
-			$installed = $this->IM->Addon->install($target);
-			if ($installed === true) {
-				$results->success = true;
-			} else {
-				$results->success = false;
-				$results->message = $installed;
-			}
 		}
 		
 		$this->IM->fireEvent('afterDoProcess','admin',$action,$values,$results);

@@ -2,38 +2,29 @@
 /**
  * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodule.kr)
  * 
- * 모듈의 설정패널을 불러온다. 모듈의 설정패널은 각 모듈폴더의 admin/config.php 파일에 정의되어 있다.
+ * 모듈의 설정값을 불러온다. 모듈의 설정필드는 각 모듈의 package.json 에 정의되어 있으며 설정값은 DB의 module_table 에 저장된다.
  *
  * @file /modules/admin/process/@getModuleConfigs.php
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.0.0.160903
  *
- * @post string $module 모듈명
+ * @post string $target 대상 모듈명
  * @return object $results
  */
 if (defined('__IM__') == false) exit;
 
 $module = Request('target');
-$panel = $this->Module->getConfigPanel($module);
+$package = $this->Module->getPackage($module);
+$configs = $this->Module->isInstalled($module) == true ? json_decode($this->Module->getInstalled($module)->configs) : new stdClass();
 
-if ($panel == null) {
-	$results->success = true;
-	$results->panel = null;
-} else {
-	$package = $this->Module->getPackage($module);
+$data = isset($package->configs) == true ? $package->configs : new stdClass();
+foreach ($data as $key=>$type) {
+	if (isset($configs->$key) == false) $data->$key = $type->value;
+	else $data->$key = $configs->$key;
 	
-	$results->success = true;
-	$results->panel = $panel;
-	$results->language = __IM_DIR__.'/scripts/language.js.php?languages='.$module.'@'.$this->IM->language.'@'.$package->language;
-	
-	if (is_file($this->Module->getPath($module).'/admin/scripts/'.$module.'.js') == true) {
-		$results->script = $this->Module->getDir($module).'/admin/scripts/'.$module.'.js';
-	} else {
-		$results->script = null;
-	}
+	if ($type->type == 'array') $data->$key = implode(',',$data->$key);
 }
-
-$results->isInstalled = $this->Module->isInstalled($module);
-$results->isLatest = $results->isInstalled == true && $this->Module->getInstalled($module)->hash == $this->Module->getHash($module);
+$results->success = true;
+$results->data = $data;
 ?>

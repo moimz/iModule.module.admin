@@ -12,12 +12,16 @@
  */
 ?>
 <main>
-	<h1><i class="fa fa-lock"></i> Login to control panel</h1>
+	<h1><i class="mi mi-lock"></i> Login to control panel</h1>
 	
 	<div class="inputbox">
-		<input type="email" name="email" placeholder="E-mail">
-		<input type="password" name="password" placeholder="Password">
-		<button type="submit"><i class="fa fa-arrow-right"></i></button>
+		<div data-role="input">
+			<input type="email" name="email" placeholder="E-mail">
+		</div>
+		<div data-role="input">
+			<input type="password" name="password" placeholder="Password">
+		</div>
+		<button type="submit"><i class="mi mi-go-bold"></i></button>
 	</div>
 	
 	<label class="autoLogin"><input type="checkbox" name="auto"> Keep me signed in</label>

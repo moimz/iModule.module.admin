@@ -16,8 +16,12 @@ var panel = new Ext.grid.Panel({
 	border:false,
 	tbar:[
 		new Ext.Button({
-			text:Admin.getLanguage("modules/lists/updateSize"),
+			iconCls:"fa fa-refresh",
+			text:Admin.getLanguage("modules/lists/update_size"),
 			handler:function() {
+				$.send(ENV.getProcessUrl("admin","@updateModuleSize"),function(result) {
+					if (result.success == true) Ext.getCmp("ModuleList").getStore().reload();
+				});
 			}
 		})
 	],
@@ -25,7 +29,7 @@ var panel = new Ext.grid.Panel({
 		proxy:{
 			type:"ajax",
 			simpleSortMode:true,
-			url:ENV.getProcessUrl("admin","@getModuleList"),
+			url:ENV.getProcessUrl("admin","@getModules"),
 			reader:{type:"json"}
 		},
 		remoteSort:false,
@@ -34,7 +38,7 @@ var panel = new Ext.grid.Panel({
 		pageSize:0,
 		groupField:"installed",
 		groupDir:"DESC",
-		fields:["id","module","title","version","description","hash",{name:"db_size",type:"int"},{name:"attachment_size",type:"int"},"installed","installed_hash"],
+		fields:["id","module","title","version","description","hash",{name:"db_size",type:"int"},{name:"attachment_size",type:"int"},{name:"installed",type:"boolean"},"installed_hash",{name:"isConfigPanel",type:"boolean"}],
 		listeners:{
 			load:function(store,records,success,e) {
 				if (success == false) {
@@ -79,7 +83,7 @@ var panel = new Ext.grid.Panel({
 		dataIndex:"hash",
 		align:"center",
 		renderer:function(value,p,record) {
-			if (record.data.installed == "FALSE") {
+			if (record.data.installed == false) {
 				p.style = "color:#666;";
 				return Admin.getLanguage("modules/lists/columns/need_install");
 			} else if (record.data.installed_hash != value) {
@@ -118,117 +122,64 @@ var panel = new Ext.grid.Panel({
 	selModel:new Ext.selection.RowModel(),
 	features:[{
 		ftype:"groupingsummary",
-		groupHeaderTpl:'<tpl if="name == \'TRUE\'">'+Admin.getLanguage("modules/lists/columns/installed")+'<tpl elseif="name == \'FALSE\'">'+Admin.getLanguage("modules/lists/columns/not_installed")+'</tpl>',
+		groupHeaderTpl:'<tpl if="name == \'true\'">'+Admin.getLanguage("modules/lists/columns/installed")+'<tpl elseif="name == \'false\'">'+Admin.getLanguage("modules/lists/columns/not_installed")+'</tpl>',
 		hideGroupedHeader:false,
 		enableGroupingMenu:false
 	}],
+	bbar:[
+		new Ext.Button({
+			iconCls:"x-tbar-loading",
+			handler:function() {
+				Ext.getCmp("ModuleList").getStore().reload();
+			}
+		}),
+		"->",
+		{xtype:"tbtext",text:Admin.getLanguage("text/gridHelp")}
+	],
 	listeners:{
 		itemdblclick:function(grid,record) {
 			Admin.modules.show(record.data.module);
-			return;
-			var type = record.data.installed == "FALSE" ? "install" : (record.data.hash != record.data.installed_hash ? "update" : "config");
+		},
+		itemcontextmenu:function(grid,record,item,index,e) {
+			var menu = new Ext.menu.Menu();
 			
-			Ext.Msg.wait(Admin.getLanguage("action/working"),Admin.getLanguage("action/wait"));
-			
-			$.ajax({
-				type:"POST",
-				url:ENV.getProcessUrl("admin","@loadModuleConfig"),
-				data:{target:record.data.module},
-				dataType:"json",
-				success:function(result) {
-					if (result.success == true) {/*
-						if (result.script != null) {
-							$("head").append(result.script);
-//							$("head")(result.script);
-						}*/
-						
-						if (result.script != null && $("script[src='"+result.script+"']").length == 0) {
-							$("head").append($("<script>").attr("src",result.script));
-							console.log("script 불러옴");
-						}
-						
-						if ($("script[src='"+result.language+"']").length == 0) {
-							$("head").append($("<script>").attr("src",result.language));
-							console.log("language 불러옴");
-						}
-						
-						$("head").append($("<script>").attr("src",result.config));
-						console.log("config 불러옴");
-						
-						Ext.Msg.hide();
-						
-						new Ext.Window({
-							id:"ModuleConfigWindow",
-							title:Admin.getLanguage("modules/lists/window/"+type),
-							width:800,
-							height:400,
-							modal:true,
-							border:false,
-							resizeable:false,
-							autoScroll:true,
-							autoDestory:false,
-							items:[
-								Admin.getConfigPanel()
-							],
-							buttons:[
-								new Ext.Button({
-									text:Admin.getLanguage("modules/lists/window/"+type),
-									handler:function() {
-										Ext.getCmp("ModuleConfigForm").getForm().submit({
-											url:ENV.getProcessUrl("admin","@installModule"),
-											params:{target:record.data.module},
-											submitEmptyText:false,
-											waitTitle:Admin.getLanguage("action/wait"),
-											waitMsg:Admin.getLanguage("modules/lists/installing"),
-											success:function(form,action) {
-												Ext.Msg.show({title:Admin.getLanguage("alert/info"),msg:Admin.getLanguage("modules/lists/installComplete"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO,fn:function(button) {
-													Ext.getCmp("ModuleConfigWindow").close();
-													Ext.getCmp("ModuleList").getStore().reload();
-												}});
-											},
-											failure:function(form,action) {
-												if (action.result && action.result.message) {
-													Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
-												} else {
-													Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getLanguage("error/form"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
-												}
-											}
-										});
-									}
-								}),
-								new Ext.Button({
-									text:Admin.getLanguage("button/cancel"),
-									handler:function() {
-										Ext.getCmp("ModuleConfigWindow").close();
-									}
-								})
-							],
-							listeners:{
-								show:function() {
-									Ext.getCmp("ModuleConfigForm").getForm().load({
-										url:ENV.getProcessUrl("admin","@getModuleConfig"),
-										params:{target:record.data.module},
-										waitTitle:Admin.getLanguage("action/wait"),
-										waitMsg:Admin.getLanguage("action/loading"),
-										success:function(form,action) {
-										},
-										failure:function(form,action) {
-											if (action.result && action.result.message) {
-												Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
-											} else {
-												Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getLanguage("error/load"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
-											}
-										}
-									});
-								},
-								close:function() {
-									Admin.resetConfigPanel();
-								}
-							}
-						}).show();
-					}
+			menu.add('<div class="x-menu-title">'+record.data.title+'('+record.data.module+')</div>');
+			menu.add({
+				iconCls:"fa fa-cube",
+				text:Admin.getLanguage("modules/menus/detail"),
+				handler:function() {
+					Admin.modules.show(record.data.module);
 				}
 			});
+			
+			if (record.data.installed === false) {
+				menu.add({
+					iconCls:"fa fa-hdd-o",
+					text:Admin.getLanguage("modules/menus/install"),
+					handler:function() {
+						Admin.modules.install(record.data.module);
+					}
+				});
+			} else if (record.data.installed_hash != record.data.hash) {
+				menu.add({
+					iconCls:"fa fa-hdd-o",
+					text:Admin.getLanguage("modules/menus/update"),
+					handler:function() {
+						Admin.modules.install(record.data.module);
+					}
+				});
+			} else if (record.data.isConfigPanel == true) {
+				menu.add({
+					iconCls:"fa fa-cog",
+					text:Admin.getLanguage("modules/menus/config"),
+					handler:function() {
+						Admin.modules.install(record.data.module);
+					}
+				});
+			}
+			
+			e.stopEvent();
+			menu.showAt(e.getXY());
 		}
 	}
 });

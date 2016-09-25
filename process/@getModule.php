@@ -57,7 +57,7 @@ if ($package == null) {
 	
 	$data->isInstalled = $this->Module->isInstalled($module);
 	$data->isLatest = $data->isInstalled == true && $this->Module->getInstalled($module)->hash == $this->Module->getHash($module);
-	$data->isConfig = $this->Module->isConfigPanel($module);
+	$data->isConfigPanel = $this->Module->isConfigPanel($module);
 	
 	$results->success = true;
 	$results->data = $data;

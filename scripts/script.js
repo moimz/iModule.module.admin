@@ -47,7 +47,7 @@ var Admin = {
 				id:"ModuleWindow",
 				title:Admin.getLanguage("action/wait"),
 				width:800,
-				height:400,
+				height:600,
 				modal:true,
 				border:false,
 				resizeable:false,
@@ -73,7 +73,7 @@ var Admin = {
 														id:"ModuleIcon",
 														border:false,
 														bodyCls:"im-icon-default",
-														html:'<i class="fa fa-spin fa-spinner"></i>',
+														html:'<i class="mi mi-loading"></i>',
 													}),
 													new Ext.Button({
 														id:"ModuleInstallButton1",
@@ -193,7 +193,7 @@ var Admin = {
 							waitMsg:Admin.getLanguage("action/loading"),
 							success:function(form,action) {
 								Ext.getCmp("ModuleWindow").setTitle(action.result.data.title);
-								$("#ModuleIcon i.fa").removeClass("fa-spin fa-spinner").addClass(action.result.data.icon);
+								$("#ModuleIcon i.mi").removeClass("mi-loading").addClass(action.result.data.icon);
 								
 								for (var i=0, loop=action.result.data.dependencies.length;i<loop;i++) {
 									Ext.getCmp("ModuleDependencies").add(
@@ -211,7 +211,7 @@ var Admin = {
 									Ext.getCmp("ModuleInstallButton1").setText(Admin.getLanguage("modules/show/installed"));
 									Ext.getCmp("ModuleInstallButton1").disable();
 									
-									if (action.result.data.isConfig == true) {
+									if (action.result.data.isConfigPanel == true) {
 										Ext.getCmp("ModuleInstallButton2").setText(Admin.getLanguage("modules/show/setting"));
 									} else {
 										Ext.getCmp("ModuleInstallButton2").hide();
@@ -247,7 +247,7 @@ var Admin = {
 			Admin.modules.installReady = {};
 			$(document).off("Admin.modules.installReady");
 			
-			$.send(ENV.getProcessUrl("admin","@getModuleConfigs"),{target:module},function(result) {
+			$.send(ENV.getProcessUrl("admin","@getModuleConfigPanel"),{target:module},function(result) {
 				if (result.success == true) {
 					if (result.panel == null) {
 						
@@ -287,30 +287,30 @@ var Admin = {
 						}
 						
 						new Ext.Window({
-							id:"ModuleConfigWindow",
+							id:"ModuleConfigsWindow",
 							title:Admin.getLanguage("modules/lists/window/"+type),
 							width:800,
-							height:400,
+							height:600,
 							modal:true,
 							border:false,
 							resizeable:false,
 							autoScroll:true,
 							items:[
-								config
+								Ext.getCmp("ModuleConfigsForm")
 							],
 							buttons:[
 								new Ext.Button({
 									text:Admin.getLanguage("button/confirm"),
 									handler:function() {
-										Ext.getCmp("ModuleConfigForm").getForm().submit({
+										Ext.getCmp("ModuleConfigsForm").getForm().submit({
 											url:ENV.getProcessUrl("admin","@installModule"),
 											params:{target:module},
 											submitEmptyText:false,
 											waitTitle:Admin.getLanguage("action/wait"),
 											waitMsg:Admin.getLanguage("modules/lists/installing"),
 											success:function(form,action) {
-												Ext.Msg.show({title:Admin.getLanguage("alert/info"),msg:Admin.getLanguage("modules/lists/installComplete"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO,fn:function(button) {
-													Ext.getCmp("ModuleConfigWindow").close();
+												Ext.Msg.show({title:Admin.getLanguage("alert/info"),msg:Admin.getLanguage("modules/lists/installed"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO,fn:function(button) {
+													Ext.getCmp("ModuleConfigsWindow").close();
 													Ext.getCmp("ModuleList").getStore().reload();
 												}});
 											},
@@ -327,14 +327,14 @@ var Admin = {
 								new Ext.Button({
 									text:Admin.getLanguage("button/cancel"),
 									handler:function() {
-										Ext.getCmp("ModuleConfigWindow").close();
+										Ext.getCmp("ModuleConfigsWindow").close();
 									}
 								})
 							],
 							listeners:{
 								show:function() {
-									Ext.getCmp("ModuleConfigForm").getForm().load({
-										url:ENV.getProcessUrl("admin","@getModuleConfig"),
+									Ext.getCmp("ModuleConfigsForm").getForm().load({
+										url:ENV.getProcessUrl("admin","@getModuleConfigs"),
 										params:{target:module},
 										waitTitle:Admin.getLanguage("action/wait"),
 										waitMsg:Admin.getLanguage("action/loading"),
@@ -1767,14 +1767,14 @@ var Admin = {
 					new Ext.Button({
 						text:Admin.getLanguage("button/confirm"),
 						handler:function() {
-							Ext.getCmp("ModuleConfigForm").getForm().submit({
+							Ext.getCmp("ModuleConfigsForm").getForm().submit({
 								url:ENV.getProcessUrl("admin","@installModule"),
 								params:{target:target},
 								submitEmptyText:false,
 								waitTitle:Admin.getLanguage("action/wait"),
 								waitMsg:Admin.getLanguage("module/list/installing"),
 								success:function(form,action) {
-									Ext.Msg.show({title:Admin.getLanguage("alert/info"),msg:Admin.getLanguage("module/list/installComplete"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO});
+									Ext.Msg.show({title:Admin.getLanguage("alert/info"),msg:Admin.getLanguage("module/list/installed"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO});
 								},
 								failure:function(form,action) {
 									if (action.result && action.result.message) {
@@ -1789,8 +1789,8 @@ var Admin = {
 				],
 				listeners:{
 					render:function() {
-						Ext.getCmp("ModuleConfigForm").getForm().load({
-							url:ENV.getProcessUrl("admin","@getModuleConfig"),
+						Ext.getCmp("ModuleConfigsForm").getForm().load({
+							url:ENV.getProcessUrl("admin","@getModuleConfigs"),
 							params:{target:target},
 							waitTitle:Admin.getLanguage("action/wait"),
 							waitMsg:Admin.getLanguage("action/loading"),
@@ -1951,7 +1951,7 @@ var Admin = {
 					}
 				}),
 				new Ext.Button({
-					iconCls:"fa fa-question",
+					iconCls:"mi mi-question",
 					handler:function() {
 						
 					}

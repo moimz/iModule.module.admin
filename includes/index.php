@@ -15,7 +15,7 @@
 	
 	<ul>
 		<?php for ($i=0, $loop=count($menus);$i<$loop;$i++) { ?>
-		<li<?php echo $menus[$i]->menu == $this->menu && ($menus[$i]->page == false || $menus[$i]->menu == $this->page) ? ' class="selected"' : ''; ?>><a href="<?php echo $this->getUrl($menus[$i]->menu,$menus[$i]->page,$menus[$i]->tab); ?>"><i class="fa <?php echo $menus[$i]->icon; ?>"></i><?php echo $menus[$i]->title; ?></a></li>
+		<li<?php echo $menus[$i]->menu == $this->menu && ($menus[$i]->page == false || $menus[$i]->menu == $this->page) ? ' class="selected"' : ''; ?>><a href="<?php echo $this->getUrl($menus[$i]->menu,$menus[$i]->page,$menus[$i]->tab); ?>"><i class="<?php echo substr($menus[$i]->icon,0,2); ?> <?php echo $menus[$i]->icon; ?>"></i><?php echo $menus[$i]->title; ?></a></li>
 		<?php } ?>
 	</ul>
 </header>
@@ -24,7 +24,7 @@
 <aside id="iModuleAdminPages">
 	<ul>
 		<?php for ($i=0, $loop=count($pages);$i<$loop;$i++) { ?>
-		<li<?php echo $pages[$i]->page == $this->page ? ' class="selected"' : ''; ?>><a href="<?php echo $this->getUrl($pages[$i]->menu,$pages[$i]->page,$pages[$i]->tab); ?>"><i class="fa <?php echo $pages[$i]->icon; ?>"></i><?php echo $pages[$i]->title; ?></a></li>
+		<li<?php echo $pages[$i]->page == $this->page ? ' class="selected"' : ''; ?>><a href="<?php echo $this->getUrl($pages[$i]->menu,$pages[$i]->page,$pages[$i]->tab); ?>"><i class="<?php echo substr($pages[$i]->icon,0,2); ?> <?php echo $pages[$i]->icon; ?>"></i><?php echo $pages[$i]->title; ?></a></li>
 		<?php } ?>
 	</ul>
 </aside>
