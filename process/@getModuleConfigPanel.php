@@ -25,7 +25,7 @@ if ($panel == null) {
 	
 	$results->success = true;
 	$results->panel = $panel;
-	$results->language = __IM_DIR__.'/scripts/language.js.php?languages='.$module.'@'.$this->IM->language.'@'.$package->language;
+	$results->language = __IM_DIR__.'/scripts/language.js.php?language='.$this->IM->language.'&languages=module@'.$module.'@'.$package->language;
 	
 	if (is_file($this->Module->getPath($module).'/admin/scripts/script.js') == true) {
 		$results->script = $this->Module->getDir($module).'/admin/scripts/script.js';

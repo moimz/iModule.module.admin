@@ -23,7 +23,7 @@ var panel = new Ext.grid.Panel({
 	tbar:[
 		new Ext.Button({
 			iconCls:"fa fa-plus",
-			text:Admin.getLanguage("configs/sites/addSite"),
+			text:Admin.getLanguage("configs/sites/add_site"),
 			handler:function() {
 				Admin.configs.sites.add();
 			}
@@ -49,7 +49,7 @@ var panel = new Ext.grid.Panel({
 					if (e.getError()) {
 						Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:e.getError(),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
 					} else {
-						Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getLanguage("error/load"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
+						Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getErrorMessage("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
 					}
 				}
 			}
@@ -90,6 +90,16 @@ var panel = new Ext.grid.Panel({
 		hideGroupedHeader:false,
 		enableGroupingMenu:false
 	}],
+	bbar:[
+		new Ext.Button({
+			iconCls:"x-tbar-loading",
+			handler:function() {
+				Ext.getCmp("SiteList").getStore().reload();
+			}
+		}),
+		"->",
+		{xtype:"tbtext",text:Admin.getLanguage("text/grid_help")}
+	],
 	listeners:{
 		itemdblclick:function(grid,record) {
 			Admin.configs.sites.add(record.data.domain,record.data.language);

@@ -159,9 +159,10 @@ class ModuleAdmin {
 	 * 코드에 해당하는 문자열이 없을 경우 1차적으로 package.json 에 정의된 기본언어셋의 텍스트를 반환하고, 기본언어셋 텍스트도 없을 경우에는 코드를 그대로 반환한다.
 	 *
 	 * @param string $code 언어코드
+	 * @param string $replacement 일치하는 언어코드가 없을 경우 반환될 메세지 (기본값 : null, $code 반환)
 	 * @return string $language 실제 언어셋 텍스트
 	 */
-	function getLanguage($code) {
+	function getLanguage($code,$replacement=null) {
 		if ($this->lang == null) {
 			if (file_exists($this->Module->getPath().'/languages/'.$this->IM->language.'.json') == true) {
 				$this->lang = json_decode(file_get_contents($this->Module->getPath().'/languages/'.$this->IM->language.'.json'));
@@ -174,32 +175,69 @@ class ModuleAdmin {
 			}
 		}
 		
+		$returnString = null;
 		$temp = explode('/',$code);
-		if (count($temp) == 1) {
-			return isset($this->lang->$code) == true ? $this->lang->$code : ($this->oLang != null && isset($this->oLang->$code) == true ? $this->oLang->$code : $code);
-		} else {
-			$string = $this->lang;
-			for ($i=0, $loop=count($temp);$i<$loop;$i++) {
-				if (isset($string->{$temp[$i]}) == true) {
-					$string = $string->{$temp[$i]};
-				} else {
-					$string = null;
-					break;
-				}
+		
+		$string = $this->lang;
+		for ($i=0, $loop=count($temp);$i<$loop;$i++) {
+			if (isset($string->{$temp[$i]}) == true) {
+				$string = $string->{$temp[$i]};
+			} else {
+				$string = null;
+				break;
 			}
-			
-			if ($string != null) return $string;
-			if ($this->oLang == null) return $code;
-			
+		}
+		
+		if ($string != null) {
+			$returnString = $string;
+		} elseif ($this->oLang != null) {
 			if ($string == null && $this->oLang != null) {
 				$string = $this->oLang;
 				for ($i=0, $loop=count($temp);$i<$loop;$i++) {
-					if (isset($string->{$temp[$i]}) == true) $string = $string->{$temp[$i]};
-					return $code;
+					if (isset($string->{$temp[$i]}) == true) {
+						$string = $string->{$temp[$i]};
+					} else {
+						$string = null;
+						break;
+					}
 				}
 			}
-			return $string;
+			
+			if ($string != null) $returnString = $string;
 		}
+		
+		/**
+		 * 언어셋 텍스트가 없는경우 iModule 코어에서 불러온다.
+		 */
+		if ($returnString != null) return $returnString;
+		elseif (in_array(reset($temp),array('text','button','action')) == true) return $this->IM->getLanguage($code,$replacement);
+		else return $replacement == null ? $code : $replacement;
+	}
+	
+	/**
+	 * 상황에 맞게 에러코드를 반환한다.
+	 *
+	 * @param string $code 에러코드
+	 * @param object $value(옵션) 에러와 관련된 데이터
+	 * @param boolean $isRawData(옵션) RAW 데이터 반환여부
+	 * @return string $message 에러 메세지
+	 */
+	function getErrorMessage($code,$value=null,$isRawData=false) {
+		$message = $this->getLanguage('error/'.$code,$code);
+		if ($message == $code) return $this->IM->getErrorMessage($code,$value,null,$isRawData);
+		
+		$description = null;
+		switch ($code) {
+			default :
+				if (is_object($value) == false && $value) $description = $value;
+		}
+		
+		$error = new stdClass();
+		$error->message = $message;
+		$error->description = $description;
+		
+		if ($isRawData === true) return $error;
+		else return $this->IM->getErrorMessage($error);
 	}
 	
 	/**
@@ -261,6 +299,21 @@ class ModuleAdmin {
 	}
 	
 	/**
+	 * 에러메세지를 반환한다.
+	 *
+	 * @param string $code 에러코드 (에러코드는 iModule 코어에 의해 해석된다.)
+	 * @param object $value 에러코드에 따른 에러값
+	 * @return $html 에러메세지 HTML
+	 */
+	function getError($code,$value=null) {
+		/**
+		 * iModule 코어를 통해 에러메세지를 구성한다.
+		 */
+		$error = $this->getErrorMessage($code,$value,true);
+		$this->IM->getError($error);
+	}
+	
+	/**
 	 * 사이트관리자 로그인화면을 구성한다.
 	 *
 	 * @return string $html 로그인 HTML
@@ -300,7 +353,12 @@ class ModuleAdmin {
 		 * ExtJS 라이브러리와 관리자 언어셋을 불러온다.
 		 */
 		$this->IM->loadExtJs();
-		$this->IM->loadLangaugeJs('admin');
+		$this->Module->loadLanguage('admin');
+		
+		/**
+		 * Wysiwyg 에디터를 사용하기 위한 코드를 불러온다.
+		 */
+		$this->IM->getModule('wysiwyg')->preload();
 		
 		/**
 		 * 관리자화면의 스타일시트와 언어셋에 따라 웹폰트를 불러온다.
@@ -361,7 +419,7 @@ class ModuleAdmin {
 	 * @return string $panel 관리패널 스크립트
 	 */
 	function getPanelContext() {
-		$panel = '';
+		$panel = null;
 		
 		/**
 		 * 1차 메뉴가 configs 일 경우
@@ -397,7 +455,11 @@ class ModuleAdmin {
 				}
 				$panel = ob_get_contents();
 				ob_end_clean();
-			} else {/*
+			} else {
+				$panel = $this->Module->getAdminPanel($this->page);
+				
+				
+				/*
 				$this->loadLangaugeJs($page);
 			
 			if (file_exists(__IM_PATH__.'/modules/'.$page.'/admin/config.php') == true) {
@@ -806,8 +868,8 @@ class ModuleAdmin {
 		if ($language != '*') $sites->where('language',$language);
 		$sites = $sites->get();
 		for ($i=0, $loop=count($sites);$i<$loop;$i++) {
-			if (preg_match('/^logo(.*?)$/',$type,$match) == true) { // set logo
-				$logoType = strtolower($match[1]);
+			if (preg_match('/^logo_(.*?)$/',$type,$match) == true) { // set logo
+				$logoType = $match[1];
 				$logo = $sites[$i]->logo && json_decode($sites[$i]->logo) != null ? json_decode($sites[$i]->logo) : new stdClass();
 				
 				if ($is_reset == true) {

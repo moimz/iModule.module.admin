@@ -22,7 +22,7 @@ $module = Request('target');
 $package = $this->Module->getPackage($module);
 if ($package == null) {
 	$results->success = false;
-	$results->message = $this->getLanguage('error/notFound');
+	$results->message = $this->getErrorMessage('NOT_FOUND');
 } else {
 	$data = new stdClass();
 	$data->icon = $package->icon;

@@ -18,8 +18,12 @@ var panel = new Ext.grid.Panel({
 		new Ext.Button({
 			iconCls:"fa fa-refresh",
 			text:Admin.getLanguage("modules/lists/update_size"),
-			handler:function() {
+			handler:function(button) {
+				button.disable();
+				button.setIconCls("mi mi-loading");
 				$.send(ENV.getProcessUrl("admin","@updateModuleSize"),function(result) {
+					button.enable();
+					button.setIconCls("fa fa-refresh");
 					if (result.success == true) Ext.getCmp("ModuleList").getStore().reload();
 				});
 			}
@@ -45,7 +49,7 @@ var panel = new Ext.grid.Panel({
 					if (e.getError()) {
 						Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:e.getError(),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
 					} else {
-						Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getLanguage("error/load"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
+						Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getErrorMessage("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
 					}
 				}
 			}
@@ -134,7 +138,7 @@ var panel = new Ext.grid.Panel({
 			}
 		}),
 		"->",
-		{xtype:"tbtext",text:Admin.getLanguage("text/gridHelp")}
+		{xtype:"tbtext",text:Admin.getLanguage("text/grid_help")}
 	],
 	listeners:{
 		itemdblclick:function(grid,record) {

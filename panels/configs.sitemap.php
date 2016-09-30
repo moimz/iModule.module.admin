@@ -9,9 +9,6 @@
  * @license GPLv3
  * @version 3.0.0.160903
  */
- 
-$this->IM->loadWebFont('XEIcon');
-$this->IM->loadWebFont('XEIcon2');
 ?>
 <script>
 var panel = new Ext.Panel({
@@ -45,7 +42,7 @@ var panel = new Ext.Panel({
 							if (e.getError()) {
 								Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:e.getError(),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
 							} else {
-								Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getLanguage("error/load"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
+								Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getErrorMessage("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
 							}
 						}
 					}
@@ -73,7 +70,7 @@ var panel = new Ext.Panel({
 		}),
 		new Ext.Button({
 			iconCls:"fa fa-plus",
-			text:Admin.getLanguage("configs/sites/addSite"),
+			text:Admin.getLanguage("configs/sites/add_site"),
 			handler:function() {
 				Admin.configs.sites.add();
 			}
@@ -91,16 +88,16 @@ var panel = new Ext.Panel({
 					border:true,
 					disabled:true,
 					selected:null,
-					title:Admin.getLanguage("configs/sitemap/menuList"),
+					title:Admin.getLanguage("configs/sitemap/menu_list"),
 					tbar:[
 						new Ext.Button({
-							text:Admin.getLanguage("configs/sitemap/addMenu"),
+							text:Admin.getLanguage("configs/sitemap/add_menu"),
 							handler:function() {
 								Admin.configs.sitemap.menu();
 							}
 						}),
 						new Ext.Button({
-							text:Admin.getLanguage("configs/sitemap/loadMenu"),
+							text:Admin.getLanguage("configs/sitemap/load_menu"),
 							handler:function() {
 								Admin.configs.sitemap.loadMenu();
 							}
@@ -128,7 +125,7 @@ var panel = new Ext.Panel({
 									if (e.getError()) {
 										Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:e.getError(),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
 									} else {
-										Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getLanguage("error/load"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
+										Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getErrorMessage("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
 									}
 								} else {
 									if (Ext.getCmp("MenuList").selected != null) {
@@ -147,7 +144,7 @@ var panel = new Ext.Panel({
 						width:100,
 						dataIndex:"menu"
 					},{
-						text:Admin.getLanguage("configs/sitemap/columns/menuTitle"),
+						text:Admin.getLanguage("configs/sitemap/columns/menu_title"),
 						minWidth:150,
 						flex:1,
 						dataIndex:"title",
@@ -182,7 +179,16 @@ var panel = new Ext.Panel({
 								Admin.gridSort(Ext.getCmp("MenuList"),"sort","down");
 								Admin.gridSave(Ext.getCmp("MenuList"),ENV.getProcessUrl("admin","@saveSitemapSort"),500);
 							}
-						})
+						}),
+						"-",
+						new Ext.Button({
+							iconCls:"x-tbar-loading",
+							handler:function() {
+								Ext.getCmp("MenuList").getStore().reload();
+							}
+						}),
+						"->",
+						{xtype:"tbtext",text:Admin.getLanguage("text/grid_help")}
 					],
 					listeners:{
 						select:function(grid,record) {
@@ -200,16 +206,16 @@ var panel = new Ext.Panel({
 					border:true,
 					disabled:true,
 					selected:null,
-					title:Admin.getLanguage("configs/sitemap/pageList"),
+					title:Admin.getLanguage("configs/sitemap/page_list"),
 					tbar:[
 						new Ext.Button({
-							text:Admin.getLanguage("configs/sitemap/addPage"),
+							text:Admin.getLanguage("configs/sitemap/add_page"),
 							handler:function() {
 								Admin.configs.sitemap.page();
 							}
 						}),
 						new Ext.Button({
-							text:Admin.getLanguage("configs/sitemap/loadPage"),
+							text:Admin.getLanguage("configs/sitemap/load_page"),
 							handler:function() {
 								Admin.configs.sitemap.loadPage();
 							}
@@ -237,7 +243,7 @@ var panel = new Ext.Panel({
 									if (e.getError()) {
 										Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:e.getError(),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
 									} else {
-										Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getLanguage("error/load"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
+										Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getErrorMessage("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
 									}
 								} else {
 									if (Ext.getCmp("PageList").selected != null) {
@@ -254,7 +260,7 @@ var panel = new Ext.Panel({
 						width:100,
 						dataIndex:"page"
 					},{
-						text:Admin.getLanguage("configs/sitemap/columns/pageTitle"),
+						text:Admin.getLanguage("configs/sitemap/columns/page_title"),
 						minWidth:150,
 						flex:1,
 						dataIndex:"title"
@@ -285,7 +291,16 @@ var panel = new Ext.Panel({
 								Admin.gridSort(Ext.getCmp("PageList"),"sort","down");
 								Admin.gridSave(Ext.getCmp("PageList"),ENV.getProcessUrl("admin","@saveSitemapSort"),500);
 							}
-						})
+						}),
+						"-",
+						new Ext.Button({
+							iconCls:"x-tbar-loading",
+							handler:function() {
+								Ext.getCmp("PageList").getStore().reload();
+							}
+						}),
+						"->",
+						{xtype:"tbtext",text:Admin.getLanguage("text/grid_help")}
 					],
 					listeners:{
 						itemdblclick:function(grid,record) {

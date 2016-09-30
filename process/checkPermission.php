@@ -15,7 +15,7 @@ if (defined('__IM__') == false) exit;
 
 if ($this->checkPermission() === false) {
 	$results->success = false;
-	$results->message = $this->getLanguage('error/forbidden');
+	$results->message = $this->getErrorMessage('FORBIDDEN');
 } else {
 	$results->success = true;
 }

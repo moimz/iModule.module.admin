@@ -19,7 +19,7 @@ $oLanguage = Request('oLanguage');
 $errors = array();
 
 $domain = Request('domain');
-$language = preg_match('/^[a-z]{2}$/',Request('language')) == true ? Request('language') : $errors['language'] = $this->getLanguage('error/languageCode');
+$language = preg_match('/^[a-z]{2}$/',Request('language')) == true ? Request('language') : $errors['language'] = $this->getErrorMessage('INVALID_LANGUAGE_CODE',Request('language'));
 $alias = Request('alias');
 $templet = Request('templet');
 $title = Request('title');
@@ -40,7 +40,7 @@ $templetConfigs = json_encode($templetConfigs,JSON_UNESCAPED_UNICODE);
 
 // @todo uploaded file type checking
 
-if (is_dir(__IM_PATH__.'/templets/'.$templet) == false) $errors['templet'] = $this->getLanguage('error/notFoundTemplet');
+if (is_dir(__IM_PATH__.'/templets/'.$templet) == false) $errors['templet'] = $this->getErrorMessage('NOT_FOUND_TEMPLET',$templet);
 
 /**
  * 사이트 추가시 기본 데이터를 추가 후 수정모드로 이동한다.
@@ -50,7 +50,7 @@ if ($oDomain == '' && $oLanguage == '') {
 	 * 사이트 중복체크
 	 */
 	if ($this->IM->db()->select($this->IM->getTable('site'))->where('domain',$domain)->where('language',$language)->has() == true) {
-		$errors['domain'] = $errors['language'] = $this->getLanguage('error/duplicated');
+		$errors['domain'] = $errors['language'] = $this->getErrorMessage('DUPLICATED');
 	}
 	
 	if (count($errors) == 0) {
@@ -85,11 +85,11 @@ if ($oDomain == '' && $oLanguage == '') {
  */
 if ($oDomain != $domain) {
 	if ($this->IM->db()->select($this->IM->getTable('site'))->where('domain',$domain)->has() == true) {
-		$errors['domain'] = $this->getLanguage('error/duplicated');
+		$errors['domain'] = $this->getErrorMessage('DUPLICATED');
 	}
 } elseif ($oLanguage != $language) {
 	if ($this->IM->db()->select($this->IM->getTable('site'))->where('domain',$domain)->where('language',$language)->has() == true) {
-		$errors['language'] = $this->getLanguage('error/duplicated');
+		$errors['language'] = $this->getErrorMessage('DUPLICATED');
 	}
 }
 
@@ -97,7 +97,7 @@ if (count($errors) == 0) {
 	$site = $this->IM->db()->select($this->IM->getTable('site'))->where('domain',$oDomain)->where('language',$oLanguage)->getOne();
 	if ($site == null) {
 		$results->success = false;
-		$results->message = $this->getLanguage('error/notFound');
+		$results->message = $this->getErrorMessage('NOT_FOUND');
 	} else {
 		/**
 		 * 같은 도메인에 모두 공통으로 적용되어야 하는 값을 일괄 수정한다.
@@ -141,8 +141,8 @@ if ($results->success == true) {
 	
 	if (count($insert) > 0) $this->IM->db()->update($this->IM->getTable('site'),$insert)->where('domain',$domain)->where('language',$language,'!=')->execute();
 	
-	$this->setSiteImage($domain,Request('logoDefault_all') == 'on' ? '*' : $language,'logoDefault');
-	$this->setSiteImage($domain,Request('logoFooter_all') == 'on' ? '*' : $language,'logoFooter');
+	$this->setSiteImage($domain,Request('logo_default_all') == 'on' ? '*' : $language,'logo_default');
+	$this->setSiteImage($domain,Request('logo_footer_all') == 'on' ? '*' : $language,'logo_footer');
 	$this->setSiteImage($domain,Request('favicon_all') == 'on' ? '*' : $language,'favicon');
 	$this->setSiteImage($domain,Request('emblem_all') == 'on' ? '*' : $language,'emblem');
 	$this->setSiteImage($domain,Request('maskicon_all') == 'on' ? '*' : $language,'maskicon');

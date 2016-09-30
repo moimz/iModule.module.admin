@@ -44,7 +44,7 @@ var panel = null;
 if (panel == null) {
 	var center = new Ext.Panel({
 		title:"<?php echo $pageTitle->title; ?>",
-		iconCls:"fa <?php echo $pageTitle->icon; ?>",
+		iconCls:"<?php echo substr($pageTitle->icon,0,2); ?> <?php echo $pageTitle->icon; ?>",
 		region:"center",
 		cls:"<?php echo count($pages) == 0 ? '' : 'x-main-panel'; ?>",
 		border:false,
@@ -53,7 +53,7 @@ if (panel == null) {
 } else {
 	var center = new Ext.Panel({
 		title:"<?php echo $pageTitle->title; ?>",
-		iconCls:"fa <?php echo $pageTitle->icon; ?>",
+		iconCls:"<?php echo substr($pageTitle->icon,0,2); ?> <?php echo $pageTitle->icon; ?>",
 		region:"center",
 		cls:"<?php echo count($pages) == 0 ? '' : 'x-main-panel'; ?>",
 		layout:"fit",
@@ -66,6 +66,7 @@ if (panel == null) {
 
 Ext.onReady(function () {
 	new Ext.Viewport({
+		id:"AdminViewport",
 		layout:{type:"border"},
 		items:[
 			new Ext.Panel({
@@ -77,7 +78,7 @@ Ext.onReady(function () {
 			<?php if (count($pages) > 0) { ?>
 			new Ext.Panel({
 				title:"<?php echo $menuTitle->title; ?>",
-				iconCls:"fa <?php echo $menuTitle->icon; ?>",
+				iconCls:"<?php echo substr($menuTitle->icon,0,2); ?> <?php echo $menuTitle->icon; ?>",
 				region:"west",
 				width:230,
 				collapsible:true,
@@ -95,5 +96,11 @@ Ext.onReady(function () {
 			})
 		]
 	}).updateLayout();
+	
+	try {
+		document.fonts.ready.then(function() {
+			setTimeout(function() { Ext.getCmp("AdminViewport").updateLayout(); },1000);
+		});
+	} catch (e) {}
 });
 </script>

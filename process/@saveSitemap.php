@@ -18,31 +18,31 @@ $language = Request('language');
 $mode = Request('mode');
 
 $errors = array();
-$title = Request('title') ? Request('title') : $errors['title'] = $this->getLanguage('error/required');
+$title = Request('title') ? Request('title') : $errors['title'] = $this->getErrorMessage('REQUIRED');
 $icon_type = Request('icon_type');
 $icon = Request('icon');
 if ($icon && $icon_type != 'image') $icon = $icon_type.' '.$icon;
 $is_footer = Request('is_footer') ? 'TRUE' : 'FALSE';
 $is_hide = Request('is_hide') ? 'TRUE' : 'FALSE';
 $description = Request('description');
-$type = Request('type') ? Request('type') : $errors['type'] = $this->getLanguage('error/required');
+$type = Request('type') ? Request('type') : $errors['type'] = $this->getErrorMessage('REQUIRED');
 
 if ($mode == 'menu') {
 	$oMenu = Request('oMenu');
-	$menu = preg_match('/^[a-z]+$/',Request('menu')) == true ? Request('menu') : $errors['menu'] = $this->getLanguage('error/alphabetOnly');
+	$menu = preg_match('/^[a-z]+$/',Request('menu')) == true ? Request('menu') : $errors['menu'] = $this->getErrorMessage('LOWER_CASE_ALPHABET_ONLY');
 	
 	if ($oMenu != $menu && $this->IM->db()->select($this->IM->getTable('sitemap'))->where('domain',$domain)->where('language',$language)->where('menu',$menu)->where('page','')->has() == true) {
-		$errors['menu'] = $this->getLanguage('error/duplicated');
+		$errors['menu'] = $this->getErrorMessage('DUPLICATED');
 	}
 }
 
 if ($mode == 'page') {
 	$oMenu = Request('oMenu');
 	$oPage = Request('oPage');
-	$page = preg_match('/^[a-z]+$/',Request('page')) == true ? Request('page') : $errors['page'] = $this->getLanguage('error/alphabetOnly');
+	$page = preg_match('/^[a-z]+$/',Request('page')) == true ? Request('page') : $errors['page'] = $this->getErrorMessage('LOWER_CASE_ALPHABET_ONLY');
 	
 	if ($oPage != $page && $this->IM->db()->select($this->IM->getTable('sitemap'))->where('domain',$domain)->where('language',$language)->where('menu',$oMenu)->where('page',$page)->has() == true) {
-		$errors['page'] = $this->getLanguage('error/duplicated');
+		$errors['page'] = $this->getErrorMessage('DUPLICATED');
 	}
 }
 
@@ -50,10 +50,10 @@ $context = new stdClass();
 
 if ($type == 'MODULE') {
 	if ($mode == 'menu') {
-		$errors['type'] = $this->getLanguage('error/notAllowModuleInMenu');
+		$errors['type'] = $this->getErrorMessage('NOT_ALLOWED_MODULE_IN_MENU');
 	} else {
-		$context->module = Request('target') ? Request('target') : $errors['target'] = $this->getLanguage('error/required');
-		$context->context = Request('context') ? Request('context') : $errors['context'] = $this->getLanguage('error/required');
+		$context->module = Request('target') ? Request('target') : $errors['target'] = $this->getErrorMessage('REQUIRED');
+		$context->context = Request('context') ? Request('context') : $errors['context'] = $this->getErrorMessage('REQUIRED');
 		$configs = array();
 		foreach ($_POST as $key=>$value) {
 			if (preg_match('/^@/',$key) == true) {
@@ -63,28 +63,28 @@ if ($type == 'MODULE') {
 		$context->configs = $configs;
 	}
 } elseif ($type == 'EXTERNAL') {
-	$context->external = Request('external') ? Request('external') : $errors['external'] = $this->getLanguage('error/required');
+	$context->external = Request('external') ? Request('external') : $errors['external'] = $this->getErrorMessage('REQUIRED');
 } elseif ($type == 'PAGE') {
 	if ($mode == 'page') {
-		$errors['type'] = $this->getLanguage('error/notAllowModuleInMenu');
+		$errors['type'] = $this->getErrorMessage('NOT_ALLOWED_SUBPAGE_IN_PAGE');
 	} else {
 		if (Request('subpage_create') == 'on') {
-			$context->page = Request('subpage_code') ? Request('subpage_code') : $errors['subpage_code'] = $this->getLanguage('error/required');
+			$context->page = Request('subpage_code') ? Request('subpage_code') : $errors['subpage_code'] = $this->getErrorMessage('REQUIRED');
 		} else {
-			$context->page = Request('subpage') ? Request('subpage') : $errors['subpage'] = $this->getLanguage('error/required');
+			$context->page = Request('subpage') ? Request('subpage') : $errors['subpage'] = $this->getErrorMessage('REQUIRED');
 		}
 	}
 } elseif ($type == 'WIDGET') {
 	$context->widget = Request('widget') && json_decode(Request('widget')) != null ? json_decode(Request('widget')) : array();
 } elseif ($type == 'LINK') {
-	$context->link = Request('link_url') ? Request('link_url') : $errors['link_url'] = $this->getLanguage('error/required');
-	$context->target = Request('link_target') ? Request('link_target') : $errors['link_target'] = $this->getLanguage('error/required');
+	$context->link = Request('link_url') ? Request('link_url') : $errors['link_url'] = $this->getErrorMessage('REQUIRED');
+	$context->target = Request('link_target') ? Request('link_target') : $errors['link_target'] = $this->getErrorMessage('REQUIRED');
 }
 
 if ($type == 'LINK') {
 	$layout = 'empty';
 } else {
-	$layout = Request('layout') ? Request('layout') : $errors['layout'] = $this->getLanguage('error/required');
+	$layout = Request('layout') ? Request('layout') : $errors['layout'] = $this->getErrorMessage('REQUIRED');
 }
 
 if (count($errors) == 0) {
