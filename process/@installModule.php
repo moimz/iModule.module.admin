@@ -19,8 +19,20 @@ $target = Request('target');
 $configs = new stdClass();
 foreach ($_POST as $key=>$value) {
 	if (in_array($key,array('target')) == true) continue;
-	$configs->$key = $value;
+	if (strpos($key,'@') === 0) {
+		$temp = explode('-',substr($key,1));
+		$groupKey = $temp[0];
+		$childKey = $temp[1];
+		
+		if (isset($configs->$groupKey) == false) $configs->$groupKey = new stdClass();
+		$configs->$groupKey->$childKey = $value;
+	} else {
+		$configs->$key = $value;
+	}
 }
+
+print_r($configs);
+
 $installed = $this->IM->Module->install($target,$configs);
 if ($installed === true) {
 	$results->success = true;

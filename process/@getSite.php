@@ -23,8 +23,8 @@ if ($data != null) {
 	$data->logo = $data->logo && json_decode($data->logo) != null ? json_decode($data->logo) : null;
 	if ($data->logo == null || empty($data->logo->default) == true) $data->logo->default = -1;
 	if ($data->logo == null || empty($data->logo->footer) == true) $data->logo->footer = -1;
-	$data->logoDefault = $data->logo->default == -1 ? __IM_DIR__.'/images/logo/default.png' : ($data->logo->default == 0 ? $this->AdminModule->getDir().'/images/empty_horizontal.png' : __IM_DIR__.'/attachment/view/'.$data->logo->default.'/default.png');
-	$data->logoFooter = $data->logo->footer == -1 ? __IM_DIR__.'/images/logo/footer.png' : ($data->logo->footer == 0 ? $this->AdminModule->getDir().'/images/empty_square.png' : __IM_DIR__.'/attachment/view/'.$data->logo->footer.'/footer.png');
+	$data->logo_default = $data->logo->default == -1 ? __IM_DIR__.'/images/logo/default.png' : ($data->logo->default == 0 ? $this->AdminModule->getDir().'/images/empty_horizontal.png' : __IM_DIR__.'/attachment/view/'.$data->logo->default.'/default.png');
+	$data->logo_footer = $data->logo->footer == -1 ? __IM_DIR__.'/images/logo/footer.png' : ($data->logo->footer == 0 ? $this->AdminModule->getDir().'/images/empty_square.png' : __IM_DIR__.'/attachment/view/'.$data->logo->footer.'/footer.png');
 	
 	$data->emblem = $data->emblem == -1 ? __IM_DIR__.'/images/logo/emblem.png' : ($data->emblem == 0 ? $this->AdminModule->getDir().'/images/empty_square.png' : __IM_DIR__.'/attachment/view/'.$data->emblem.'/emblem.png');
 	$data->favicon = $data->favicon == -1 ? __IM_DIR__.'/images/logo/favicon.ico' : ($data->favicon == 0 ? $this->AdminModule->getDir().'/images/empty_square.png' : __IM_DIR__.'/attachment/view/'.$data->favicon.'/favicon.ico');
@@ -41,6 +41,6 @@ if ($data != null) {
 	$results->data = $data;
 } else {
 	$results->success = false;
-	$results->message = $this->getErrorMessage('NOT_FOUND');
+	$results->message = $this->getErrorText('NOT_FOUND');
 }
 ?>

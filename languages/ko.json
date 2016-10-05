@@ -115,7 +115,7 @@
 				"templet":"템플릿"
 			},
 			"member":{
-				"MERGE":"통합회원",
+				"UNIVERSAL":"통합회원",
 				"UNIQUE":"회원분리"
 			},
 			"window":{
@@ -129,12 +129,11 @@
 				"alias_help":"별칭도메인으로 접속시 메인 도메인으로 리다이렉트됩니다.",
 				"member":{
 					"label":"회원로그인",
-					"MERGE":"사이트관리에 등록된 다른 사이트와 통합로그인을 사용합니다.",
+					"UNIVERSAL":"사이트관리에 등록된 다른 사이트와 통합로그인을 사용합니다.",
 					"UNIQUE":"현 사이트만 독립적으로 로그인을 사용합니다."
 				},
 				"language_config":"언어별 설정(현재 언어별 사이트에만 적용됩니다.)",
 				"apply_all_site":"동일도메인 전체적용",
-				"apply_all_templet":"동일템플릿 전체적용",
 				"is_default":"기본언어",
 				"templet":"사이트템플릿",
 				"title":"사이트명",
@@ -154,8 +153,11 @@
 				"maskicon_help":"정사각형형태의 벡터이미지파일(.svg)",
 				"maskicon_color":"아이콘색상",
 				"image":"사이트이미지",
-				"image_help":"직사각형 형태의 이미지파일",
-				"templet_configs":"템플릿 설정"
+				"image_help":"직사각형 형태의 이미지파일"
+			},
+			"menus":{
+				"detail":"사이트상세정보",
+				"delete":"사이트삭제"
 			},
 			"add_site":"사이트추가"
 		},
@@ -251,7 +253,9 @@
 	"text":{
 		"language_setting":"언어별 설정",
 		"language_code":"언어코드",
-		"language_code_help":"",
+		"language_code_help":"영어소문자로 언어코드(예 : en, ko 등)을 입력하세요.",
+		"templet_configs":"템플릿 설정",
+		"apply_all_templet":"동일템플릿 전체적용",
 		"grid_help":"항목 더블클릭 : 상세정보 / 항목 우클릭 : 메뉴"
 	},
 	"button":{

@@ -16,18 +16,10 @@ if (defined('__IM__') == false) exit;
 $domain = Request('domain');
 $language = Request('language');
 
-$site = $this->IM->getSites($domain,$language);
-$templet = json_decode(file_get_contents(__IM_PATH__.'/templets/'.$site->templet.'/package.json'));
-
-$lists = array();
-foreach ($templet->layouts as $layout=>$description) {
-	$lists[] = array(
-		'layout'=>$layout,
-		'description'=>isset($description->{$this->IM->language}) == true ? $description->{$this->IM->language} : ''
-	);
-}
+$site = $this->IM->db()->select($this->IM->getTable('site'))->where('domain',$domain)->where('language',$language)->getOne();
+$layouts = $this->IM->getTemplet($this->IM,$site->templet)->getLayouts();
 
 $results->success = true;
-$results->lists = $lists;
-$results->count = count($lists);
+$results->lists = $layouts;
+$results->count = count($layouts);
 ?>

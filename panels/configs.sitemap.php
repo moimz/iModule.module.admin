@@ -9,6 +9,8 @@
  * @license GPLv3
  * @version 3.0.0.160903
  */
+ 
+if (defined('__IM__') == false) exit;
 ?>
 <script>
 var panel = new Ext.Panel({
@@ -40,9 +42,9 @@ var panel = new Ext.Panel({
 							}
 						} else {
 							if (e.getError()) {
-								Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:e.getError(),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
+								Ext.Msg.show({title:Admin.getText("alert/error"),msg:e.getError(),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
 							} else {
-								Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getErrorMessage("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
+								Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
 							}
 						}
 					}
@@ -70,7 +72,7 @@ var panel = new Ext.Panel({
 		}),
 		new Ext.Button({
 			iconCls:"fa fa-plus",
-			text:Admin.getLanguage("configs/sites/add_site"),
+			text:Admin.getText("configs/sites/add_site"),
 			handler:function() {
 				Admin.configs.sites.add();
 			}
@@ -88,16 +90,16 @@ var panel = new Ext.Panel({
 					border:true,
 					disabled:true,
 					selected:null,
-					title:Admin.getLanguage("configs/sitemap/menu_list"),
+					title:Admin.getText("configs/sitemap/menu_list"),
 					tbar:[
 						new Ext.Button({
-							text:Admin.getLanguage("configs/sitemap/add_menu"),
+							text:Admin.getText("configs/sitemap/add_menu"),
 							handler:function() {
 								Admin.configs.sitemap.menu();
 							}
 						}),
 						new Ext.Button({
-							text:Admin.getLanguage("configs/sitemap/load_menu"),
+							text:Admin.getText("configs/sitemap/load_menu"),
 							handler:function() {
 								Admin.configs.sitemap.loadMenu();
 							}
@@ -123,9 +125,9 @@ var panel = new Ext.Panel({
 								
 								if (success == false) {
 									if (e.getError()) {
-										Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:e.getError(),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
+										Ext.Msg.show({title:Admin.getText("alert/error"),msg:e.getError(),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
 									} else {
-										Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getErrorMessage("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
+										Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
 									}
 								} else {
 									if (Ext.getCmp("MenuList").selected != null) {
@@ -140,11 +142,11 @@ var panel = new Ext.Panel({
 						}
 					}),
 					columns:[{
-						text:Admin.getLanguage("configs/sitemap/columns/menu"),
+						text:Admin.getText("configs/sitemap/columns/menu"),
 						width:100,
 						dataIndex:"menu"
 					},{
-						text:Admin.getLanguage("configs/sitemap/columns/menu_title"),
+						text:Admin.getText("configs/sitemap/columns/menu_title"),
 						minWidth:150,
 						flex:1,
 						dataIndex:"title",
@@ -153,14 +155,14 @@ var panel = new Ext.Panel({
 							return record.data.icon+" "+value;
 						}
 					},{
-						text:Admin.getLanguage("configs/sitemap/columns/type"),
+						text:Admin.getText("configs/sitemap/columns/type"),
 						width:80,
 						dataIndex:"type",
 						renderer:function(value) {
-							return Admin.getLanguage("configs/sitemap/type/"+value) ? Admin.getLanguage("configs/sitemap/type/"+value) : value;
+							return Admin.getText("configs/sitemap/type/"+value) ? Admin.getText("configs/sitemap/type/"+value) : value;
 						}
 					},{
-						text:Admin.getLanguage("configs/sitemap/columns/context"),
+						text:Admin.getText("configs/sitemap/columns/context"),
 						width:160,
 						dataIndex:"context"
 					}],
@@ -188,7 +190,7 @@ var panel = new Ext.Panel({
 							}
 						}),
 						"->",
-						{xtype:"tbtext",text:Admin.getLanguage("text/grid_help")}
+						{xtype:"tbtext",text:Admin.getText("text/grid_help")}
 					],
 					listeners:{
 						select:function(grid,record) {
@@ -206,16 +208,16 @@ var panel = new Ext.Panel({
 					border:true,
 					disabled:true,
 					selected:null,
-					title:Admin.getLanguage("configs/sitemap/page_list"),
+					title:Admin.getText("configs/sitemap/page_list"),
 					tbar:[
 						new Ext.Button({
-							text:Admin.getLanguage("configs/sitemap/add_page"),
+							text:Admin.getText("configs/sitemap/add_page"),
 							handler:function() {
 								Admin.configs.sitemap.page();
 							}
 						}),
 						new Ext.Button({
-							text:Admin.getLanguage("configs/sitemap/load_page"),
+							text:Admin.getText("configs/sitemap/load_page"),
 							handler:function() {
 								Admin.configs.sitemap.loadPage();
 							}
@@ -241,9 +243,9 @@ var panel = new Ext.Panel({
 								
 								if (success == false) {
 									if (e.getError()) {
-										Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:e.getError(),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
+										Ext.Msg.show({title:Admin.getText("alert/error"),msg:e.getError(),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
 									} else {
-										Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getErrorMessage("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
+										Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
 									}
 								} else {
 									if (Ext.getCmp("PageList").selected != null) {
@@ -256,23 +258,23 @@ var panel = new Ext.Panel({
 						}
 					}),
 					columns:[{
-						text:Admin.getLanguage("configs/sitemap/columns/page"),
+						text:Admin.getText("configs/sitemap/columns/page"),
 						width:100,
 						dataIndex:"page"
 					},{
-						text:Admin.getLanguage("configs/sitemap/columns/page_title"),
+						text:Admin.getText("configs/sitemap/columns/page_title"),
 						minWidth:150,
 						flex:1,
 						dataIndex:"title"
 					},{
-						text:Admin.getLanguage("configs/sitemap/columns/type"),
+						text:Admin.getText("configs/sitemap/columns/type"),
 						width:80,
 						dataIndex:"type",
 						renderer:function(value) {
-							return Admin.getLanguage("configs/sitemap/type/"+value);
+							return Admin.getText("configs/sitemap/type/"+value);
 						}
 					},{
-						text:Admin.getLanguage("configs/sitemap/columns/context"),
+						text:Admin.getText("configs/sitemap/columns/context"),
 						width:200,
 						dataIndex:"context"
 					}],
@@ -300,7 +302,7 @@ var panel = new Ext.Panel({
 							}
 						}),
 						"->",
-						{xtype:"tbtext",text:Admin.getLanguage("text/grid_help")}
+						{xtype:"tbtext",text:Admin.getText("text/grid_help")}
 					],
 					listeners:{
 						itemdblclick:function(grid,record) {

@@ -61,6 +61,6 @@ if ($data != null) {
 	$results->data = $data;
 } else {
 	$results->success = false;
-	$results->message = $this->getErrorMessage('NOT_FOUND');
+	$results->message = $this->getErrorText('NOT_FOUND');
 }
 ?>

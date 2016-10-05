@@ -19,28 +19,29 @@ $oLanguage = Request('oLanguage');
 $errors = array();
 
 $domain = Request('domain');
-$language = preg_match('/^[a-z]{2}$/',Request('language')) == true ? Request('language') : $errors['language'] = $this->getErrorMessage('INVALID_LANGUAGE_CODE',Request('language'));
+$language = preg_match('/^[a-z]{2}$/',Request('language')) == true ? Request('language') : $errors['language'] = $this->getErrorText('INVALID_LANGUAGE_CODE',Request('language'));
 $alias = Request('alias');
 $templet = Request('templet');
 $title = Request('title');
 $description = Request('description');
 $is_ssl = Request('is_ssl');
 $member = Request('member');
+$is_default = Request('is_default') ? 'TRUE' : 'FALSE';
 
-$templetConfigs = new stdClass();
-$templetConfigsAll = new stdClass();
-$templetPackage = json_decode(file_get_contents(__IM_PATH__.'/templets/'.$templet.'/package.json'));
+$templetConfigs = array();
+$templetConfigsAll = array();
 
-if (isset($templetPackage->configs) == true) {
-	foreach ($templetPackage->configs as $key=>$value) {
-		$templetConfigs->$key = Request('@'.$key);
+foreach ($this->IM->getTemplet($this->IM,$templet)->getConfigs() as $key=>$value) {
+	$templetConfigs[$key] = Request('@templet_configs-'.$key);
+	if (Request('@templet_configs-'.$key.'_all') == 'on') {
+		$templetConfigsAll[$key] = Request('@templet_configs-'.$key);
 	}
 }
 $templetConfigs = json_encode($templetConfigs,JSON_UNESCAPED_UNICODE);
 
 // @todo uploaded file type checking
 
-if (is_dir(__IM_PATH__.'/templets/'.$templet) == false) $errors['templet'] = $this->getErrorMessage('NOT_FOUND_TEMPLET',$templet);
+if (is_dir(__IM_PATH__.'/templets/'.$templet) == false) $errors['templet'] = $this->getErrorText('NOT_FOUND_TEMPLET',$templet);
 
 /**
  * 사이트 추가시 기본 데이터를 추가 후 수정모드로 이동한다.
@@ -50,7 +51,7 @@ if ($oDomain == '' && $oLanguage == '') {
 	 * 사이트 중복체크
 	 */
 	if ($this->IM->db()->select($this->IM->getTable('site'))->where('domain',$domain)->where('language',$language)->has() == true) {
-		$errors['domain'] = $errors['language'] = $this->getErrorMessage('DUPLICATED');
+		$errors['domain'] = $errors['language'] = $this->getErrorText('DUPLICATED');
 	}
 	
 	if (count($errors) == 0) {
@@ -67,7 +68,7 @@ if ($oDomain == '' && $oLanguage == '') {
 		$insert['templet'] = $templet;
 		$insert['logo'] = '{"icon":-1,"color":"#0578bf"}';
 		$insert['maskicon'] = '{"default":-1,"footer":-1}';
-		$insert['templetConfigs'] = $templetConfigs;
+		$insert['templet_configs'] = $templetConfigs;
 		$insert['sort'] = $checkDomain != null ? $checkDomain->sort : ($this->IM->db()->select($this->IM->getTable('site'),'max(sort) as sort')->getOne()->sort + 1);
 		
 		/**
@@ -85,11 +86,11 @@ if ($oDomain == '' && $oLanguage == '') {
  */
 if ($oDomain != $domain) {
 	if ($this->IM->db()->select($this->IM->getTable('site'))->where('domain',$domain)->has() == true) {
-		$errors['domain'] = $this->getErrorMessage('DUPLICATED');
+		$errors['domain'] = $this->getErrorText('DUPLICATED');
 	}
 } elseif ($oLanguage != $language) {
 	if ($this->IM->db()->select($this->IM->getTable('site'))->where('domain',$domain)->where('language',$language)->has() == true) {
-		$errors['language'] = $this->getErrorMessage('DUPLICATED');
+		$errors['language'] = $this->getErrorText('DUPLICATED');
 	}
 }
 
@@ -97,7 +98,7 @@ if (count($errors) == 0) {
 	$site = $this->IM->db()->select($this->IM->getTable('site'))->where('domain',$oDomain)->where('language',$oLanguage)->getOne();
 	if ($site == null) {
 		$results->success = false;
-		$results->message = $this->getErrorMessage('NOT_FOUND');
+		$results->message = $this->getErrorText('NOT_FOUND');
 	} else {
 		/**
 		 * 같은 도메인에 모두 공통으로 적용되어야 하는 값을 일괄 수정한다.
@@ -117,10 +118,25 @@ if (count($errors) == 0) {
 		$insert['title'] = $title;
 		$insert['description'] = $description;
 		$insert['templet'] = $templet;
-		$insert['templetConfigs'] = $templetConfigs;
-		$insert['is_default'] = Request('is_default') ? 'TRUE' : 'FALSE';
+		$insert['templet_configs'] = $templetConfigs;
+		$insert['is_default'] = $is_default;
 		
 		$this->IM->db()->update($this->IM->getTable('site'),$insert)->where('domain',$domain)->where('language',$oLanguage)->execute();
+		
+		/**
+		 * 기본 언어셋이 없을 경우 현재 사이트를 기본 언어셋으로 지정한다.
+		 */
+		if ($this->IM->db()->select($this->IM->getTable('site'))->where('domain',$domain)->where('is_default','TRUE')->has() == false) {
+			$this->IM->db()->update($this->IM->getTable('site'),array('is_default'=>'TRUE'))->where('domain',$domain)->where('language',$language)->execute();
+			$is_default = 'TRUE';
+		}
+		
+		/**
+		 * 도메인이나 언어셋이 변경되었다면, 하부 사이트맵의 도메인과 언어셋을 일괄 수정한다.
+		 */
+		if ($oDomain != $domain || $oLanguage != $language) {
+			$this->IM->db()->update($this->IM->getTable('sitemap'),array('domain'=>$domain,'language'=>$language))->where('domain',$oDomain)->where('language',$oLanguage)->execute();
+		}
 		
 		$results->success = true;
 	}
@@ -148,20 +164,18 @@ if ($results->success == true) {
 	$this->setSiteImage($domain,Request('maskicon_all') == 'on' ? '*' : $language,'maskicon');
 	$this->setSiteImage($domain,Request('image_all') == 'on' ? '*' : $language,'image');
 	
-	if (isset($templetPackage->configs) == true) {
+	/**
+	 * 전체 템플릿 적용이 있을 경우, 해당 템플릿을 사용하고 있는 사이트에 적용한다.
+	 */
+	if (count($templetConfigsAll) > 0) {
 		$sites = $this->IM->db()->select($this->IM->getTable('site'))->where('templet',$templet)->get();
 		for ($i=0, $loop=count($sites);$i<$loop;$i++) {
-			$prevConfigs = json_decode($sites[$i]->templetConfigs);
-			$configs = new stdClass();
-			foreach ($templetPackage->configs as $key=>$value) {
-				if (Request('@'.$key.'_all') == 'on') {
-					$configs->$key = Request('@'.$key);
-				} else {
-					$configs->$key = isset($prevConfigs->$key) == true ? $prevConfigs->$key : (isset($value->default) == true ? $value->default : '');
-				}
+			$templetConfigs = $this->IM->getTemplet($this->IM,$templet)->setConfigs(json_decode($sites[$i]->templet_configs))->getConfigs();
+			foreach ($templetConfigs as $key=>$value) {
+				$templetConfigs->$key = isset($templetConfigsAll[$key]) == true ? $templetConfigsAll[$key] : $value->value;
 			}
-			$configs = json_encode($configs,JSON_UNESCAPED_UNICODE);
-			$this->IM->db()->update($this->IM->getTable('site'),array('templetConfigs'=>$configs))->where('domain',$sites[$i]->domain)->where('language',$sites[$i]->language)->execute();
+			$templetConfigs = json_encode($templetConfigs,JSON_UNESCAPED_UNICODE);
+			$this->IM->db()->update($this->IM->getTable('site'),array('templet_configs'=>$templetConfigs))->where('domain',$sites[$i]->domain)->where('language',$sites[$i]->language)->execute();
 		}
 	}
 }

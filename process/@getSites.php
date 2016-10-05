@@ -24,6 +24,9 @@ for ($i=0, $loop=count($lists);$i<$loop;$i++) {
 	
 	$lists[$i]->display = $lists[$i]->title.'('.$lists[$i]->url.')';
 	$lists[$i]->value = $lists[$i]->domain.'@'.$lists[$i]->language;
+	
+	$Templet = $this->IM->getTemplet($this->IM,$lists[$i]->templet);
+	$lists[$i]->templet = $Templet->getTitle();
 }
 
 $results->success = true;

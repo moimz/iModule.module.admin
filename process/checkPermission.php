@@ -15,7 +15,7 @@ if (defined('__IM__') == false) exit;
 
 if ($this->checkPermission() === false) {
 	$results->success = false;
-	$results->message = $this->getErrorMessage('FORBIDDEN');
+	$results->message = $this->getErrorText('FORBIDDEN');
 } else {
 	$results->success = true;
 }

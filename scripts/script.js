@@ -12,26 +12,30 @@ var Admin = {
 	/**
 	 * 사이트관리자 로그인 처리
 	 */
-	login:{
-		/**
-		 * 로그인 처리
-		 */
-		submit:function($form) {
-			$form.send(ENV.getProcessUrl("member","login"),function(result) {
-				if (result.success == true) {
-					$.send(ENV.getProcessUrl("admin","checkPermission"),function(result) {
-						if (result.success == true) {
-							location.href = location.href;
-						} else {
-							iModule.alertMessage.show("error",result.message);
-						}
-					});
-				} else {
-					$("main").addClass("error").shake();
-					if (result.message) iModule.alertMessage.show("error",result.message);
-				}
-			});
-		}
+	login:function($form) {
+		$form.send(ENV.getProcessUrl("member","login"),function(result) {
+			if (result.success == true) {
+				$.send(ENV.getProcessUrl("admin","checkPermission"),function(result) {
+					if (result.success == true) {
+						location.href = location.href;
+					} else {
+						iModule.alert.show("error",result.message);
+					}
+				});
+			} else {
+				$("main").addClass("error").shake();
+			}
+		});
+	},
+	/**
+	 * 로그아웃
+	 */
+	logout:function() {
+		$.send(ENV.getProcessUrl("member","logout"),function(result) {
+			if (result.success == true) {
+				location.href = ENV.DIR + "/admin/";
+			}
+		});
 	},
 	/**
 	 * 모듈
@@ -45,7 +49,7 @@ var Admin = {
 		show:function(module) {
 			new Ext.Window({
 				id:"ModuleWindow",
-				title:Admin.getLanguage("action/wait"),
+				title:Admin.getText("action/wait"),
 				width:800,
 				height:600,
 				modal:true,
@@ -60,7 +64,7 @@ var Admin = {
 						fieldDefaults:{labelAlign:"right",labelWidth:80,anchor:"100%",allowBlank:true},
 						items:[
 							new Ext.form.FieldSet({
-								title:Admin.getLanguage("modules/show/default"),
+								title:Admin.getText("modules/show/default"),
 								items:[
 									new Ext.form.FieldContainer({
 										layout:"hbox",
@@ -92,19 +96,19 @@ var Admin = {
 												fieldDefaults:{margin:0,padding:0},
 												items:[
 													new Ext.form.DisplayField({
-														fieldLabel:Admin.getLanguage("modules/show/version"),
+														fieldLabel:Admin.getText("modules/show/version"),
 														name:"version"
 													}),
 													new Ext.form.DisplayField({
-														fieldLabel:Admin.getLanguage("modules/show/author"),
+														fieldLabel:Admin.getText("modules/show/author"),
 														name:"author"
 													}),
 													new Ext.form.DisplayField({
-														fieldLabel:Admin.getLanguage("modules/show/homepage"),
+														fieldLabel:Admin.getText("modules/show/homepage"),
 														name:"homepage"
 													}),
 													new Ext.form.DisplayField({
-														fieldLabel:Admin.getLanguage("modules/show/language"),
+														fieldLabel:Admin.getText("modules/show/language"),
 														name:"language"
 													})
 												]
@@ -114,7 +118,7 @@ var Admin = {
 								]
 							}),
 							new Ext.form.FieldSet({
-								title:Admin.getLanguage("modules/show/description"),
+								title:Admin.getText("modules/show/description"),
 								items:[
 									new Ext.form.DisplayField({
 										name:"description"
@@ -122,32 +126,32 @@ var Admin = {
 								]
 							}),
 							new Ext.form.FieldSet({
-								title:Admin.getLanguage("modules/show/functions"),
+								title:Admin.getText("modules/show/functions"),
 								items:[
 									new Ext.form.CheckboxGroup({
 										columns:4,
 										items:[
 											new Ext.form.Checkbox({
 												name:"global",
-												boxLabel:Admin.getLanguage("modules/show/global"),
+												boxLabel:Admin.getText("modules/show/global"),
 												flex:1,
 												readOnly:true
 											}),
 											new Ext.form.Checkbox({
 												name:"context",
-												boxLabel:Admin.getLanguage("modules/show/context"),
+												boxLabel:Admin.getText("modules/show/context"),
 												flex:1,
 												readOnly:true
 											}),
 											new Ext.form.Checkbox({
 												name:"article",
-												boxLabel:Admin.getLanguage("modules/show/article"),
+												boxLabel:Admin.getText("modules/show/article"),
 												flex:1,
 												readOnly:true
 											}),
 											new Ext.form.Checkbox({
 												name:"admin",
-												boxLabel:Admin.getLanguage("modules/show/admin"),
+												boxLabel:Admin.getText("modules/show/admin"),
 												flex:1,
 												readOnly:false
 											})
@@ -156,7 +160,7 @@ var Admin = {
 								]
 							}),
 							new Ext.form.FieldSet({
-								title:Admin.getLanguage("modules/show/dependencies"),
+								title:Admin.getText("modules/show/dependencies"),
 								items:[
 									new Ext.form.CheckboxGroup({
 										id:"ModuleDependencies",
@@ -178,7 +182,7 @@ var Admin = {
 						}
 					}),
 					new Ext.Button({
-						text:Admin.getLanguage("button/close"),
+						text:Admin.getText("button/close"),
 						handler:function() {
 							Ext.getCmp("ModuleWindow").close();
 						}
@@ -189,11 +193,11 @@ var Admin = {
 						Ext.getCmp("ModuleForm").getForm().load({
 							url:ENV.getProcessUrl("admin","@getModule"),
 							params:{target:module},
-							waitTitle:Admin.getLanguage("action/wait"),
-							waitMsg:Admin.getLanguage("action/loading"),
+							waitTitle:Admin.getText("action/wait"),
+							waitMsg:Admin.getText("action/loading"),
 							success:function(form,action) {
 								Ext.getCmp("ModuleWindow").setTitle(action.result.data.title);
-								$("#ModuleIcon i.mi").removeClass("mi-loading").addClass(action.result.data.icon);
+								$("#ModuleIcon i.mi").removeClass("mi mi-loading").addClass(action.result.data.icon.substr(0,2)).addClass(action.result.data.icon);
 								
 								for (var i=0, loop=action.result.data.dependencies.length;i<loop;i++) {
 									Ext.getCmp("ModuleDependencies").add(
@@ -208,27 +212,27 @@ var Admin = {
 								Ext.getCmp("ModuleInstallButton1").show();
 								Ext.getCmp("ModuleInstallButton2").show();
 								if (action.result.data.isLatest == true) {
-									Ext.getCmp("ModuleInstallButton1").setText(Admin.getLanguage("modules/show/installed"));
+									Ext.getCmp("ModuleInstallButton1").setText(Admin.getText("modules/show/installed"));
 									Ext.getCmp("ModuleInstallButton1").disable();
 									
 									if (action.result.data.isConfigPanel == true) {
-										Ext.getCmp("ModuleInstallButton2").setText(Admin.getLanguage("modules/show/setting"));
+										Ext.getCmp("ModuleInstallButton2").setText(Admin.getText("modules/show/setting"));
 									} else {
 										Ext.getCmp("ModuleInstallButton2").hide();
 									}
 								} else if (action.result.data.isInstalled == true) {
-									Ext.getCmp("ModuleInstallButton1").setText(Admin.getLanguage("modules/show/update"));
-									Ext.getCmp("ModuleInstallButton2").setText(Admin.getLanguage("modules/show/update"));
+									Ext.getCmp("ModuleInstallButton1").setText(Admin.getText("modules/show/update"));
+									Ext.getCmp("ModuleInstallButton2").setText(Admin.getText("modules/show/update"));
 								} else {
-									Ext.getCmp("ModuleInstallButton1").setText(Admin.getLanguage("modules/show/install"));
-									Ext.getCmp("ModuleInstallButton2").setText(Admin.getLanguage("modules/show/install"));
+									Ext.getCmp("ModuleInstallButton1").setText(Admin.getText("modules/show/install"));
+									Ext.getCmp("ModuleInstallButton2").setText(Admin.getText("modules/show/install"));
 								}
 							},
 							failure:function(form,action) {
 								if (action.result && action.result.message) {
-									Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+									Ext.Msg.show({title:Admin.getText("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 								} else {
-									Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getErrorMessage("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+									Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 								}
 							}
 						});
@@ -242,7 +246,7 @@ var Admin = {
 		 * @param string module 모듈명
 		 */
 		install:function(module) {
-			Ext.Msg.wait(Admin.getLanguage("action/working"),Admin.getLanguage("action/wait"));
+			Ext.Msg.wait(Admin.getText("action/working"),Admin.getText("action/wait"));
 			
 			Admin.modules.installReady = {};
 			$(document).off("Admin.modules.installReady");
@@ -250,7 +254,32 @@ var Admin = {
 			$.send(ENV.getProcessUrl("admin","@getModuleConfigPanel"),{target:module},function(result) {
 				if (result.success == true) {
 					if (result.panel == null) {
+						$.send(ENV.getProcessUrl("admin","@installModule"),{target:module},function(result) {
+							console.log(result);
+						});
 						
+						/*
+						Ext.getCmp("ModuleConfigForm").getForm().submit({
+							url:ENV.getProcessUrl("admin","@installModule"),
+							params:{target:module},
+							submitEmptyText:false,
+							waitTitle:Admin.getText("action/wait"),
+							waitMsg:Admin.getText("modules/lists/installing"),
+							success:function(form,action) {
+								Ext.Msg.show({title:Admin.getText("alert/info"),msg:Admin.getText("modules/lists/installed"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO,fn:function(button) {
+									Ext.getCmp("ModuleConfigsWindow").close();
+									Ext.getCmp("ModuleList").getStore().reload();
+								}});
+							},
+							failure:function(form,action) {
+								if (action.result && action.result.message) {
+									Ext.Msg.show({title:Admin.getText("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+								} else {
+									Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("INVALID_FORM_DATA"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+								}
+							}
+						});
+						*/
 					} else {
 						/**
 						 * 모듈 스크립트가 있다면 불러오기
@@ -288,7 +317,7 @@ var Admin = {
 						
 						new Ext.Window({
 							id:"ModuleConfigsWindow",
-							title:Admin.getLanguage("modules/lists/window/"+type),
+							title:Admin.getText("modules/lists/window/"+type),
 							width:800,
 							height:600,
 							modal:true,
@@ -296,36 +325,36 @@ var Admin = {
 							resizeable:false,
 							autoScroll:true,
 							items:[
-								Ext.getCmp("ModuleConfigsForm")
+								Ext.getCmp("ModuleConfigForm")
 							],
 							buttons:[
 								new Ext.Button({
-									text:Admin.getLanguage("button/confirm"),
+									text:Admin.getText("button/confirm"),
 									handler:function() {
-										Ext.getCmp("ModuleConfigsForm").getForm().submit({
+										Ext.getCmp("ModuleConfigForm").getForm().submit({
 											url:ENV.getProcessUrl("admin","@installModule"),
 											params:{target:module},
 											submitEmptyText:false,
-											waitTitle:Admin.getLanguage("action/wait"),
-											waitMsg:Admin.getLanguage("modules/lists/installing"),
+											waitTitle:Admin.getText("action/wait"),
+											waitMsg:Admin.getText("modules/lists/installing"),
 											success:function(form,action) {
-												Ext.Msg.show({title:Admin.getLanguage("alert/info"),msg:Admin.getLanguage("modules/lists/installed"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO,fn:function(button) {
+												Ext.Msg.show({title:Admin.getText("alert/info"),msg:Admin.getText("modules/lists/installed"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO,fn:function(button) {
 													Ext.getCmp("ModuleConfigsWindow").close();
 													Ext.getCmp("ModuleList").getStore().reload();
 												}});
 											},
 											failure:function(form,action) {
 												if (action.result && action.result.message) {
-													Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+													Ext.Msg.show({title:Admin.getText("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 												} else {
-													Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getErrorMessage("INVALID_FORM_DATA"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+													Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("INVALID_FORM_DATA"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 												}
 											}
 										});
 									}
 								}),
 								new Ext.Button({
-									text:Admin.getLanguage("button/cancel"),
+									text:Admin.getText("button/cancel"),
 									handler:function() {
 										Ext.getCmp("ModuleConfigsWindow").close();
 									}
@@ -333,24 +362,23 @@ var Admin = {
 							],
 							listeners:{
 								show:function() {
-									Ext.getCmp("ModuleConfigsForm").getForm().load({
+									Ext.getCmp("ModuleConfigForm").getForm().load({
 										url:ENV.getProcessUrl("admin","@getModuleConfigs"),
 										params:{target:module},
-										waitTitle:Admin.getLanguage("action/wait"),
-										waitMsg:Admin.getLanguage("action/loading"),
+										waitTitle:Admin.getText("action/wait"),
+										waitMsg:Admin.getText("action/loading"),
 										success:function(form,action) {
 										},
 										failure:function(form,action) {
 											if (action.result && action.result.message) {
-												Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+												Ext.Msg.show({title:Admin.getText("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 											} else {
-												Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getErrorMessage("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+												Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 											}
 										}
 									});
 								},
 								close:function() {
-									console.log($("div[data-role=config][data-module="+module+"]"));
 									$("div[data-role=config][data-module="+module+"]").remove();
 								}
 							}
@@ -380,7 +408,7 @@ var Admin = {
 				
 				new Ext.Window({
 					id:"SiteConfigWindow",
-					title:Admin.getLanguage("configs/sites/window/"+type),
+					title:Admin.getText("configs/sites/window/"+type),
 					width:800,
 					modal:true,
 					border:false,
@@ -402,10 +430,10 @@ var Admin = {
 									value:language ? language : ""
 								}),
 								new Ext.form.FieldSet({
-									title:Admin.getLanguage("configs/sites/form/site_config"),
+									title:Admin.getText("configs/sites/form/site_config"),
 									items:[
 										new Ext.form.FieldContainer({
-											fieldLabel:Admin.getLanguage("configs/sites/form/domain"),
+											fieldLabel:Admin.getText("configs/sites/form/domain"),
 											layout:"hbox",
 											items:[
 												new Ext.form.ComboBox({
@@ -428,31 +456,31 @@ var Admin = {
 											]
 										}),
 										new Ext.form.TextField({
-											fieldLabel:Admin.getLanguage("configs/sites/form/alias"),
+											fieldLabel:Admin.getText("configs/sites/form/alias"),
 											name:"alias",
 											emptyText:"*.examples.kr,beta.examples.kr,etc.com",
 											allowBlank:true,
-											afterBodyEl:'<div class="x-form-help">'+Admin.getLanguage("configs/sites/form/alias_help")+'</div>'
+											afterBodyEl:'<div class="x-form-help">'+Admin.getText("configs/sites/form/alias_help")+'</div>'
 										}),
 										new Ext.form.ComboBox({
-											fieldLabel:Admin.getLanguage("configs/sites/form/member").label,
+											fieldLabel:Admin.getText("configs/sites/form/member").label,
 											name:"member",
 											store:new Ext.data.ArrayStore({
 												fields:["display","value"],
-												data:[[Admin.getLanguage("configs/sites/form/member").MERGE,"MERGE"],[Admin.getLanguage("configs/sites/form/member").UNIQUE,"UNIQUE"]]
+												data:[[Admin.getText("configs/sites/form/member/UNIVERSAL"),"UNIVERSAL"],[Admin.getText("configs/sites/form/member/UNIQUE"),"UNIQUE"]]
 											}),
 											editable:false,
 											displayField:"display",
 											valueField:"value",
-											value:"MERGE"
+											value:"UNIVERSAL"
 										})
 									]
 								}),
 								new Ext.form.FieldSet({
-									title:Admin.getLanguage("configs/sites/form/language_config"),
+									title:Admin.getText("configs/sites/form/language_config"),
 									items:[
 										new Ext.form.FieldContainer({
-											fieldLabel:Admin.getLanguage("text/language_code"),
+											fieldLabel:Admin.getText("text/language_code"),
 											layout:"hbox",
 											items:[
 												new Ext.form.TextField({
@@ -464,30 +492,29 @@ var Admin = {
 													style:{marginRight:"5px"}
 												}),
 												new Ext.Button({
-													text:Admin.getLanguage("button/language_search"),
+													text:Admin.getText("button/language_search"),
 													handler:function() {
 														window.open("http://www.mcanerin.com/en/articles/meta-language.asp");
 													}
 												}),
 												new Ext.form.Checkbox({
 													name:"is_default",
-													boxLabel:Admin.getLanguage("configs/sites/form/is_default"),
+													boxLabel:Admin.getText("configs/sites/form/is_default"),
 													style:{marginLeft:"5px"}
 												}),
 												new Ext.form.DisplayField({
 													flex:1,
-													value:Admin.getLanguage("text/language_code_help"),
+													value:Admin.getText("text/language_code_help"),
 													style:{textAlign:"right"}
 												})
 											]
 										}),
 										new Ext.form.FieldContainer({
-											fieldLabel:Admin.getLanguage("configs/sites/form/templet"),
+											fieldLabel:Admin.getText("configs/sites/form/templet"),
 											layout:"hbox",
 											items:[
 												new Ext.form.ComboBox({
 													name:"templet",
-													_configs:{},
 													store:new Ext.data.JsonStore({
 														proxy:{
 															type:"ajax",
@@ -497,28 +524,28 @@ var Admin = {
 														},
 														remoteSort:false,
 														sorters:[{property:"templet",direction:"ASC"}],
-														fields:["templet","title"]
+														fields:["display","value"]
 													}),
 													autoLoadOnValue:true,
 													editable:false,
-													displayField:"title",
-													valueField:"templet",
+													displayField:"display",
+													valueField:"value",
 													flex:1,
 													listeners:{
 														change:function(form,value) {
-															Admin.configs.sites.getTempletConfigs(value);
+															Admin.configs.sites.getTempletConfigs(domain ? domain : "",language ? language : "",value);
 														}
 													}
 												}),
 												new Ext.form.Checkbox({
-													boxLabel:Admin.getLanguage("configs/sites/form/apply_all_site"),
+													boxLabel:Admin.getText("configs/sites/form/apply_all_site"),
 													name:"templet_all",
 													style:{marginLeft:"5px"}
 												})
 											]
 										}),
 										new Ext.form.FieldContainer({
-											fieldLabel:Admin.getLanguage("configs/sites/form/title"),
+											fieldLabel:Admin.getText("configs/sites/form/title"),
 											layout:"hbox",
 											items:[
 												new Ext.form.TextField({
@@ -526,14 +553,14 @@ var Admin = {
 													flex:1
 												}),
 												new Ext.form.Checkbox({
-													boxLabel:Admin.getLanguage("configs/sites/form/apply_all_site"),
+													boxLabel:Admin.getText("configs/sites/form/apply_all_site"),
 													name:"title_all",
 													style:{marginLeft:"5px"}
 												})
 											]
 										}),
 										new Ext.form.FieldContainer({
-											fieldLabel:Admin.getLanguage("configs/sites/form/description"),
+											fieldLabel:Admin.getText("configs/sites/form/description"),
 											layout:"hbox",
 											items:[
 												new Ext.form.TextArea({
@@ -544,7 +571,7 @@ var Admin = {
 													margin:"0 5 5 0",
 												}),
 												new Ext.form.Checkbox({
-													boxLabel:Admin.getLanguage("configs/sites/form/apply_all_site"),
+													boxLabel:Admin.getText("configs/sites/form/apply_all_site"),
 													name:"description_all"
 												})
 											]
@@ -559,7 +586,7 @@ var Admin = {
 								}),
 								new Ext.form.FieldSet({
 									id:"SiteConfigTempletConfigs",
-									title:Admin.getLanguage("configs/sites/form/templet_configs"),
+									title:Admin.getText("text/templet_configs"),
 									hidden:true,
 									fieldDefaults:{labelAlign:"right",labelWidth:100,anchor:"100%",allowBlank:true},
 									items:[]
@@ -569,15 +596,15 @@ var Admin = {
 					],
 					buttons:[
 						new Ext.Button({
-							text:Admin.getLanguage("button/confirm"),
+							text:Admin.getText("button/confirm"),
 							handler:function() {
 								Ext.getCmp("SiteConfigForm").getForm().submit({
 									url:ENV.getProcessUrl("admin","@saveSite"),
 									submitEmptyText:false,
-									waitTitle:Admin.getLanguage("action/wait"),
-									waitMsg:Admin.getLanguage("action/saving"),
+									waitTitle:Admin.getText("action/wait"),
+									waitMsg:Admin.getText("action/saving"),
 									success:function(form,action) {
-										Ext.Msg.show({title:Admin.getLanguage("alert/info"),msg:Admin.getLanguage("action/saved"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO,fn:function(button) {
+										Ext.Msg.show({title:Admin.getText("alert/info"),msg:Admin.getText("action/saved"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO,fn:function(button) {
 											Ext.getCmp("SiteConfigWindow").close();
 											Ext.getCmp("SiteList").getStore().reload();
 										}});
@@ -585,19 +612,19 @@ var Admin = {
 									failure:function(form,action) {
 										if (action.result) {
 											if (action.result.message) {
-												Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+												Ext.Msg.show({title:Admin.getText("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 											} else {
-												Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getErrorMessage("DATA_SAVE_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+												Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("DATA_SAVE_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 											}
 										} else {
-											Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getErrorMessage("INVALID_FORM_DATA"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+											Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("INVALID_FORM_DATA"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 										}
 									}
 								});
 							}
 						}),
 						new Ext.Button({
-							text:Admin.getLanguage("button/cancel"),
+							text:Admin.getText("button/cancel"),
 							handler:function() {
 								Ext.getCmp("SiteConfigWindow").close();
 							}
@@ -609,10 +636,9 @@ var Admin = {
 								Ext.getCmp("SiteConfigForm").getForm().load({
 									url:ENV.getProcessUrl("admin","@getSite"),
 									params:{domain:domain,language:language},
-									waitTitle:Admin.getLanguage("action/wait"),
-									waitMsg:Admin.getLanguage("action/loading"),
+									waitTitle:Admin.getText("action/wait"),
+									waitMsg:Admin.getText("action/loading"),
 									success:function(form,action) {
-										Ext.getCmp("SiteConfigForm").getForm().findField("templet")._configs = JSON.parse(action.result.data.templetConfigs);
 										Ext.getCmp("SiteConfigForm").getForm().findField("logo_default").defaultImage = Ext.getCmp("SiteConfigForm").getForm().findField("logo_default").getValue();
 										Ext.getCmp("SiteConfigForm").getForm().findField("logo_footer").defaultImage = Ext.getCmp("SiteConfigForm").getForm().findField("logo_footer").getValue();
 										Ext.getCmp("SiteConfigForm").getForm().findField("emblem").defaultImage = Ext.getCmp("SiteConfigForm").getForm().findField("emblem").getValue();
@@ -622,9 +648,9 @@ var Admin = {
 									},
 									failure:function(form,action) {
 										if (action.result && action.result.message) {
-											Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+											Ext.Msg.show({title:Admin.getText("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 										} else {
-											Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getErrorMessage("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+											Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 										}
 										Ext.getCmp("SitemapConfigWindow").close();
 									}
@@ -639,101 +665,10 @@ var Admin = {
 			 *
 			 * @param string templet 템플릿명
 			 */
-			getTempletConfigs:function(templet) {
-				$.send(ENV.getProcessUrl("admin","@getTempletConfigs"),{templet:templet},function(result) {
+			getTempletConfigs:function(domain,language,templet) {
+				$.send(ENV.getProcessUrl("admin","@getSiteTempletConfigs"),{domain:domain,language:language,templet:templet},function(result) {
 					if (result.success == true) {
-						Ext.getCmp("SiteConfigTempletConfigs").hide();
-						Ext.getCmp("SiteConfigTempletConfigs").removeAll();
-						
-						console.log(result);
-						
-						var form = Ext.getCmp("SiteConfigForm").getForm().findField("templet");
-						
-						for (var i=0, loop=result.configs.length;i<loop;i++) {
-							if (result.configs[i].type == "select") {
-								Ext.getCmp("SiteConfigTempletConfigs").add(
-									new Ext.form.FieldContainer({
-										fieldLabel:result.configs[i].title,
-										anchor:"100%",
-										layout:"hbox",
-										items:[
-											new Ext.form.ComboBox({
-												name:"@"+result.configs[i].name,
-												store:new Ext.data.ArrayStore({
-													fields:["value","display"],
-													data:result.configs[i].data
-												}),
-												editable:false,
-												allowBlank:true,
-												displayField:"display",
-												valueField:"value",
-												margin:"0 5 0 0",
-												flex:1,
-												value:form._configs[result.configs[i].name] ? form._configs[result.configs[i].name] : ""
-											}),
-											new Ext.form.Checkbox({
-												boxLabel:Admin.getLanguage("configs/sites/form/apply_all_templet"),
-												name:"@"+result.configs[i].name+"_all"
-											})
-										],
-										afterBodyEl:'<div class="x-form-help">'+result.configs[i].help+'</div>'
-									})
-								);
-							}
-							
-							if (result.configs[i].type == "text") {
-								Ext.getCmp("SiteConfigTempletConfigs").add(
-									new Ext.form.FieldContainer({
-										fieldLabel:result.configs[i].title,
-										anchor:"100%",
-										layout:"hbox",
-										items:[
-											new Ext.form.TextField({
-												name:"@"+result.configs[i].name,
-												allowBlank:true,
-												flex:1,
-												margin:"0 5 0 0",
-												value:form._configs[result.configs[i].name] ? form._configs[result.configs[i].name] : ""
-											}),
-											new Ext.form.Checkbox({
-												boxLabel:Admin.getLanguage("configs/sites/form/apply_all_templet"),
-												name:"@"+result.configs[i].name+"_all"
-											})
-										],
-										afterBodyEl:'<div class="x-form-help">'+result.configs[i].help+'</div>'
-									})
-								);
-							}
-							
-							if (result.configs[i].type == "textarea") {
-								Ext.getCmp("SiteConfigTempletConfigs").add(
-									new Ext.form.FieldContainer({
-										fieldLabel:result.configs[i].title,
-										anchor:"100%",
-										layout:"hbox",
-										items:[
-											new Ext.form.TextArea({
-												name:"@"+result.configs[i].name,
-												allowBlank:true,
-												height:80,
-												margin:"0 5 5 0",
-												flex:1,
-												value:form._configs[result.configs[i].name] ? form._configs[result.configs[i].name] : ""
-											}),
-											new Ext.form.Checkbox({
-												boxLabel:Admin.getLanguage("configs/sites/form/apply_all_templet"),
-												name:"@"+result.configs[i].name+"_all"
-											})
-										],
-										afterBodyEl:'<div class="x-form-help">'+result.configs[i].help+'</div>'
-									})
-								);
-							}
-						}
-						
-						if (Ext.getCmp("SiteConfigTempletConfigs").items.length > 0) {
-							Ext.getCmp("SiteConfigTempletConfigs").show();
-						}
+						Admin.setTempletConfigs("SiteConfigTempletConfigs","@templet_configs-",result.configs,true);
 					}
 				});
 			},
@@ -776,7 +711,7 @@ var Admin = {
 				}
 				
 				return new Ext.form.FieldContainer({
-					fieldLabel:Admin.getLanguage("configs/sites/form/"+name),
+					fieldLabel:Admin.getText("configs/sites/form/"+name),
 					layout:"hbox",
 					items:[
 						new Ext.form.Hidden({
@@ -784,7 +719,15 @@ var Admin = {
 							defaultImage:emptyImage,
 							listeners:{
 								change:function(form,value) {
-									Ext.getCmp(form.name+"_preview").setBodyStyle("backgroundImage","url("+value+")");
+									if (emptyImage == value) {
+										Ext.getCmp(form.name+"_preview").setBodyStyle("backgroundImage","url("+value+")");
+										Ext.getCmp(form.name+"_preview").setBodyStyle("backgroundColor","transparent");
+										$("#"+form.name+"_preview-innerCt").css("background","transparent");
+									} else {
+										Ext.getCmp(form.name+"_preview").setBodyStyle("backgroundImage","");
+										Ext.getCmp(form.name+"_preview").setBodyStyle("backgroundColor","#f4f4f4");
+										$("#"+form.name+"_preview-innerCt").css("background","url("+value+") no-repeat 50% 50%").css("backgroundSize","contain");
+									}
 								}
 							}
 						}),
@@ -792,7 +735,7 @@ var Admin = {
 							id:name+"_preview",
 							border:false,
 							padding:0,
-							bodyStyle:{backgroundColor:"transparent",backgroundImage:"url("+emptyImage+")",backgroundRepeat:"no-repeat",backgroundSize:"contain",backgroundPosition:"0 50%"},
+							bodyStyle:{backgroundColor:"#f4f4f4",backgroundRepeat:"no-repeat",backgroundSize:"contain",backgroundPosition:"0 50%",borderRadius:"5px",padding:"5px"},
 							width:previewWidth,
 							height:60,
 							style:{marginRight:"5px"}
@@ -808,12 +751,12 @@ var Admin = {
 										items:[
 											new Ext.form.FileUploadField({
 												name:name+"_file",
-												buttonText:Admin.getLanguage("configs/sites/form/select_file"),
+												buttonText:Admin.getText("configs/sites/form/select_file"),
 												allowBlank:true,
 												clearOnSubmit:false,
 												accept:extension,
 												flex:1,
-												emptyText:Admin.getLanguage("configs/sites/form/"+name+"_help"),
+												emptyText:Admin.getText("configs/sites/form/"+name+"_help"),
 												style:{marginBottom:0,marginRight:"5px"},
 												listeners:{
 													change:function(form,value) {
@@ -837,15 +780,17 @@ var Admin = {
 									:
 									new Ext.form.FileUploadField({
 										name:name+"_file",
-										buttonText:Admin.getLanguage("configs/sites/form/select_file"),
+										buttonText:Admin.getText("configs/sites/form/select_file"),
 										allowBlank:true,
 										clearOnSubmit:false,
 										accept:extension,
-										emptyText:Admin.getLanguage("configs/sites/form/"+name+"_help"),
+										emptyText:Admin.getText("configs/sites/form/"+name+"_help"),
 										style:{marginBottom:0},
 										listeners:{
 											change:function(form,value) {
-												var name = form.name.split("_").shift();
+												var name = form.name.split("_");
+												name.pop();
+												name = name.join("_");
 												if (value) {
 													Ext.getCmp("SiteConfigForm").getForm().findField(name+"_reset").setValue(false);
 													Ext.getCmp("SiteConfigForm").getForm().findField(name+"_default").setValue(false);
@@ -859,11 +804,13 @@ var Admin = {
 									items:[
 										new Ext.form.Checkbox({
 											name:name+"_reset",
-											boxLabel:Admin.getLanguage("configs/sites/form/reset_file"),
+											boxLabel:Admin.getText("configs/sites/form/reset_file"),
 											flex:1,
 											listeners:{
 												change:function(form,value) {
-													var name = form.name.split("_").shift();
+													var name = form.name.split("_");
+													name.pop();
+													name = name.join("_");
 													Ext.getCmp("SiteConfigForm").getForm().findField(name+"_default").setValue(false);
 													Ext.getCmp("SiteConfigForm").getForm().findField(name+"_default").setDisabled(value);
 													if (value == true) {
@@ -877,11 +824,13 @@ var Admin = {
 										}),
 										new Ext.form.Checkbox({
 											name:name+"_default",
-											boxLabel:Admin.getLanguage("configs/sites/form/default_file"),
+											boxLabel:Admin.getText("configs/sites/form/default_file"),
 											flex:1,
 											listeners:{
 												change:function(form,value) {
-													var name = form.name.split("_").shift();
+													var name = form.name.split("_");
+													name.pop();
+													name = name.join("_");
 													Ext.getCmp("SiteConfigForm").getForm().findField(name+"_reset").setValue(false);
 													Ext.getCmp("SiteConfigForm").getForm().findField(name+"_reset").setDisabled(value);
 													if (value == true) {
@@ -898,7 +847,7 @@ var Admin = {
 							]
 						}),
 						new Ext.form.Checkbox({
-							boxLabel:Admin.getLanguage("configs/sites/form/apply_all_site"),
+							boxLabel:Admin.getText("configs/sites/form/apply_all_site"),
 							name:name+"_all",
 							style:{marginLeft:"5px"}
 						})
@@ -967,7 +916,7 @@ var Admin = {
 				
 				new Ext.Window({
 					id:"SitemapConfigWindow",
-					title:(code ? Admin.getLanguage("configs/sitemap/window/modify") : Admin.getLanguage("configs/sitemap/window/add")),
+					title:(code ? Admin.getText("configs/sitemap/window/modify") : Admin.getText("configs/sitemap/window/add")),
 					width:700,
 					modal:true,
 					border:false,
@@ -1003,10 +952,10 @@ var Admin = {
 									allowBlank:true
 								}),
 								new Ext.form.FieldSet({
-									title:Admin.getLanguage("configs/sitemap/form/default"),
+									title:Admin.getText("configs/sitemap/form/default"),
 									items:[
 										new Ext.form.FieldContainer({
-											fieldLabel:Admin.getLanguage("configs/sitemap/form/menu"),
+											fieldLabel:Admin.getText("configs/sitemap/form/menu"),
 											layout:"hbox",
 											disabled:(mode == "page"),
 											hidden:(mode == "page"),
@@ -1019,10 +968,10 @@ var Admin = {
 													flex:1
 												})
 											],
-											afterBodyEl:'<div class="x-form-help">'+Admin.getLanguage("configs/sitemap/form/menu_help")+'</div>'
+											afterBodyEl:'<div class="x-form-help">'+Admin.getText("configs/sitemap/form/menu_help")+'</div>'
 										}),
 										new Ext.form.FieldContainer({
-											fieldLabel:Admin.getLanguage("configs/sitemap/form/page"),
+											fieldLabel:Admin.getText("configs/sitemap/form/page"),
 											layout:"hbox",
 											disabled:(mode == "menu"),
 											hidden:(mode == "menu"),
@@ -1035,14 +984,14 @@ var Admin = {
 													flex:1
 												})
 											],
-											afterBodyEl:'<div class="x-form-help">'+Admin.getLanguage("configs/sitemap/form/page_help")+'</div>'
+											afterBodyEl:'<div class="x-form-help">'+Admin.getText("configs/sitemap/form/page_help")+'</div>'
 										}),
 										new Ext.form.TextField({
-											fieldLabel:(mode == "menu" ? Admin.getLanguage("configs/sitemap/form/menu_title") : Admin.getLanguage("configs/sitemap/form/page_title")),
+											fieldLabel:(mode == "menu" ? Admin.getText("configs/sitemap/form/menu_title") : Admin.getText("configs/sitemap/form/page_title")),
 											name:"title"
 										}),
 										new Ext.form.FieldContainer({
-											fieldLabel:Admin.getLanguage("configs/sitemap/form/icon"),
+											fieldLabel:Admin.getText("configs/sitemap/form/icon"),
 											layout:"hbox",
 											items:[
 												new Ext.form.ComboBox({
@@ -1058,17 +1007,17 @@ var Admin = {
 													value:"",
 													width:140,
 													margin:"0 5 0 0",
-													emptyText:Admin.getLanguage("configs/sitemap/form/icon_type"),
+													emptyText:Admin.getText("configs/sitemap/form/icon_type"),
 													listeners:{
 														change:function(form,value) {
 															if (value) {
 																Ext.getCmp("SitemapConfigForm").getForm().findField("icon").enable();
-																Ext.getCmp("SitemapConfigForm").getForm().findField("icon").setEmptyText(Admin.getLanguage("configs/sitemap/form/icon_"+value+"_help"));
+																Ext.getCmp("SitemapConfigForm").getForm().findField("icon").setEmptyText(Admin.getText("configs/sitemap/form/icon_"+value+"_help"));
 																if (value != "image") Ext.getCmp("SitemapIconSearchButton").show();
 																else Ext.getCmp("SitemapIconSearchButton").hide();
 															} else {
 																Ext.getCmp("SitemapConfigForm").getForm().findField("icon").disable();
-																Ext.getCmp("SitemapConfigForm").getForm().findField("icon").setEmptyText(Admin.getLanguage("configs/sitemap/form/icon_help"));
+																Ext.getCmp("SitemapConfigForm").getForm().findField("icon").setEmptyText(Admin.getText("configs/sitemap/form/icon_help"));
 															}
 														}
 													}
@@ -1078,13 +1027,13 @@ var Admin = {
 													flex:1,
 													allowBlank:true,
 													disabled:true,
-													emptyText:Admin.getLanguage("configs/sitemap/form/icon_help")
+													emptyText:Admin.getText("configs/sitemap/form/icon_help")
 												}),
 												new Ext.Button({
 													id:"SitemapIconSearchButton",
 													style:{marginLeft:"5px"},
 													hidden:true,
-													text:Admin.getLanguage("configs/sitemap/form/icon_search"),
+													text:Admin.getText("configs/sitemap/form/icon_search"),
 													handler:function() {
 														var iconType = Ext.getCmp("SitemapConfigForm").getForm().findField("icon_type").getValue();
 														if (iconType == "fa") window.open("https://fortawesome.github.io/Font-Awesome/icons/");
@@ -1095,34 +1044,34 @@ var Admin = {
 											]
 										}),
 										new Ext.form.TextField({
-											fieldLabel:Admin.getLanguage("configs/sitemap/form/description"),
+											fieldLabel:Admin.getText("configs/sitemap/form/description"),
 											name:"description",
 											allowBlank:true
 										}),
 										new Ext.form.Checkbox({
-											fieldLabel:Admin.getLanguage("configs/sitemap/form/is_footer"),
+											fieldLabel:Admin.getText("configs/sitemap/form/is_footer"),
 											name:"is_footer",
-											boxLabel:Admin.getLanguage("configs/sitemap/form/is_footer_help")
+											boxLabel:Admin.getText("configs/sitemap/form/is_footer_help")
 										}),
 										new Ext.form.Checkbox({
-											fieldLabel:Admin.getLanguage("configs/sitemap/form/is_hide"),
+											fieldLabel:Admin.getText("configs/sitemap/form/is_hide"),
 											name:"is_hide",
-											boxLabel:Admin.getLanguage("configs/sitemap/form/is_hide_help")
+											boxLabel:Admin.getText("configs/sitemap/form/is_hide_help")
 										}),
 										new Ext.form.ComboBox({
-											fieldLabel:Admin.getLanguage("configs/sitemap/form/type"),
+											fieldLabel:Admin.getText("configs/sitemap/form/type"),
 											name:"type",
 											store:new Ext.data.ArrayStore({
 												fields:["display","value"],
 												data:(mode == "menu" ? 
-													[[Admin.getLanguage("configs/sitemap/type/EXTERNAL"),"EXTERNAL"],[Admin.getLanguage("configs/sitemap/type/PAGE"),"PAGE"],[Admin.getLanguage("configs/sitemap/type/WIDGET"),"WIDGET"],[Admin.getLanguage("configs/sitemap/type/LINK"),"LINK"],[Admin.getLanguage("configs/sitemap/type/EMPTY"),"EMPTY"]] : 
-													[[Admin.getLanguage("configs/sitemap/type/MODULE"),"MODULE"],[Admin.getLanguage("configs/sitemap/type/EXTERNAL"),"EXTERNAL"],[Admin.getLanguage("configs/sitemap/type/WIDGET"),"WIDGET"],[Admin.getLanguage("configs/sitemap/type/LINK"),"LINK"],[Admin.getLanguage("configs/sitemap/type/EMPTY"),"EMPTY"]]
+													[[Admin.getText("configs/sitemap/type/EXTERNAL"),"EXTERNAL"],[Admin.getText("configs/sitemap/type/PAGE"),"PAGE"],[Admin.getText("configs/sitemap/type/WIDGET"),"WIDGET"],[Admin.getText("configs/sitemap/type/LINK"),"LINK"],[Admin.getText("configs/sitemap/type/EMPTY"),"EMPTY"]] : 
+													[[Admin.getText("configs/sitemap/type/MODULE"),"MODULE"],[Admin.getText("configs/sitemap/type/EXTERNAL"),"EXTERNAL"],[Admin.getText("configs/sitemap/type/WIDGET"),"WIDGET"],[Admin.getText("configs/sitemap/type/LINK"),"LINK"],[Admin.getText("configs/sitemap/type/EMPTY"),"EMPTY"]]
 												)
 											}),
 											editable:false,
 											displayField:"display",
 											valueField:"value",
-											emptyText:Admin.getLanguage("configs/sitemap/form/type_help"),
+											emptyText:Admin.getText("configs/sitemap/form/type_help"),
 											listeners:{
 												change:function(form,value) {
 													Ext.getCmp("SitemapConfigMODULE").hide().disable();
@@ -1146,12 +1095,12 @@ var Admin = {
 											}
 										}),
 										new Ext.form.ComboBox({
-											fieldLabel:Admin.getLanguage("configs/sitemap/form/layout"),
+											fieldLabel:Admin.getText("configs/sitemap/form/layout"),
 											name:"layout",
 											store:new Ext.data.JsonStore({
 												proxy:{
 													type:"ajax",
-													url:ENV.getProcessUrl("admin","@getTempletLayouts"),
+													url:ENV.getProcessUrl("admin","@getSiteTempletLayouts"),
 													extraParams:{domain:domain,language:language},
 													reader:{type:"json"}
 												},
@@ -1167,10 +1116,10 @@ var Admin = {
 								}),
 								new Ext.form.FieldSet({
 									id:"SitemapConfigMODULE",
-									title:Admin.getLanguage("configs/sitemap/form/context"),
+									title:Admin.getText("configs/sitemap/form/context"),
 									items:[
 										new Ext.form.FieldContainer({
-											fieldLabel:Admin.getLanguage("configs/sitemap/form/module"),
+											fieldLabel:Admin.getText("configs/sitemap/form/module"),
 											layout:"hbox",
 											items:[
 												new Ext.form.ComboBox({
@@ -1200,7 +1149,7 @@ var Admin = {
 											]
 										}),
 										new Ext.form.FieldContainer({
-											fieldLabel:Admin.getLanguage("configs/sitemap/form/context"),
+											fieldLabel:Admin.getText("configs/sitemap/form/context"),
 											layout:"hbox",
 											items:[
 												new Ext.form.ComboBox({
@@ -1226,9 +1175,9 @@ var Admin = {
 																	Ext.getCmp("SitemapConfigForm").getForm().findField("context").enable();
 																} else {
 																	if (e.getError()) {
-																		Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:e.getError(),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+																		Ext.Msg.show({title:Admin.getText("alert/error"),msg:e.getError(),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 																	} else {
-																		Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getErrorMessage("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+																		Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 																	}
 																	Ext.getCmp("SitemapConfigForm").getForm().findField("target").reset();
 																	Ext.getCmp("SitemapConfigForm").getForm().findField("context").disable();
@@ -1302,10 +1251,10 @@ var Admin = {
 								}),
 								new Ext.form.FieldSet({
 									id:"SitemapConfigEXTERNAL",
-									title:Admin.getLanguage("configs/sitemap/form/context"),
+									title:Admin.getText("configs/sitemap/form/context"),
 									items:[
 										new Ext.form.ComboBox({
-											fieldLabel:Admin.getLanguage("configs/sitemap/form/external"),
+											fieldLabel:Admin.getText("configs/sitemap/form/external"),
 											name:"external",
 											store:new Ext.data.JsonStore({
 												proxy:{
@@ -1321,16 +1270,16 @@ var Admin = {
 											editable:false,
 											displayField:"path",
 											valueField:"external",
-											afterBodyEl:'<div class="x-form-help">'+Admin.getLanguage("configs/sitemap/form/external_help")+'</div>'
+											afterBodyEl:'<div class="x-form-help">'+Admin.getText("configs/sitemap/form/external_help")+'</div>'
 										})
 									]
 								}),
 								new Ext.form.FieldSet({
 									id:"SitemapConfigPAGE",
-									title:Admin.getLanguage("configs/sitemap/form/context"),
+									title:Admin.getText("configs/sitemap/form/context"),
 									items:[
 										new Ext.form.FieldContainer({
-											fieldLabel:Admin.getLanguage("configs/sitemap/form/subpage"),
+											fieldLabel:Admin.getText("configs/sitemap/form/subpage"),
 											layout:"hbox",
 											items:[
 												new Ext.form.ComboBox({
@@ -1352,7 +1301,7 @@ var Admin = {
 																	}
 																} else {
 																	if (e.getError()) {
-																		Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:e.getError(),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+																		Ext.Msg.show({title:Admin.getText("alert/error"),msg:e.getError(),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 																	}
 																}
 															}
@@ -1368,12 +1317,12 @@ var Admin = {
 												}),
 												new Ext.form.Checkbox({
 													name:"subpage_create",
-													boxLabel:Admin.getLanguage("configs/sitemap/form/subpage_create"),
+													boxLabel:Admin.getText("configs/sitemap/form/subpage_create"),
 													checked:code ? false : true,
 													listeners:{
 														change:function(form,value) {
 															if (!code || (value == false && Ext.getCmp("SitemapConfigForm").getForm().findField("subpage").getStore().getCount() == 0)) {
-																Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getErrorMessage("NOT_FOUND_SUBPAGE"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+																Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("NOT_FOUND_SUBPAGE"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 																form.setValue(true);
 																return;
 															}
@@ -1383,13 +1332,13 @@ var Admin = {
 													}
 												})
 											],
-											afterBodyEl:'<div class="x-form-help">'+Admin.getLanguage("configs/sitemap/form/subpage_help")+'</div>'
+											afterBodyEl:'<div class="x-form-help">'+Admin.getText("configs/sitemap/form/subpage_help")+'</div>'
 										}),
 										new Ext.form.TextField({
-											fieldLabel:Admin.getLanguage("configs/sitemap/form/subpage_code"),
+											fieldLabel:Admin.getText("configs/sitemap/form/subpage_code"),
 											name:"subpage_code",
 											disabled:code ? true : false,
-											afterBodyEl:'<div class="x-form-help">'+Admin.getLanguage("configs/sitemap/form/subpage_code_help")+'</div>'
+											afterBodyEl:'<div class="x-form-help">'+Admin.getText("configs/sitemap/form/subpage_code_help")+'</div>'
 										})
 									],
 									listeners:{
@@ -1400,14 +1349,14 @@ var Admin = {
 								}),
 								new Ext.form.FieldSet({
 									id:"SitemapConfigWIDGET",
-									title:Admin.getLanguage("configs/sitemap/form/context"),
+									title:Admin.getText("configs/sitemap/form/context"),
 									items:[
 										new Ext.form.TextArea({
-											fieldLabel:Admin.getLanguage("configs/sitemap/form/widget"),
+											fieldLabel:Admin.getText("configs/sitemap/form/widget"),
 											name:"widget",
 											height:100,
 											value:"[]",
-											afterBodyEl:'<div class="x-form-help">'+Admin.getLanguage("configs/sitemap/form/widget_help")+'</div>'
+											afterBodyEl:'<div class="x-form-help">'+Admin.getText("configs/sitemap/form/widget_help")+'</div>'
 										})
 									],
 									listeners:{
@@ -1418,10 +1367,10 @@ var Admin = {
 								}),
 								new Ext.form.FieldSet({
 									id:"SitemapConfigLINK",
-									title:Admin.getLanguage("configs/sitemap/form/context"),
+									title:Admin.getText("configs/sitemap/form/context"),
 									items:[
 										new Ext.form.FieldContainer({
-											fieldLabel:Admin.getLanguage("configs/sitemap/form/link"),
+											fieldLabel:Admin.getText("configs/sitemap/form/link"),
 											layout:"hbox",
 											items:[
 												new Ext.form.TextField({
@@ -1433,7 +1382,7 @@ var Admin = {
 													name:"link_target",
 													store:new Ext.data.ArrayStore({
 														fields:["display","value"],
-														data:[[Admin.getLanguage("configs/sitemap/form/link_target")._self,"_self"],[Admin.getLanguage("configs/sitemap/form/link_target")._blank,"_blank"]]
+														data:[[Admin.getText("configs/sitemap/form/link_target")._self,"_self"],[Admin.getText("configs/sitemap/form/link_target")._blank,"_blank"]]
 													}),
 													editable:false,
 													displayField:"display",
@@ -1455,15 +1404,15 @@ var Admin = {
 					],
 					buttons:[
 						new Ext.Button({
-							text:Admin.getLanguage("button/confirm"),
+							text:Admin.getText("button/confirm"),
 							handler:function() {
 								Ext.getCmp("SitemapConfigForm").getForm().submit({
 									url:ENV.getProcessUrl("admin","@saveSitemap"),
 									submitEmptyText:false,
-									waitTitle:Admin.getLanguage("action/wait"),
-									waitMsg:Admin.getLanguage("action/saving"),
+									waitTitle:Admin.getText("action/wait"),
+									waitMsg:Admin.getText("action/saving"),
 									success:function(form,action) {
-										Ext.Msg.show({title:Admin.getLanguage("alert/info"),msg:Admin.getLanguage("action/saved"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO,fn:function(button) {
+										Ext.Msg.show({title:Admin.getText("alert/info"),msg:Admin.getText("action/saved"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO,fn:function(button) {
 											if (mode == "menu") {
 												Ext.getCmp("MenuList").selected = form.findField("menu").getValue();
 												Ext.getCmp("MenuList").getStore().reload();
@@ -1480,19 +1429,19 @@ var Admin = {
 									failure:function(form,action) {
 										if (action.result) {
 											if (action.result.message) {
-												Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+												Ext.Msg.show({title:Admin.getText("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 											} else {
-												Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getErrorMessage("DATA_SAVE_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+												Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("DATA_SAVE_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 											}
 										} else {
-											Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getErrorMessage("INVALID_FORM_DATA"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+											Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("INVALID_FORM_DATA"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 										}
 									}
 								});
 							}
 						}),
 						new Ext.Button({
-							text:Admin.getLanguage("button/cancel"),
+							text:Admin.getText("button/cancel"),
 							handler:function() {
 								Ext.getCmp("SitemapConfigWindow").close();
 							}
@@ -1504,8 +1453,8 @@ var Admin = {
 								Ext.getCmp("SitemapConfigForm").getForm().load({
 									url:ENV.getProcessUrl("admin","@getMenu"),
 									params:{domain:domain,language:language,menu:menu,page:page},
-									waitTitle:Admin.getLanguage("action/wait"),
-									waitMsg:Admin.getLanguage("action/loading"),
+									waitTitle:Admin.getText("action/wait"),
+									waitMsg:Admin.getText("action/loading"),
 									success:function(form,action) {
 										form.findField("context")._configs = action.result.data._configs;
 										
@@ -1520,9 +1469,9 @@ var Admin = {
 									},
 									failure:function(form,action) {
 										if (action.result && action.result.message) {
-											Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+											Ext.Msg.show({title:Admin.getText("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 										} else {
-											Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getErrorMessage("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+											Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 										}
 										Ext.getCmp("SitemapConfigWindow").close();
 									}
@@ -1550,7 +1499,7 @@ var Admin = {
 				
 				new Ext.Window({
 					id:"LoadMenuWindow",
-					title:Admin.getLanguage("configs/sitemap/load_"+mode),
+					title:Admin.getText("configs/sitemap/load_"+mode),
 					width:600,
 					modal:true,
 					border:false,
@@ -1564,7 +1513,7 @@ var Admin = {
 							fieldDefaults:{labelAlign:"right",labelWidth:100,anchor:"100%",allowBlank:false},
 							items:[
 								new Ext.form.FieldSet({
-									title:Admin.getLanguage("configs/sitemap/form/load_target"),
+									title:Admin.getText("configs/sitemap/form/load_target"),
 									items:[
 										new Ext.form.Hidden({
 											name:"mode",
@@ -1590,7 +1539,7 @@ var Admin = {
 											name:"oLanguage"
 										}),
 										new Ext.form.ComboBox({
-											fieldLabel:Admin.getLanguage("configs/sitemap/form/load_site"),
+											fieldLabel:Admin.getText("configs/sitemap/form/load_site"),
 											name:"site",
 											store:new Ext.data.JsonStore({
 												proxy:{
@@ -1619,7 +1568,7 @@ var Admin = {
 											}
 										}),
 										new Ext.form.ComboBox({
-											fieldLabel:Admin.getLanguage("configs/sitemap/form/load_menu"),
+											fieldLabel:Admin.getText("configs/sitemap/form/load_menu"),
 											name:"oMenu",
 											disabled:true,
 											store:new Ext.data.JsonStore({
@@ -1653,7 +1602,7 @@ var Admin = {
 											}
 										}),
 										new Ext.form.ComboBox({
-											fieldLabel:Admin.getLanguage("configs/sitemap/form/load_page"),
+											fieldLabel:Admin.getText("configs/sitemap/form/load_page"),
 											name:"oPage",
 											hidden:(mode == "menu"),
 											disabled:true,
@@ -1680,13 +1629,13 @@ var Admin = {
 									]
 								}),
 								new Ext.form.FieldSet({
-									title:Admin.getLanguage("configs/sitemap/form/load_options"),
+									title:Admin.getText("configs/sitemap/form/load_options"),
 									hidden:(mode == "page"),
 									disabled:(mode == "page"),
 									items:[
 										new Ext.form.Checkbox({
 											name:"is_include",
-											boxLabel:Admin.getLanguage("configs/sitemap/form/include_pages")
+											boxLabel:Admin.getText("configs/sitemap/form/include_pages")
 										})
 									]
 								})
@@ -1695,15 +1644,15 @@ var Admin = {
 					],
 					buttons:[
 						new Ext.Button({
-							text:Admin.getLanguage("button/confirm"),
+							text:Admin.getText("button/confirm"),
 							handler:function() {
 								Ext.getCmp("LoadMenuForm").getForm().submit({
 									url:ENV.getProcessUrl("admin","@copySitemap"),
 									submitEmptyText:false,
-									waitTitle:Admin.getLanguage("action/wait"),
-									waitMsg:Admin.getLanguage("action/saving"),
+									waitTitle:Admin.getText("action/wait"),
+									waitMsg:Admin.getText("action/saving"),
 									success:function(form,action) {
-										Ext.Msg.show({title:Admin.getLanguage("alert/info"),msg:Admin.getLanguage("action/saved"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO,fn:function(button) {
+										Ext.Msg.show({title:Admin.getText("alert/info"),msg:Admin.getText("action/saved"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO,fn:function(button) {
 											if (mode == "menu") {
 												Ext.getCmp("MenuList").selected = form.findField("menu").getValue();
 												Ext.getCmp("MenuList").getStore().reload();
@@ -1720,19 +1669,19 @@ var Admin = {
 									failure:function(form,action) {
 										if (action.result) {
 											if (action.result.message) {
-												Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+												Ext.Msg.show({title:Admin.getText("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 											} else {
-												Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getErrorMessage("DATA_SAVE_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+												Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("DATA_SAVE_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 											}
 										} else {
-											Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getErrorMessage("INVALID_FORM_DATA"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+											Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("INVALID_FORM_DATA"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 										}
 									}
 								});
 							}
 						}),
 						new Ext.Button({
-							text:Admin.getLanguage("button/cancel"),
+							text:Admin.getText("button/cancel"),
 							handler:function() {
 								Ext.getCmp("LoadMenuWindow").close();
 							}
@@ -1745,28 +1694,28 @@ var Admin = {
 	module:{
 		addConfigPanel:function(target,configPanel) {
 			panel.add(new Ext.Panel({
-				title:Admin.getLanguage("module/list/window/config"),
+				title:Admin.getText("module/list/window/config"),
 				border:false,
 				autoScroll:true,
 				items:[configPanel],
 				buttons:[
 					new Ext.Button({
-						text:Admin.getLanguage("button/confirm"),
+						text:Admin.getText("button/confirm"),
 						handler:function() {
-							Ext.getCmp("ModuleConfigsForm").getForm().submit({
+							Ext.getCmp("ModuleConfigForm").getForm().submit({
 								url:ENV.getProcessUrl("admin","@installModule"),
 								params:{target:target},
 								submitEmptyText:false,
-								waitTitle:Admin.getLanguage("action/wait"),
-								waitMsg:Admin.getLanguage("module/list/installing"),
+								waitTitle:Admin.getText("action/wait"),
+								waitMsg:Admin.getText("module/list/installing"),
 								success:function(form,action) {
-									Ext.Msg.show({title:Admin.getLanguage("alert/info"),msg:Admin.getLanguage("module/list/installed"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO});
+									Ext.Msg.show({title:Admin.getText("alert/info"),msg:Admin.getText("module/list/installed"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO});
 								},
 								failure:function(form,action) {
 									if (action.result && action.result.message) {
-										Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+										Ext.Msg.show({title:Admin.getText("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 									} else {
-										Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getErrorMessage("INVALID_FORM_DATA"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+										Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("INVALID_FORM_DATA"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 									}
 								}
 							});
@@ -1775,18 +1724,18 @@ var Admin = {
 				],
 				listeners:{
 					render:function() {
-						Ext.getCmp("ModuleConfigsForm").getForm().load({
+						Ext.getCmp("ModuleConfigForm").getForm().load({
 							url:ENV.getProcessUrl("admin","@getModuleConfigs"),
 							params:{target:target},
-							waitTitle:Admin.getLanguage("action/wait"),
-							waitMsg:Admin.getLanguage("action/loading"),
+							waitTitle:Admin.getText("action/wait"),
+							waitMsg:Admin.getText("action/loading"),
 							success:function(form,action) {
 							},
 							failure:function(form,action) {
 								if (action.result && action.result.message) {
-									Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+									Ext.Msg.show({title:Admin.getText("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 								} else {
-									Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getErrorMessage("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+									Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 								}
 							}
 						});
@@ -1819,17 +1768,17 @@ var Admin = {
 					grid.getStore().getAt(lowFixedCount + sort).set(field,sort-1);
 					grid.getStore().getAt(lowFixedCount + sort - 1).set(field,sort);
 				} else {
-					return false;
+					continue;
 				}
 			}
 		} else {
 			for (var i=checked.length-1;i>=0;i--) {
 				var sort = checked[i].get(field);
-				if (lowFixedCount + sort < grid.getStore().getCount() - highFixedCount - 1 && sort < 10000) {
+				if (sort >= 0 && lowFixedCount + sort < grid.getStore().getCount() - highFixedCount - 1 && sort < 10000) {
 					grid.getStore().getAt(lowFixedCount + sort).set(field,sort+1);
 					grid.getStore().getAt(lowFixedCount + sort + 1).set(field,sort);
 				} else {
-					return false;
+					continue;
 				}
 			}
 		}
@@ -1866,10 +1815,123 @@ var Admin = {
 			if (result.success == true) {
 				store.commitChanges();
 			} else {
-				Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getErrorMessage("DATA_SAVE_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+				Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("DATA_SAVE_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 			}
 		});
 	},
+	/**
+	 * 템플릿 환경설정폼을 구성한다.
+	 *
+	 * @param string id 환경설정폼을 구성할 FieldSet 이름
+	 * @param string prefix 환경설정키값 앞에 고정될 변수
+	 * @param object configs 템플릿 환경설정
+	 * @param boolean is_apply_all 전체적용 필드 여부 (기본값 false)
+	 */
+	setTempletConfigs:function(id,prefix,configs,is_apply_all) {
+		Ext.getCmp(id).hide();
+		Ext.getCmp(id).removeAll();
+		
+		if (configs == null) return;
+		
+		for (var config in configs) {
+			if (configs[config].type == "select") {
+				Ext.getCmp(id).add(
+					new Ext.form.FieldContainer({
+						fieldLabel:configs[config].title,
+						anchor:"100%",
+						layout:"hbox",
+						items:[
+							new Ext.form.ComboBox({
+								name:prefix+config,
+								store:new Ext.data.ArrayStore({
+									fields:["value","display"],
+									data:configs[config].data
+								}),
+								editable:false,
+								allowBlank:true,
+								displayField:"display",
+								valueField:"value",
+								margin:"0 5 0 0",
+								flex:1,
+								value:configs[config].value
+							}),
+							new Ext.form.Checkbox({
+								boxLabel:Admin.getText("text/apply_all_templet"),
+								name:prefix+config+"_all",
+								hidden:is_apply_all !== true,
+								disabled:is_apply_all !== true
+							})
+						],
+						afterBodyEl:'<div class="x-form-help">'+configs[config].help+'</div>'
+					})
+				);
+			}
+			
+			if (configs[config].type == "text") {
+				Ext.getCmp(id).add(
+					new Ext.form.FieldContainer({
+						fieldLabel:configs[config].title,
+						anchor:"100%",
+						layout:"hbox",
+						items:[
+							new Ext.form.TextField({
+								name:prefix+config,
+								allowBlank:true,
+								flex:1,
+								margin:"0 5 0 0",
+								value:configs[config].value
+							}),
+							new Ext.form.Checkbox({
+								boxLabel:Admin.getText("text/apply_all_templet"),
+								name:prefix+configs[config].name+"_all",
+								hidden:is_apply_all !== true,
+								disabled:is_apply_all !== true
+							})
+						],
+						afterBodyEl:'<div class="x-form-help">'+configs[config].help+'</div>'
+					})
+				);
+			}
+			
+			if (configs[config].type == "textarea") {
+				Ext.getCmp(id).add(
+					new Ext.form.FieldContainer({
+						fieldLabel:configs[config].title,
+						anchor:"100%",
+						layout:"hbox",
+						items:[
+							new Ext.form.TextArea({
+								name:prefix+config,
+								allowBlank:true,
+								height:80,
+								margin:"0 5 5 0",
+								flex:1,
+								value:configs[config].value
+							}),
+							new Ext.form.Checkbox({
+								boxLabel:Admin.getText("text/apply_all_templet"),
+								name:prefix+config.name+"_all",
+								hidden:is_apply_all !== true,
+								disabled:is_apply_all !== true
+							})
+						],
+						afterBodyEl:'<div class="x-form-help">'+configs[config].help+'</div>'
+					})
+				);
+			}
+		}
+		
+		if (Ext.getCmp(id).items.length > 0) {
+			Ext.getCmp(id).show();
+		}
+	},
+	/**
+	 * 위지윅 필드를 추가한다.
+	 *
+	 * @param string label 라벨명
+	 * @param string name 필드명
+	 * @param string value 필드값
+	 */
 	wysiwygField:function(label,name,value) {
 		return new Ext.form.TextArea({
 			fieldLabel:(label ? label : ""),
@@ -1903,13 +1965,13 @@ var Admin = {
 	permissionField:function(label,name,value,is_guest) {
 		var selectorValue = "etc";
 		var presets = [];
-		var permissions = Admin.getLanguage("permission/preset");
+		var permissions = Admin.getText("permission/preset");
 		for (var code in permissions) {
 			if (is_guest === false && code == "true") continue;
 			presets.push([permissions[code],code]);
 			if (code == value) selectorValue = code;
 		}
-		presets.push([Admin.getLanguage("permission/etc"),"etc"]);
+		presets.push([Admin.getText("permission/etc"),"etc"]);
 		
 		return new Ext.form.FieldContainer({
 			fieldLabel:label,
@@ -1978,7 +2040,7 @@ var Admin = {
 	languageFieldSet:function(id,label,code,field) {
 		return new Ext.form.FieldSet({
 			id:id,
-			title:Admin.getLanguage("text/language_setting"),
+			title:Admin.getText("text/language_setting"),
 			collapsible:true,
 			collapsed:true,
 			codeName:code,
@@ -1990,7 +2052,7 @@ var Admin = {
 					margin:"0 0 0 0",
 					items:[
 						new Ext.form.DisplayField({
-							fieldLabel:Admin.getLanguage("text/language_code"),
+							fieldLabel:Admin.getText("text/language_code"),
 							width:180,
 							margin:"0 5 0 0"
 						}),
@@ -2016,12 +2078,12 @@ var Admin = {
 									length:2,
 									maxLength:2,
 									validator:function(value) {
-										if (value.length > 0 && value.search(/^[a-z]{2}$/) == -1) return Admin.getErrorMessage("INVALID_LANGUAGE_CODE");
+										if (value.length > 0 && value.search(/^[a-z]{2}$/) == -1) return Admin.getErrorText("INVALID_LANGUAGE_CODE");
 										return true;
 									}
 								}),
 								new Ext.Button({
-									text:Admin.getLanguage("button/language_search"),
+									text:Admin.getText("button/language_search"),
 									handler:function() {
 										window.open("http://www.mcanerin.com/en/articles/meta-language.asp");
 									}
@@ -2086,12 +2148,12 @@ var Admin = {
 								flex:1,
 								style:{marginRight:"5px"},
 								validator:function(value) {
-									if (value.search(/^[a-z]{2}$/) == -1) return Admin.getErrorMessage("INVALID_LANGUAGE_CODE");
+									if (value.search(/^[a-z]{2}$/) == -1) return Admin.getErrorText("INVALID_LANGUAGE_CODE");
 									return true;
 								}
 							}),
 							new Ext.Button({
-								text:Admin.getLanguage("button/language_search"),
+								text:Admin.getText("button/language_search"),
 								handler:function() {
 									window.open("http://www.mcanerin.com/en/articles/meta-language.asp");
 								}

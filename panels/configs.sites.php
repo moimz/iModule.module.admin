@@ -9,6 +9,8 @@
  * @license GPLv3
  * @version 3.0.0.160903
  */
+
+if (defined('__IM__') == false) exit;
 ?>
 <style>
 .groupHeader span.label {float:right; font-size:12px; height:18px; border:1px solid transparent; padding:0px 3px; line-height:18px; margin-left:5px; border-radius:3px;}
@@ -23,7 +25,7 @@ var panel = new Ext.grid.Panel({
 	tbar:[
 		new Ext.Button({
 			iconCls:"fa fa-plus",
-			text:Admin.getLanguage("configs/sites/add_site"),
+			text:Admin.getText("configs/sites/add_site"),
 			handler:function() {
 				Admin.configs.sites.add();
 			}
@@ -47,16 +49,16 @@ var panel = new Ext.grid.Panel({
 			load:function(store,records,success,e) {
 				if (success == false) {
 					if (e.getError()) {
-						Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:e.getError(),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
+						Ext.Msg.show({title:Admin.getText("alert/error"),msg:e.getError(),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
 					} else {
-						Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getErrorMessage("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
+						Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
 					}
 				}
 			}
 		}
 	}),
 	columns:[{
-		text:Admin.getLanguage("configs/sites/columns").domain+" / "+Admin.getLanguage("configs/sites/columns").language,
+		text:Admin.getText("configs/sites/columns").domain+" / "+Admin.getText("configs/sites/columns").language,
 		width:280,
 		dataIndex:"url",
 		summaryType:"count",
@@ -68,25 +70,25 @@ var panel = new Ext.grid.Panel({
 			return value+" language"+(value > 1 ? "s" : "");
 		}
 	},{
-		text:Admin.getLanguage("configs/sites/columns").title,
+		text:Admin.getText("configs/sites/columns").title,
 		width:150,
 		dataIndex:"title"
 	},{
-		text:Admin.getLanguage("configs/sites/columns").description,
+		text:Admin.getText("configs/sites/columns").description,
 		minWidth:150,
 		flex:1,
 		sortable:true,
 		dataIndex:"description"
 	},{
-		text:Admin.getLanguage("configs/sites/columns").templet,
-		width:90,
+		text:Admin.getText("configs/sites/columns").templet,
+		width:140,
 		sortable:true,
 		dataIndex:"templet"
 	}],
 	selModel:new Ext.selection.RowModel(),
 	features:[{
 		ftype:"groupingsummary",
-		groupHeaderTpl:'<div class="groupHeader">{[values.children[0].data.domain]} <tpl if="[values.children[0].data.member] == \'MERGE\'"><span class="label merge">{[Admin.getLanguage("configs/sites/member/"+[values.children[0].data.member])]}</span><tpl else><span class="label unique">{[Admin.getLanguage("configs/sites/member/"+[values.children[0].data.member])]}</span></tpl></div>',
+		groupHeaderTpl:'<div class="groupHeader">{[values.children[0].data.domain]} <tpl if="[values.children[0].data.member] == \'MERGE\'"><span class="label merge">{[Admin.getText("configs/sites/member/"+[values.children[0].data.member])]}</span><tpl else><span class="label unique">{[Admin.getText("configs/sites/member/"+[values.children[0].data.member])]}</span></tpl></div>',
 		hideGroupedHeader:false,
 		enableGroupingMenu:false
 	}],
@@ -98,11 +100,34 @@ var panel = new Ext.grid.Panel({
 			}
 		}),
 		"->",
-		{xtype:"tbtext",text:Admin.getLanguage("text/grid_help")}
+		{xtype:"tbtext",text:Admin.getText("text/grid_help")}
 	],
 	listeners:{
 		itemdblclick:function(grid,record) {
 			Admin.configs.sites.add(record.data.domain,record.data.language);
+		},
+		itemcontextmenu:function(grid,record,item,index,e) {
+			var menu = new Ext.menu.Menu();
+			
+			menu.add('<div class="x-menu-title">'+record.data.title+'('+record.data.url+')</div>');
+			menu.add({
+				iconCls:"mi mi-home",
+				text:Admin.getText("configs/sites/menus/detail"),
+				handler:function() {
+					Admin.configs.sites.add(record.data.domain,record.data.language);
+				}
+			});
+			
+			menu.add({
+				iconCls:"fa fa-trash",
+				text:Admin.getText("configs/sites/menus/delete"),
+				handler:function() {
+					Admin.configs.sites.delete(record.data.domain,record.data.language);
+				}
+			});
+			
+			e.stopEvent();
+			menu.showAt(e.getXY());
 		}
 	}
 });

@@ -9,6 +9,8 @@
  * @license MIT License
  * @version 3.0.0.160903
  */
+
+if (defined('__IM__') == false) exit;
 ?>
 <header id="iModuleAdminHeader">
 	<h1><?php echo $this->getConfig('title'); ?></h1>
@@ -18,6 +20,12 @@
 		<li<?php echo $menus[$i]->menu == $this->menu && ($menus[$i]->page == false || $menus[$i]->menu == $this->page) ? ' class="selected"' : ''; ?>><a href="<?php echo $this->getUrl($menus[$i]->menu,$menus[$i]->page,$menus[$i]->tab); ?>"><i class="<?php echo substr($menus[$i]->icon,0,2); ?> <?php echo $menus[$i]->icon; ?>"></i><?php echo $menus[$i]->title; ?></a></li>
 		<?php } ?>
 	</ul>
+	
+	<aside>
+		<button type="button" onclick="Admin.logout();"><?php echo $this->getText('button/logout'); ?></button>
+		<i class="photo" style="background-image:url(<?php echo $this->IM->getModule('member')->getMember()->photo; ?>);"></i>
+		<?php echo $this->IM->getModule('member')->getMember()->nickname; ?>
+	</aside>
 </header>
 
 <?php if (count($pages) > 0) { ?>

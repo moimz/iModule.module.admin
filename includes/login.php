@@ -10,6 +10,8 @@
  * @license GPLv3
  * @version 3.0.0.160903
  */
+
+if (defined('__IM__') == false) exit;
 ?>
 <main>
 	<h1><i class="mi mi-lock"></i> Login to control panel</h1>

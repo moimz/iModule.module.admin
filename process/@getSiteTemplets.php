@@ -14,17 +14,11 @@
 if (defined('__IM__') == false) exit;
 
 $lists = array();
-$templetsPath = @opendir(__IM_PATH__.'/templets');
-while ($templet = @readdir($templetsPath)) {
-	if ($templet != '.' && $templet != '..' && is_dir(__IM_PATH__.'/templets/'.$templet) == true) {
-		$package = json_decode(file_get_contents(__IM_PATH__.'/templets/'.$templet.'/package.json'));
-		$lists[] = array(
-			'templet'=>$templet,
-			'title'=>(isset($package->title->{$this->IM->language}) == true ? $package->title->{$this->IM->language} : $package->title->{$package->IM->language}).'('.$templet.')'
-		);
-	}
+$templets = $this->IM->getTemplets($this->IM);
+
+for ($i=0, $loop=count($templets);$i<$loop;$i++) {
+	$lists[] = array('display'=>$templets[$i]->getTitle().' ('.$templets[$i]->getDir().')','value'=>$templets[$i]->getName());
 }
-@closedir($templetsPath);
 
 $results->success = true;
 $results->lists = $lists;

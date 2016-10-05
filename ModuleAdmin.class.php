@@ -162,7 +162,7 @@ class ModuleAdmin {
 	 * @param string $replacement 일치하는 언어코드가 없을 경우 반환될 메세지 (기본값 : null, $code 반환)
 	 * @return string $language 실제 언어셋 텍스트
 	 */
-	function getLanguage($code,$replacement=null) {
+	function getText($code,$replacement=null) {
 		if ($this->lang == null) {
 			if (file_exists($this->Module->getPath().'/languages/'.$this->IM->language.'.json') == true) {
 				$this->lang = json_decode(file_get_contents($this->Module->getPath().'/languages/'.$this->IM->language.'.json'));
@@ -210,7 +210,7 @@ class ModuleAdmin {
 		 * 언어셋 텍스트가 없는경우 iModule 코어에서 불러온다.
 		 */
 		if ($returnString != null) return $returnString;
-		elseif (in_array(reset($temp),array('text','button','action')) == true) return $this->IM->getLanguage($code,$replacement);
+		elseif (in_array(reset($temp),array('text','button','action')) == true) return $this->IM->getText($code,$replacement);
 		else return $replacement == null ? $code : $replacement;
 	}
 	
@@ -222,9 +222,9 @@ class ModuleAdmin {
 	 * @param boolean $isRawData(옵션) RAW 데이터 반환여부
 	 * @return string $message 에러 메세지
 	 */
-	function getErrorMessage($code,$value=null,$isRawData=false) {
-		$message = $this->getLanguage('error/'.$code,$code);
-		if ($message == $code) return $this->IM->getErrorMessage($code,$value,null,$isRawData);
+	function getErrorText($code,$value=null,$isRawData=false) {
+		$message = $this->getText('error/'.$code,$code);
+		if ($message == $code) return $this->IM->getErrorText($code,$value,null,$isRawData);
 		
 		$description = null;
 		switch ($code) {
@@ -237,7 +237,7 @@ class ModuleAdmin {
 		$error->description = $description;
 		
 		if ($isRawData === true) return $error;
-		else return $this->IM->getErrorMessage($error);
+		else return $this->IM->getErrorText($error);
 	}
 	
 	/**
@@ -309,8 +309,8 @@ class ModuleAdmin {
 		/**
 		 * iModule 코어를 통해 에러메세지를 구성한다.
 		 */
-		$error = $this->getErrorMessage($code,$value,true);
-		$this->IM->getError($error);
+		$error = $this->getErrorText($code,$value,true);
+		return $this->IM->getError($error);
 	}
 	
 	/**
@@ -336,7 +336,7 @@ class ModuleAdmin {
 		
 		INCLUDE $this->Module->getPath().'/includes/login.php';
 		
-		echo PHP_EOL.'</form>'.PHP_EOL.'<script>$("#ModuleAdminLoginForm").inits(Admin.login.submit);</script>'.PHP_EOL;
+		echo PHP_EOL.'</form>'.PHP_EOL.'<script>$("#ModuleAdminLoginForm").inits(Admin.login);</script>'.PHP_EOL;
 		$html = ob_get_contents();
 		ob_end_clean();
 		
@@ -349,6 +349,11 @@ class ModuleAdmin {
 	 * @return string $html 관리자화면 HTML
 	 */
 	function getAdminContext() {
+		/**
+		 * 관리자권한이 없는 경우, 로그인 컨텍스트를 반환한다.
+		 */
+		if ($this->checkPermission() === false) return $this->getLoginContext();
+		
 		/**
 		 * ExtJS 라이브러리와 관리자 언어셋을 불러온다.
 		 */
@@ -564,7 +569,7 @@ class ModuleAdmin {
 			$menu->page = false;
 			$menu->tab = false;
 			$menu->icon = 'fa-dashboard';
-			$menu->title = $this->getLanguage('menus/dashboard');
+			$menu->title = $this->getText('menus/dashboard');
 			$menus[] = $menu;
 		}
 		
@@ -577,7 +582,7 @@ class ModuleAdmin {
 			$menu->page = false;
 			$menu->tab = false;
 			$menu->icon = 'fa-cube';
-			$menu->title = $this->getLanguage('menus/modules');
+			$menu->title = $this->getText('menus/modules');
 			$menus[] = $menu;
 		}
 		
@@ -590,7 +595,7 @@ class ModuleAdmin {
 			$menu->page = false;
 			$menu->tab = false;
 			$menu->icon = 'fa-puzzle-piece';
-			$menu->title = $this->getLanguage('menus/addons');
+			$menu->title = $this->getText('menus/addons');
 			$menus[] = $menu;
 		}
 		
@@ -603,7 +608,7 @@ class ModuleAdmin {
 			$menu->page = false;
 			$menu->tab = false;
 			$menu->icon = 'fa-sticky-note-o';
-			$menu->title = $this->getLanguage('menus/widgets');
+			$menu->title = $this->getText('menus/widgets');
 			$menus[] = $menu;
 		}
 		
@@ -616,7 +621,7 @@ class ModuleAdmin {
 			$menu->page = false;
 			$menu->tab = false;
 			$menu->icon = 'fa-cog';
-			$menu->title = $this->getLanguage('menus/configs');
+			$menu->title = $this->getText('menus/configs');
 			$menus[] = $menu;
 		}
 		
@@ -666,7 +671,7 @@ class ModuleAdmin {
 			$page->page = 'lists';
 			$page->tab = false;
 			$page->icon = 'fa-cubes';
-			$page->title = $this->getLanguage('pages/modules/lists');
+			$page->title = $this->getText('pages/modules/lists');
 			$pages[] = $page;
 			
 			$modules = $this->IM->Module->getAdminModules();
@@ -696,7 +701,7 @@ class ModuleAdmin {
 				$page->page = 'sites';
 				$page->tab = false;
 				$page->icon = 'fa-home';
-				$page->title = $this->getLanguage('pages/configs/sites');
+				$page->title = $this->getText('pages/configs/sites');
 				$pages[] = $page;
 			}
 			
@@ -709,7 +714,7 @@ class ModuleAdmin {
 				$page->page = 'sitemap';
 				$page->tab = false;
 				$page->icon = 'fa-sitemap';
-				$page->title = $this->getLanguage('pages/configs/sitemap');
+				$page->title = $this->getText('pages/configs/sitemap');
 				$pages[] = $page;
 			}
 		}
@@ -756,8 +761,9 @@ class ModuleAdmin {
 	 * @todo 현재는 사이트관리자에게 모든 권한을 부여하고 개개인에게 맞춤 권한을 제공하지는 않는다.
 	 */
 	function checkPermission() {
-		if ($this->IM->getModule('member')->isLogged() == false) return false;
 		if ($this->IM->getModule('member')->isAdmin() == true) return true;
+		
+		return false;
 	}
 	
 	function doLayout() {
@@ -868,7 +874,7 @@ class ModuleAdmin {
 		if ($language != '*') $sites->where('language',$language);
 		$sites = $sites->get();
 		for ($i=0, $loop=count($sites);$i<$loop;$i++) {
-			if (preg_match('/^logo_(.*?)$/',$type,$match) == true) { // set logo
+			if (preg_match('/^logo_(.*?)$/',$type,$match) == true) {
 				$logoType = $match[1];
 				$logo = $sites[$i]->logo && json_decode($sites[$i]->logo) != null ? json_decode($sites[$i]->logo) : new stdClass();
 				

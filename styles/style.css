@@ -13,7 +13,7 @@ header {background:#2d3845; height:52px; font-size:0px;}
 header > h1 {display:inline-block; width:230px; height:52px; line-height:52px; font-size:16px; font-weight:bold; padding-left:35px; font-family:OpenSans; color:#fff; letter-spacing:-1px; vertical-align:middle;background:#333f4d url(//www.moimz.com/iModule/emblem.png) no-repeat 10px 50%; background-size:20px;}
 header > h1 > i {color:#4cb9f3; margin-right:8px;}
 header > h1 > small {font-size:15px; font-weight:300; color:#aeb3b8; letter-spacing:0px;}
-header > ul {list-style:none; display:inline-block; vertical-align:middle; font-size:0px;}
+header > ul {list-style:none; display:inline-block; width:calc(100% - 230px - 230px); vertical-align:middle; font-size:0px;}
 header > ul > li {display:inline-block; height:52px; border-bottom:2px solid transparent;}
 header > ul > li > a {display:block; height:50px; line-height:52px; font-size:15px; padding:0px 18px; color:#aeb3b8; text-decoration:none;}
 header > ul > li > a > i {margin-right:5px; font-size:14px;}
@@ -21,6 +21,9 @@ header > ul > li:hover {background:#000;}
 header > ul > li.selected {border-color:#4cb9f3; background:#000;}
 header > ul > li.selected > a {color:#fff;}
 header > ul > li.selected > a > i {color:#4cb9f3;}
+header > aside {display:inline-block; width:230px; height:52px; vertical-align:middle; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; font-size:14px; font-weight:bold; color:rgba(255,255,255,0.8); line-height:52px; text-align:right; box-sizing:border-box; padding:0px 10px;}
+header > aside > i.photo {display:inline-block; margin:10px 10px 10px 0px; width:30px; height:30px; border:1px solid #44535d; vertical-align:middle; background-size:cover; background-position:50% 50%; background-repeat:no-repeat; border-radius:50%;}
+header > aside > button {float:right; background:#B71C1C; color:#fff; height:32px; line-height:32px; border:0; padding:0px 10px; margin:10px 0px 10px 15px; border-radius:3px; cursor:pointer; font-weight:bold; font-family:inherit;}
 
 aside > ul {list-style:none; display:block; vertical-align:middle; font-size:0px;}
 aside > ul > li {display:block; background:#f4f4f4;}
@@ -33,7 +36,7 @@ footer {background:#343f4d; height:25px; line-height:25px; color:#aeb3b8; text-a
 
 /* ExtJS 스타일시트 추가 */
 .im-icon-default div[data-ref=innerCt] {border:1px solid #ccc; background:#fff; width:100%; height:118px; line-height:118px; text-align:center; border-radius:5px;}
-.im-icon-default div[data-ref=innerCt] i.mi {font-size:64px; vertical-align:middle;}
+.im-icon-default div[data-ref=innerCt] i {font-size:64px; vertical-align:middle;}
 .im-icon-default div[data-ref=innerCt] i.mi-loading {font-size:14px !important;}
 
 .helpBlock {border:1px solid #e0d0bc; background:#fffeeb; padding:8px; font-size:12px; line-height:1.6;}

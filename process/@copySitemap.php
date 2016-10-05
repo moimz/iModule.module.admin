@@ -30,27 +30,27 @@ $oLanguage = Request('oLanguage');
 $oMenu = Request('oMenu');
 $oPage = Request('oPage');
 if ($oDomain == '' || $oLanguage == '') {
-	$errors['site'] = $this->getErrorMessage('REQUIRED');
+	$errors['site'] = $this->getErrorText('REQUIRED');
 }
 
 if ($mode == 'menu') {
 	if (!$oMenu) {
-		$errors['oMenu'] = $this->getErrorMessage('REQUIRED');
+		$errors['oMenu'] = $this->getErrorText('REQUIRED');
 	} elseif ($this->IM->db()->select($this->IM->getTable('sitemap'))->where('domain',$domain)->where('language',$language)->where('menu',$oMenu)->has() == true) {
-		$errors['oMenu'] = $this->getErrorMessage('DUPLICATED');
+		$errors['oMenu'] = $this->getErrorText('DUPLICATED');
 	}
 	
 	$target = $this->IM->db()->select($this->IM->getTable('sitemap'))->where('domain',$oDomain)->where('language',$oLanguage)->where('menu',$oMenu)->where('page','')->getOne();
-	if ($target == null) $errors['menu'] = $this->getErrorMessage('NOT_FOUND',$oMenu);
+	if ($target == null) $errors['menu'] = $this->getErrorText('NOT_FOUND',$oMenu);
 } else {
 	if (!$oPage) {
-		$errors['oPage'] = $this->getErrorMessage('REQUIRED');
+		$errors['oPage'] = $this->getErrorText('REQUIRED');
 	} elseif ($this->IM->db()->select($this->IM->getTable('sitemap'))->where('domain',$domain)->where('language',$language)->where('menu',$menu)->where('page',$oPage)->has() == true) {
-		$errors['oPage'] = $this->getErrorMessage('DUPLICATED');
+		$errors['oPage'] = $this->getErrorText('DUPLICATED');
 	}
 	
 	$target = $this->IM->db()->select($this->IM->getTable('sitemap'))->where('domain',$oDomain)->where('language',$oLanguage)->where('menu',$oMenu)->where('page',$oPage)->getOne();
-	if ($target == null) $errors['oPage'] = $this->getErrorMessage('NOT_FOUND',$oMenu);
+	if ($target == null) $errors['oPage'] = $this->getErrorText('NOT_FOUND',$oMenu);
 }
 
 if (count($errors) == 0) {

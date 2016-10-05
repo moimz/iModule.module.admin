@@ -9,6 +9,8 @@
  * @license GPLv3
  * @version 3.0.0.160903
  */
+
+if (defined('__IM__') == false) exit;
 ?>
 <script>
 var panel = new Ext.grid.Panel({
@@ -17,7 +19,7 @@ var panel = new Ext.grid.Panel({
 	tbar:[
 		new Ext.Button({
 			iconCls:"fa fa-refresh",
-			text:Admin.getLanguage("modules/lists/update_size"),
+			text:Admin.getText("modules/lists/update_size"),
 			handler:function(button) {
 				button.disable();
 				button.setIconCls("mi mi-loading");
@@ -47,9 +49,9 @@ var panel = new Ext.grid.Panel({
 			load:function(store,records,success,e) {
 				if (success == false) {
 					if (e.getError()) {
-						Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:e.getError(),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
+						Ext.Msg.show({title:Admin.getText("alert/error"),msg:e.getError(),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
 					} else {
-						Ext.Msg.show({title:Admin.getLanguage("alert/error"),msg:Admin.getErrorMessage("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
+						Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
 					}
 				}
 			}
@@ -57,7 +59,7 @@ var panel = new Ext.grid.Panel({
 	}),
 	width:"100%",
 	columns:[{
-		text:Admin.getLanguage("modules/lists/columns/title"),
+		text:Admin.getText("modules/lists/columns/title"),
 		width:150,
 		summaryType:"count",
 		dataIndex:"title",
@@ -66,40 +68,40 @@ var panel = new Ext.grid.Panel({
 			return value+" module"+(value > 1 ? "s" : "");
 		}
 	},{
-		text:Admin.getLanguage("modules/lists/columns/version"),
+		text:Admin.getText("modules/lists/columns/version"),
 		width:65,
 		align:"center",
 		dataIndex:"version"
 	},{
-		text:Admin.getLanguage("modules/lists/columns/description"),
+		text:Admin.getText("modules/lists/columns/description"),
 		minWidth:150,
 		flex:1,
 		sortable:true,
 		dataIndex:"description",
 	},{
-		text:Admin.getLanguage("modules/lists/columns/author"),
+		text:Admin.getText("modules/lists/columns/author"),
 		width:90,
 		sortable:true,
 		dataIndex:"author",
 	},{
-		text:Admin.getLanguage("modules/lists/columns/status"),
+		text:Admin.getText("modules/lists/columns/status"),
 		width:100,
 		dataIndex:"hash",
 		align:"center",
 		renderer:function(value,p,record) {
 			if (record.data.installed == false) {
 				p.style = "color:#666;";
-				return Admin.getLanguage("modules/lists/columns/need_install");
+				return Admin.getText("modules/lists/columns/need_install");
 			} else if (record.data.installed_hash != value) {
 				p.style = "color:red;";
-				return Admin.getLanguage("modules/lists/columns/need_update");
+				return Admin.getText("modules/lists/columns/need_update");
 			} else {
 				p.style = "color:blue;";
-				return Admin.getLanguage("modules/lists/columns/updated");
+				return Admin.getText("modules/lists/columns/updated");
 			}
 		}
 	},{
-		text:Admin.getLanguage("modules/lists/columns/db_size"),
+		text:Admin.getText("modules/lists/columns/db_size"),
 		dataIndex:"db_size",
 		width:110,
 		align:"right",
@@ -111,7 +113,7 @@ var panel = new Ext.grid.Panel({
 			return iModule.getFileSize(value);
 		}
 	},{
-		text:Admin.getLanguage("modules/lists/columns/attachment_size"),
+		text:Admin.getText("modules/lists/columns/attachment_size"),
 		dataIndex:"attachment_size",
 		width:110,
 		align:"right",
@@ -126,7 +128,7 @@ var panel = new Ext.grid.Panel({
 	selModel:new Ext.selection.RowModel(),
 	features:[{
 		ftype:"groupingsummary",
-		groupHeaderTpl:'<tpl if="name == \'true\'">'+Admin.getLanguage("modules/lists/columns/installed")+'<tpl elseif="name == \'false\'">'+Admin.getLanguage("modules/lists/columns/not_installed")+'</tpl>',
+		groupHeaderTpl:'<tpl if="name == \'true\'">'+Admin.getText("modules/lists/columns/installed")+'<tpl elseif="name == \'false\'">'+Admin.getText("modules/lists/columns/not_installed")+'</tpl>',
 		hideGroupedHeader:false,
 		enableGroupingMenu:false
 	}],
@@ -138,7 +140,7 @@ var panel = new Ext.grid.Panel({
 			}
 		}),
 		"->",
-		{xtype:"tbtext",text:Admin.getLanguage("text/grid_help")}
+		{xtype:"tbtext",text:Admin.getText("text/grid_help")}
 	],
 	listeners:{
 		itemdblclick:function(grid,record) {
@@ -150,7 +152,7 @@ var panel = new Ext.grid.Panel({
 			menu.add('<div class="x-menu-title">'+record.data.title+'('+record.data.module+')</div>');
 			menu.add({
 				iconCls:"fa fa-cube",
-				text:Admin.getLanguage("modules/menus/detail"),
+				text:Admin.getText("modules/menus/detail"),
 				handler:function() {
 					Admin.modules.show(record.data.module);
 				}
@@ -159,7 +161,7 @@ var panel = new Ext.grid.Panel({
 			if (record.data.installed === false) {
 				menu.add({
 					iconCls:"fa fa-hdd-o",
-					text:Admin.getLanguage("modules/menus/install"),
+					text:Admin.getText("modules/menus/install"),
 					handler:function() {
 						Admin.modules.install(record.data.module);
 					}
@@ -167,7 +169,7 @@ var panel = new Ext.grid.Panel({
 			} else if (record.data.installed_hash != record.data.hash) {
 				menu.add({
 					iconCls:"fa fa-hdd-o",
-					text:Admin.getLanguage("modules/menus/update"),
+					text:Admin.getText("modules/menus/update"),
 					handler:function() {
 						Admin.modules.install(record.data.module);
 					}
@@ -175,7 +177,7 @@ var panel = new Ext.grid.Panel({
 			} else if (record.data.isConfigPanel == true) {
 				menu.add({
 					iconCls:"fa fa-cog",
-					text:Admin.getLanguage("modules/menus/config"),
+					text:Admin.getText("modules/menus/config"),
 					handler:function() {
 						Admin.modules.install(record.data.module);
 					}
