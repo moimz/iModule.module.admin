@@ -66,8 +66,8 @@ if ($oDomain == '' && $oLanguage == '') {
 		$insert['alias'] = $alias;
 		$insert['description'] = $description;
 		$insert['templet'] = $templet;
-		$insert['logo'] = '{"icon":-1,"color":"#0578bf"}';
-		$insert['maskicon'] = '{"default":-1,"footer":-1}';
+		$insert['logo'] = '{"default":-1,"footer":-1}';
+		$insert['maskicon'] = '{"icon":-1,"color":"#0578bf"}';
 		$insert['templet_configs'] = $templetConfigs;
 		$insert['sort'] = $checkDomain != null ? $checkDomain->sort : ($this->IM->db()->select($this->IM->getTable('site'),'max(sort) as sort')->getOne()->sort + 1);
 		

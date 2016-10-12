@@ -698,6 +698,10 @@ var Admin = {
 					defaultImage+= "default.png";
 				} else if (name == "logo_footer") {
 					defaultImage+= "footer.png";
+				} else if (name == "maskicon") {
+					defaultImage+= name+".svg";
+				} else if (name == "favicon") {
+					defaultImage+= name+".ico";
 				} else {
 					defaultImage+= name+".png";
 				}
@@ -738,7 +742,14 @@ var Admin = {
 							bodyStyle:{backgroundColor:"#f4f4f4",backgroundRepeat:"no-repeat",backgroundSize:"contain",backgroundPosition:"0 50%",borderRadius:"5px",padding:"5px"},
 							width:previewWidth,
 							height:60,
-							style:{marginRight:"5px"}
+							style:{marginRight:"5px"},
+							listeners:{
+								render:function(panel) {
+									panel.setBodyStyle("backgroundImage","url("+emptyImage+")");
+									panel.setBodyStyle("backgroundColor","transparent");
+									$("#"+panel.getId()+"-innerCt").css("background","transparent");
+								}
+							}
 						}),
 						new Ext.form.FieldContainer({
 							flex:1,
@@ -910,7 +921,7 @@ var Admin = {
 					menu = Ext.getCmp("MenuList").getSelection().shift().data.menu;
 					page = code ? code : "";
 				}
-				var url = Ext.getCmp("SiteList").getRawValue().match(/\((.*?)\)$/).pop();
+				var url = Ext.getCmp("SiteList").getRawValue().match(/\(([^\(\)]+)\)$/).pop();
 				
 				if (mode == "page") url+= menu+"/";
 				
@@ -1456,7 +1467,7 @@ var Admin = {
 									waitTitle:Admin.getText("action/wait"),
 									waitMsg:Admin.getText("action/loading"),
 									success:function(form,action) {
-										form.findField("context")._configs = action.result.data._configs;
+										form.findField("context")._configs = action.result.data._configs ? action.result.data._configs : {};
 										
 										if (action.result.data.type == "MODULE") {
 											form.findField("context").getStore().getProxy().setExtraParam("target",action.result.data.target);

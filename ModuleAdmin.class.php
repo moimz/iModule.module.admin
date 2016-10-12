@@ -164,13 +164,13 @@ class ModuleAdmin {
 	 */
 	function getText($code,$replacement=null) {
 		if ($this->lang == null) {
-			if (file_exists($this->Module->getPath().'/languages/'.$this->IM->language.'.json') == true) {
-				$this->lang = json_decode(file_get_contents($this->Module->getPath().'/languages/'.$this->IM->language.'.json'));
-				if ($this->IM->language != $this->Module->getPackage()->language) {
-					$this->oLang = json_decode(file_get_contents($this->Module->getPath().'/languages/'.$this->Module->getPackage()->language.'.json'));
+			if (is_file($this->getModule()->getPath().'/languages/'.$this->IM->language.'.json') == true) {
+				$this->lang = json_decode(file_get_contents($this->getModule()->getPath().'/languages/'.$this->IM->language.'.json'));
+				if ($this->IM->language != $this->getModule()->getPackage()->language && is_file($this->getModule()->getPath().'/languages/'.$this->getModule()->getPackage()->language.'.json') == true) {
+					$this->oLang = json_decode(file_get_contents($this->getModule()->getPath().'/languages/'.$this->getModule()->getPackage()->language.'.json'));
 				}
-			} else {
-				$this->lang = json_decode(file_get_contents($this->Module->getPath().'/languages/'.$this->Module->getPackage()->language.'.json'));
+			} elseif (is_file($this->getModule()->getPath().'/languages/'.$this->getModule()->getPackage()->language.'.json') == true) {
+				$this->lang = json_decode(file_get_contents($this->getModule()->getPath().'/languages/'.$this->getModule()->getPackage()->language.'.json'));
 				$this->oLang = null;
 			}
 		}

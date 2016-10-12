@@ -17,23 +17,23 @@ $lists = array();
 $modulesPath = @opendir(__IM_PATH__.'/modules');
 while ($module = @readdir($modulesPath)) {
 	if ($module != '.' && $module != '..' && is_dir(__IM_PATH__.'/modules/'.$module) == true) {
-		$package = $this->Module->getPackage($module);
+		$package = $this->getModule()->getPackage($module);
 		
 		if ($package !== null) {
 			$item = array(
 				'id'=>$package->id,
 				'module'=>$module,
-				'title'=>$this->Module->GetTitle($module),
+				'title'=>$this->getModule()->getTitle($module),
 				'version'=>$package->version,
-				'description'=>$this->Module->getDescription($module),
-				'hash'=>$this->Module->getHash($module)
+				'description'=>$this->getModule()->getDescription($module),
+				'hash'=>$this->getModule()->getHash($module)
 			);
 			
 			$item['author'] = '';
 			if (isset($package->author->name) == true) $item['author'].= $package->author->name;
 			
-			if ($this->Module->isInstalled($module) == true) {
-				$installed = $this->Module->getInstalled($module);
+			if ($this->getModule()->isInstalled($module) == true) {
+				$installed = $this->getModule()->getInstalled($module);
 				$item['installed'] = true;
 				$item['installed_hash'] = $installed->hash;
 				$item['db_size'] = $installed->db_size;
@@ -44,7 +44,7 @@ while ($module = @readdir($modulesPath)) {
 				$item['db_size'] = 0;
 				$item['attachment_size'] = 0;
 			}
-			$item['isConfigPanel'] = $this->Module->isConfigPanel($module);
+			$item['isConfigPanel'] = $this->getModule()->isConfigPanel($module);
 			
 			$lists[] = $item;
 		}

@@ -31,8 +31,6 @@ foreach ($_POST as $key=>$value) {
 	}
 }
 
-print_r($configs);
-
 $installed = $this->IM->Module->install($target,$configs);
 if ($installed === true) {
 	$results->success = true;

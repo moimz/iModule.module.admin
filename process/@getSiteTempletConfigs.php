@@ -22,7 +22,7 @@ $Templet = $this->IM->getTemplet($this->IM,$templet);
 if ($Templet->isLoaded() === true) {
 	if ($domain && $language) {
 		$site = $this->IM->db()->select($this->IM->getTable('site'))->where('domain',$domain)->where('language',$language)->getOne();
-		if ($site !== null || $site->templet == $templet) $Templet->setConfigs(json_decode($site->templet_configs));
+		if ($site !== null && $site->templet == $templet) $Templet->setConfigs(json_decode($site->templet_configs));
 	}
 	$configs = $Templet->getConfigs();
 } else {
