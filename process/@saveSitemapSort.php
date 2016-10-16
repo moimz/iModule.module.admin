@@ -17,7 +17,7 @@ if (defined('__IM__') == false) exit;
 $updated = json_decode(Request('updated'));
 
 for ($i=0, $loop=count($updated);$i<$loop;$i++) {
-	$this->IM->db()->update($this->IM->getTable('page'),array('sort'=>$updated[$i]->sort))->where('domain',$updated[$i]->domain)->where('language',$updated[$i]->language)->where('menu',$updated[$i]->menu)->where('page',$updated[$i]->page)->execute();
+	$this->IM->db()->update($this->IM->getTable('sitemap'),array('sort'=>$updated[$i]->sort))->where('domain',$updated[$i]->domain)->where('language',$updated[$i]->language)->where('menu',$updated[$i]->menu)->where('page',$updated[$i]->page)->execute();
 }
 
 $results->success = true;

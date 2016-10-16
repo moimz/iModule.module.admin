@@ -29,7 +29,7 @@ $type = Request('type') ? Request('type') : $errors['type'] = $this->getErrorTex
 
 if ($mode == 'menu') {
 	$oMenu = Request('oMenu');
-	$menu = preg_match('/^[a-z]+$/',Request('menu')) == true ? Request('menu') : $errors['menu'] = $this->getErrorText('LOWER_CASE_ALPHABET_ONLY');
+	$menu = preg_match('/^[a-zA-Z0-9_]+$/',Request('menu')) == true ? Request('menu') : $errors['menu'] = $this->getErrorText('ALPHABET_NUMBER_UNDERBAR_ONLY');
 	if (in_array($menu,array('account','module')) == true) $errors['menu'] = $this->getErrorText('RESERVED_NAME');
 	
 	if ($oMenu != $menu && $this->IM->db()->select($this->IM->getTable('sitemap'))->where('domain',$domain)->where('language',$language)->where('menu',$menu)->where('page','')->has() == true) {
@@ -40,7 +40,7 @@ if ($mode == 'menu') {
 if ($mode == 'page') {
 	$oMenu = Request('oMenu');
 	$oPage = Request('oPage');
-	$page = preg_match('/^[a-z]+$/',Request('page')) == true ? Request('page') : $errors['page'] = $this->getErrorText('LOWER_CASE_ALPHABET_ONLY');
+	$page = preg_match('/^[a-zA-Z0-9_]+$/',Request('page')) == true ? Request('page') : $errors['page'] = $this->getErrorText('ALPHABET_NUMBER_UNDERBAR_ONLY');
 	
 	if ($oPage != $page && $this->IM->db()->select($this->IM->getTable('sitemap'))->where('domain',$domain)->where('language',$language)->where('menu',$oMenu)->where('page',$page)->has() == true) {
 		$errors['page'] = $this->getErrorText('DUPLICATED');
