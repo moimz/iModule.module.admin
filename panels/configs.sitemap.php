@@ -151,7 +151,6 @@ var panel = new Ext.Panel({
 						flex:1,
 						dataIndex:"title",
 						renderer:function(value,p,record) {
-							console.log(record.data.icon);
 							return record.data.icon+" "+value;
 						}
 					},{
