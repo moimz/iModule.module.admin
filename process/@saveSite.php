@@ -40,8 +40,7 @@ foreach ($this->IM->getTemplet($this->IM,$templet)->getConfigs() as $key=>$value
 $templetConfigs = json_encode($templetConfigs,JSON_UNESCAPED_UNICODE);
 
 // @todo uploaded file type checking
-
-if (is_dir(__IM_PATH__.'/templets/'.$templet) == false) $errors['templet'] = $this->getErrorText('NOT_FOUND_TEMPLET',$templet);
+if ($this->IM->getTemplet($this->IM,$templet)->isLoaded() == false) $errors['templet'] = $this->getErrorText('NOT_FOUND_TEMPLET',$templet);
 
 /**
  * 사이트 추가시 기본 데이터를 추가 후 수정모드로 이동한다.
