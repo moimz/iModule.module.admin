@@ -255,31 +255,16 @@ var Admin = {
 				if (result.success == true) {
 					if (result.panel == null) {
 						$.send(ENV.getProcessUrl("admin","@installModule"),{target:module},function(result) {
-							console.log(result);
-						});
-						
-						/*
-						Ext.getCmp("ModuleConfigForm").getForm().submit({
-							url:ENV.getProcessUrl("admin","@installModule"),
-							params:{target:module},
-							submitEmptyText:false,
-							waitTitle:Admin.getText("action/wait"),
-							waitMsg:Admin.getText("modules/lists/installing"),
-							success:function(form,action) {
+							if (result.success == true) {
 								Ext.Msg.show({title:Admin.getText("alert/info"),msg:Admin.getText("modules/lists/installed"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO,fn:function(button) {
-									Ext.getCmp("ModuleConfigsWindow").close();
 									Ext.getCmp("ModuleList").getStore().reload();
 								}});
-							},
-							failure:function(form,action) {
-								if (action.result && action.result.message) {
-									Ext.Msg.show({title:Admin.getText("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
-								} else {
-									Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("INVALID_FORM_DATA"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
-								}
 							}
 						});
-						*/
+						
+						/**
+						 * @todo 모듈의 package.json 에 설정되어 있는 configs 설정이 있다면, 해당 값으로 설정패널을 자동으로 구성한다.
+						 */
 					} else {
 						/**
 						 * 모듈 스크립트가 있다면 불러오기
@@ -442,7 +427,6 @@ var Admin = {
 														fields:["display","value"],
 														data:[["http://","FALSE"],["https://","TRUE"]]
 													}),
-													editable:false,
 													displayField:"display",
 													valueField:"value",
 													value:"FALSE",
@@ -469,7 +453,6 @@ var Admin = {
 												fields:["display","value"],
 												data:[[Admin.getText("configs/sites/form/member/UNIVERSAL"),"UNIVERSAL"],[Admin.getText("configs/sites/form/member/UNIQUE"),"UNIQUE"]]
 											}),
-											editable:false,
 											displayField:"display",
 											valueField:"value",
 											value:"UNIVERSAL"
@@ -522,12 +505,11 @@ var Admin = {
 															url:ENV.getProcessUrl("admin","@getSiteTemplets"),
 															reader:{type:"json"}
 														},
+														autoLoad:true,
 														remoteSort:false,
 														sorters:[{property:"templet",direction:"ASC"}],
 														fields:["display","value"]
 													}),
-													autoLoadOnValue:true,
-													editable:false,
 													displayField:"display",
 													valueField:"value",
 													flex:1,
@@ -1011,7 +993,6 @@ var Admin = {
 														fields:["display","value"],
 														data:[["FontAwesome","fa"],["XEIcon","xi"],["XEIcon2","xi2"],["Icon Image","image"]]
 													}),
-													editable:false,
 													allowBlank:true,
 													displayField:"display",
 													valueField:"value",
@@ -1079,7 +1060,6 @@ var Admin = {
 													[[Admin.getText("configs/sitemap/type/MODULE"),"MODULE"],[Admin.getText("configs/sitemap/type/EXTERNAL"),"EXTERNAL"],[Admin.getText("configs/sitemap/type/WIDGET"),"WIDGET"],[Admin.getText("configs/sitemap/type/LINK"),"LINK"],[Admin.getText("configs/sitemap/type/EMPTY"),"EMPTY"]]
 												)
 											}),
-											editable:false,
 											displayField:"display",
 											valueField:"value",
 											emptyText:Admin.getText("configs/sitemap/form/type_help"),
@@ -1115,11 +1095,10 @@ var Admin = {
 													extraParams:{domain:domain,language:language},
 													reader:{type:"json"}
 												},
+												autoLoad:true,
 												remoteSort:false,
 												fields:["layout","description"]
 											}),
-											autoLoadOnValue:true,
-											editable:false,
 											displayField:"description",
 											valueField:"layout"
 										})
@@ -1141,18 +1120,17 @@ var Admin = {
 															url:ENV.getProcessUrl("admin","@getContextModules"),
 															reader:{type:"json"}
 														},
+														autoLoad:true,
 														remoteSort:false,
 														sorters:[{property:"module",direction:"ASC"}],
 														fields:["module","title"]
 													}),
-													autoLoadOnValue:true,
-													editable:false,
 													displayField:"title",
 													valueField:"module",
 													flex:1,
 													listeners:{
-														select:function(form,record) {
-															Ext.getCmp("SitemapConfigForm").getForm().findField("context").getStore().getProxy().setExtraParam("target",record.data.module);
+														change:function(form,value) {
+															Ext.getCmp("SitemapConfigForm").getForm().findField("context").getStore().getProxy().setExtraParam("target",value);
 															Ext.getCmp("SitemapConfigForm").getForm().findField("context").getStore().load();
 														}
 													}
@@ -1196,7 +1174,6 @@ var Admin = {
 															}
 														}
 													}),
-													editable:false,
 													displayField:"title",
 													valueField:"context",
 													flex:1,
@@ -1226,7 +1203,6 @@ var Admin = {
 																								fields:["value","display"],
 																								data:result.configs[i].data
 																							}),
-																							editable:false,
 																							displayField:"display",
 																							valueField:"value",
 																							value:form._configs[result.configs[i].name] ? form._configs[result.configs[i].name] : result.configs[i].value
@@ -1271,16 +1247,15 @@ var Admin = {
 												proxy:{
 													type:"ajax",
 													url:ENV.getProcessUrl("admin","@getExternals"),
-													extraParams:{domain:domain,language:language},
 													reader:{type:"json"}
 												},
+												autoLoad:true,
 												remoteSort:false,
-												fields:["external","path"]
+												sorters:[{property:"path",direction:"ASC"}],
+												fields:["path"]
 											}),
-											autoLoadOnValue:true,
-											editable:false,
 											displayField:"path",
-											valueField:"external",
+											valueField:"path",
 											afterBodyEl:'<div class="x-form-help">'+Admin.getText("configs/sitemap/form/external_help")+'</div>'
 										})
 									]
@@ -1318,8 +1293,6 @@ var Admin = {
 															}
 														}
 													}),
-													autoLoadOnValue:true,
-													editable:false,
 													disabled:code ? false : true,
 													displayField:"title",
 													valueField:"page",
@@ -1395,7 +1368,6 @@ var Admin = {
 														fields:["display","value"],
 														data:[[Admin.getText("configs/sitemap/form/link_target")._self,"_self"],[Admin.getText("configs/sitemap/form/link_target")._blank,"_blank"]]
 													}),
-													editable:false,
 													displayField:"display",
 													valueField:"value",
 													value:"_self",
@@ -1563,8 +1535,6 @@ var Admin = {
 												sorters:[{property:"sort",direction:"ASC"}],
 												fields:["display","value","domain","language"]
 											}),
-											autoLoadOnValue:true,
-											editable:false,
 											displayField:"display",
 											valueField:"value",
 											listeners:{
@@ -1597,8 +1567,6 @@ var Admin = {
 													}
 												}
 											}),
-											autoLoadOnValue:true,
-											editable:false,
 											displayField:"title",
 											valueField:"menu",
 											listeners:{
@@ -1632,8 +1600,6 @@ var Admin = {
 													}
 												}
 											}),
-											autoLoadOnValue:true,
-											editable:false,
 											displayField:"title",
 											valueField:"page"
 										})
@@ -1858,7 +1824,6 @@ var Admin = {
 									fields:["value","display"],
 									data:configs[config].data
 								}),
-								editable:false,
 								allowBlank:true,
 								displayField:"display",
 								valueField:"value",
@@ -1953,13 +1918,17 @@ var Admin = {
 					var $textarea = $("textarea",$("#"+form.getId()));
 					$textarea.froalaEditor({
 						key:"pFOFSAGLUd1AVKg1SN==", // Froala Wysiwyg OEM License Key For MoimzTools Only
-						heightMin:400,
+						heightMin:300,
 						toolbarButtons:["html","|","bold","italic","underline","strikeThrough","|","paragraphFormat","fontSize","color","|","align","formatOL","formatUL","outdent","indent","|","insertLink","insertTable"],
 						fontSize:["8","9","10","11","12","14","18","24"],
 						paragraphFormat:{N:"Normal",H1:"Heading 1",H2:"Heading 2",H3:"Heading 3"},
 						toolbarSticky:false,
 						pluginsEnabled:["align","codeView","colors","fontSize","lineBreaker","link","lists","paragraphFormat","table","url"]
 					});
+				},
+				change:function(form,value) {
+					var $textarea = $("textarea",$("#"+form.getId()));
+					$textarea.froalaEditor("html.set",value);
 				}
 			}
 		});
@@ -1994,7 +1963,6 @@ var Admin = {
 						fields:["display","value"],
 						data:presets
 					}),
-					editable:false,
 					displayField:"display",
 					valueField:"value",
 					value:selectorValue,
