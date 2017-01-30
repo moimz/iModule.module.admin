@@ -18,8 +18,6 @@ if (defined('__IM__') == false) exit;
 $domain = Request('domain');
 $language = Request('language');
 
-$site = $this->IM->getSites($domain,$language);
-
 /**
  * 공용 외부파일폴더를 탐색한다.
  */
@@ -28,7 +26,6 @@ $externalsPath = @opendir(__IM_PATH__.'/externals');
 while ($external = @readdir($externalsPath)) {
 	if ($external != '.' && $external != '..' && is_file(__IM_PATH__.'/externals/'.$external) == true) {
 		$lists[] = array(
-			'external'=>$external,
 			'path'=>__IM_DIR__.'/externals/'.$external
 		);
 	}
@@ -38,16 +35,36 @@ while ($external = @readdir($externalsPath)) {
 /**
  * 사이트템플릿의 외부파일폴더를 탐색한다.
  */
-$externalsPath = @opendir(__IM_PATH__.'/templets/'.$site->templet.'/externals');
-while ($external = @readdir($externalsPath)) {
-	if ($external != '.' && $external != '..' && is_file(__IM_PATH__.'/templets/'.$site->templet.'/externals/'.$external) == true) {
-		$lists[] = array(
-			'external'=>'@'.$external,
-			'path'=>__IM_DIR__.'/templets/'.$site->templet.'/externals/'.$external
-		);
+$templetsPath = @opendir(__IM_PATH__.'/templets');
+while ($templet = @readdir($templetsPath)) {
+	if ($templet != '.' && $templet != '..' && is_dir(__IM_PATH__.'/templets/'.$templet) == true) {
+		$externalsPath = @opendir(__IM_PATH__.'/templets/'.$templet.'/externals');
+		while ($external = @readdir($externalsPath)) {
+			if ($external != '.' && $external != '..' && is_file(__IM_PATH__.'/templets/'.$templet.'/externals/'.$external) == true) {
+				$lists[] = array(
+					'path'=>__IM_DIR__.'/templets/'.$templet.'/externals/'.$external
+				);
+			}
+		}
+		@closedir($externalsPath);
 	}
 }
-@closedir($externalsPath);
+@closedir($templetsPath);
+
+/**
+ * 사이트 탬플릿을 사용하는 모듈에서 탐색한다.
+ */
+$modules = $this->IM->db()->select($this->IM->getModule()->getTable('module'))->where('is_templet','TRUE')->get();
+for ($i=0, $loop=count($modules);$i<$loop;$i++) {
+	$externalsPath = @opendir($this->IM->getModule()->getPath($modules[$i]->module).'/templets/externals');
+	while ($external = @readdir($externalsPath)) {
+		if ($external != '.' && $external != '..' && is_file($this->IM->getModule()->getPath($modules[$i]->module).'/templets/externals/'.$external) == true) {
+			$lists[] = array(
+				'path'=>$this->IM->getModule()->getDir($modules[$i]->module).'/templets/externals/'.$external
+			);
+		}
+	}
+}
 
 $results->success = true;
 $results->lists = $lists;

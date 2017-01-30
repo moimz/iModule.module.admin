@@ -57,6 +57,8 @@ if ($data != null) {
 		$data->link_target = $context->target;
 	}
 	
+	unset($data->context);
+	
 	$results->success = true;
 	$results->data = $data;
 } else {

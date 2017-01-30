@@ -22,8 +22,6 @@ $data = isset($package->configs) == true ? $package->configs : new stdClass();
 foreach ($data as $key=>$type) {
 	if (isset($configs->$key) == false) $data->$key = $type->value;
 	else $data->$key = $configs->$key;
-	
-	if ($type->type == 'array') $data->$key = implode(',',$data->$key);
 }
 $results->success = true;
 $results->data = $data;

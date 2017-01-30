@@ -54,7 +54,7 @@ var panel = new Ext.Panel({
 			editable:false,
 			displayField:"display",
 			valueField:"value",
-			width:300,
+			width:400,
 			listeners:{
 				change:function(form,value) {
 					if (value) {
@@ -119,10 +119,13 @@ var panel = new Ext.Panel({
 						pageSize:0,
 						fields:["menu","page","icon","title","type","context"],
 						listeners:{
-							load:function(store,records,success,e) {
-								Ext.getCmp("MenuList").enable();
+							beforeload:function() {
+								Ext.getCmp("MenuList").getStore().removeAll();
+								Ext.getCmp("MenuList").disable();
+								Ext.getCmp("PageList").getStore().removeAll();
 								Ext.getCmp("PageList").disable();
-								
+							},
+							load:function(store,records,success,e) {
 								if (success == false) {
 									if (e.getError()) {
 										Ext.Msg.show({title:Admin.getText("alert/error"),msg:e.getError(),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
@@ -130,6 +133,9 @@ var panel = new Ext.Panel({
 										Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
 									}
 								} else {
+									Ext.getCmp("MenuList").enable();
+									Ext.getCmp("PageList").disable();
+									
 									if (Ext.getCmp("MenuList").selected != null) {
 										var select = Ext.getCmp("MenuList").getStore().find("menu",Ext.getCmp("MenuList").selected,0,false,false,true);
 										if (select > -1 ) Ext.getCmp("MenuList").getSelectionModel().select(select);
