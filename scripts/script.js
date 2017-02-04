@@ -1907,31 +1907,33 @@ var Admin = {
 	 * @param string label 라벨명
 	 * @param string name 필드명
 	 * @param string value 필드값
+	 * @param object options 필드속성
 	 */
-	wysiwygField:function(label,name,value) {
-		return new Ext.form.TextArea({
-			fieldLabel:(label ? label : ""),
-			name:name,
-			width:"100%",
-			listeners:{
-				render:function(form) {
-					var $textarea = $("textarea",$("#"+form.getId()));
-					$textarea.froalaEditor({
-						key:"pFOFSAGLUd1AVKg1SN==", // Froala Wysiwyg OEM License Key For MoimzTools Only
-						heightMin:300,
-						toolbarButtons:["html","|","bold","italic","underline","strikeThrough","|","paragraphFormat","fontSize","color","|","align","formatOL","formatUL","outdent","indent","|","insertLink","insertTable"],
-						fontSize:["8","9","10","11","12","14","18","24"],
-						paragraphFormat:{N:"Normal",H1:"Heading 1",H2:"Heading 2",H3:"Heading 3"},
-						toolbarSticky:false,
-						pluginsEnabled:["align","codeView","colors","fontSize","lineBreaker","link","lists","paragraphFormat","table","url"]
-					});
-				},
-				change:function(form,value) {
-					var $textarea = $("textarea",$("#"+form.getId()));
-					$textarea.froalaEditor("html.set",value);
-				}
-			}
-		});
+	wysiwygField:function(label,name,value,options) {
+		var options = typeof options == "object" ? options : {};
+		
+		options.name = name;
+		options.fieldLabel = (label ? label : "");
+		options.width = options.width ? options.width : "100%";
+		options.listeners = options.listeners ? options.listeners : {};
+		options.listeners.render = function(form) {
+			var $textarea = $("textarea",$("#"+form.getId()));
+			$textarea.froalaEditor({
+				key:"pFOFSAGLUd1AVKg1SN==", // Froala Wysiwyg OEM License Key For MoimzTools Only
+				heightMin:300,
+				toolbarButtons:["html","|","bold","italic","underline","strikeThrough","|","paragraphFormat","fontSize","color","|","align","formatOL","formatUL","outdent","indent","|","insertLink","insertTable"],
+				fontSize:["8","9","10","11","12","14","18","24"],
+				paragraphFormat:{N:"Normal",H1:"Heading 1",H2:"Heading 2",H3:"Heading 3"},
+				toolbarSticky:false,
+				pluginsEnabled:["align","codeView","colors","fontSize","lineBreaker","link","lists","paragraphFormat","table","url"]
+			});
+		}
+		options.listeners.change = function(form,value) {
+			var $textarea = $("textarea",$("#"+form.getId()));
+			$textarea.froalaEditor("html.set",value);
+		}
+		
+		return new Ext.form.TextArea(options);
 	},
 	/**
 	 * 권한을 설정하는 필드셋을 정의한다.
