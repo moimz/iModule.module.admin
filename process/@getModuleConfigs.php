@@ -20,7 +20,7 @@ $configs = $this->Module->isInstalled($module) == true ? json_decode($this->Modu
 
 $data = isset($package->configs) == true ? $package->configs : new stdClass();
 foreach ($data as $key=>$type) {
-	if (isset($configs->$key) == false) $data->$key = $type->value;
+	if (isset($configs->$key) == false) $data->$key = isset($type->default) == true ? $type->default : '';
 	else $data->$key = $configs->$key;
 }
 $results->success = true;

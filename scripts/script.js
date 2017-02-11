@@ -1797,109 +1797,137 @@ var Admin = {
 		});
 	},
 	/**
-	 * 템플릿 환경설정폼을 구성한다.
+	 * 템플릿 필드를 추가한다.
 	 *
-	 * @param string id 환경설정폼을 구성할 FieldSet 이름
-	 * @param string prefix 환경설정키값 앞에 고정될 변수
-	 * @param object configs 템플릿 환경설정
-	 * @param boolean is_apply_all 전체적용 필드 여부 (기본값 false)
+	 * @param string label 라벨명
+	 * @param string name 필드명
+	 * @param string target 템플릿을 불러올 대상 (모듈명, 위젯명)
+	 * @return object Ext.form.Combobox
 	 */
-	setTempletConfigs:function(id,prefix,configs,is_apply_all) {
-		Ext.getCmp(id).hide();
-		Ext.getCmp(id).removeAll();
-		
-		if (configs == null) return;
-		
-		for (var config in configs) {
-			if (configs[config].type == "select") {
-				Ext.getCmp(id).add(
-					new Ext.form.FieldContainer({
-						fieldLabel:configs[config].title,
-						anchor:"100%",
-						layout:"hbox",
-						items:[
-							new Ext.form.ComboBox({
-								name:prefix+config,
-								store:new Ext.data.ArrayStore({
-									fields:["value","display"],
-									data:configs[config].data
-								}),
-								allowBlank:true,
-								displayField:"display",
-								valueField:"value",
-								margin:"0 5 0 0",
-								flex:1,
-								value:configs[config].value
-							}),
-							new Ext.form.Checkbox({
-								boxLabel:Admin.getText("text/apply_all_templet"),
-								name:prefix+config+"_all",
-								hidden:is_apply_all !== true,
-								disabled:is_apply_all !== true
-							})
-						],
-						afterBodyEl:'<div class="x-form-help">'+configs[config].help+'</div>'
-					})
-				);
-			}
-			
-			if (configs[config].type == "text") {
-				Ext.getCmp(id).add(
-					new Ext.form.FieldContainer({
-						fieldLabel:configs[config].title,
-						anchor:"100%",
-						layout:"hbox",
-						items:[
-							new Ext.form.TextField({
-								name:prefix+config,
-								allowBlank:true,
-								flex:1,
-								margin:"0 5 0 0",
-								value:configs[config].value
-							}),
-							new Ext.form.Checkbox({
-								boxLabel:Admin.getText("text/apply_all_templet"),
-								name:prefix+configs[config].name+"_all",
-								hidden:is_apply_all !== true,
-								disabled:is_apply_all !== true
-							})
-						],
-						afterBodyEl:'<div class="x-form-help">'+configs[config].help+'</div>'
-					})
-				);
-			}
-			
-			if (configs[config].type == "textarea") {
-				Ext.getCmp(id).add(
-					new Ext.form.FieldContainer({
-						fieldLabel:configs[config].title,
-						anchor:"100%",
-						layout:"hbox",
-						items:[
-							new Ext.form.TextArea({
-								name:prefix+config,
-								allowBlank:true,
-								height:80,
-								margin:"0 5 5 0",
-								flex:1,
-								value:configs[config].value
-							}),
-							new Ext.form.Checkbox({
-								boxLabel:Admin.getText("text/apply_all_templet"),
-								name:prefix+config.name+"_all",
-								hidden:is_apply_all !== true,
-								disabled:is_apply_all !== true
-							})
-						],
-						afterBodyEl:'<div class="x-form-help">'+configs[config].help+'</div>'
-					})
-				);
-			}
-		}
-		
-		if (Ext.getCmp(id).items.length > 0) {
-			Ext.getCmp(id).show();
-		}
+	templetField:function(label,name,target,use_default,url,params) {
+		return new Ext.form.FieldContainer({
+			layout:{type:"vbox",align:"stretch"},
+			style:{marginBottom:"0px"},
+			items:[
+				new Ext.form.ComboBox({
+					fieldLabel:label,
+					name:name,
+					url:url,
+					params:params,
+					store:new Ext.data.JsonStore({
+						proxy:{
+							type:"ajax",
+							simpleSortMode:true,
+							url:ENV.getProcessUrl("admin","@getTemplets"),
+							reader:{type:"json",root:"lists",totalProperty:"totalCount"}
+						},
+						remoteSort:false,
+						sorters:[{property:"sort",direction:"ASC"},{property:"name",direction:"ASC"}],
+						pageSize:0,
+						fields:["title","templet"]
+					}),
+					flex:1,
+					editable:false,
+					displayField:"title",
+					valueField:"templet",
+					value:use_default !== undefined ? "#" : "default",
+					listeners:{
+						render:function(form) {
+							var type = "module";
+							
+							if (form.getPanel().getId() == "ModuleConfigForm") {
+								
+							} else if (form.getPanel().getId() == "") {
+							}
+							
+							form.getStore().getProxy().setExtraParams({type:type,target:target,use_default:use_default === undefined ? false : use_default});
+							form.getStore().load();
+						},
+						change:function(form,value) {
+							if (Ext.getCmp(form.getName()+"-configs")) form.ownerCt.remove(Ext.getCmp(form.getName()+"-configs"));
+							if (value == "#") return;
+							
+							if (form.url) {
+								var url = form.url;
+								var params = {};
+								
+								if (form.params) {
+									for (var i=0, loop=form.params.length;i<loop;i++) {
+										params[form.params[i]] = form.getForm().findField(form.params[i]).getValue();
+									}
+								}
+								
+								params.name = form.getName();
+								params.templet = value;
+							} else {
+								var url = ENV.getProcessUrl("admin","@getTempletConfigs");
+								var params = {name:form.getName(),target:target,templet:value};
+								if (form.getPanel().getId() == "ModuleConfigForm") {
+									params.type = "module";
+									params.position = "module";
+								} else if (form.getPanel().getId() == "") {
+									params.position = "sitemap";
+								}
+							}
+							
+							$.send(url,params,function(result) {
+								if (result.success == true) {
+									var configs = result.configs;
+									if (configs == null) return;
+									
+									var container = new Ext.form.FieldSet({
+										id:form.getName()+"-configs",
+										title:"템플릿 세부설정",
+										style:{marginLeft:(form.getPanel().fieldDefaults.labelWidth + 5)+"px",marginBottom:"10px"}
+									});
+									
+									var preset = form.getName()+"_configs_";
+									for (var config in configs) {
+										var item = configs[config];
+										
+										var options = {
+											fieldLabel:item.title,
+											name:preset+config,
+											allowBlank:true
+										};
+										
+										if (item.help) options.afterBodyEl = '<div class="x-form-help">'+item.help+'</div>';
+										if (item.value) options.value = item.value;
+										
+										if (item.type == "string") {
+											if (item.is_multiline == true) {
+												options.height = 80;
+												
+												container.add(
+													new Ext.form.TextArea(options)
+												);
+											} else {
+												container.add(
+													new Ext.form.TextField(options)
+												);
+											}
+										}
+										
+										if (item.type == "int") {
+											container.add(
+												new Ext.form.NumberField(options)
+											);
+										}
+									}
+									
+									if (container.items.length == 0) {
+										form.ownerCt.style = {marginBottom:"0px"};
+									} else {
+										form.ownerCt.add(container);
+									}
+									form.ownerCt.updateLayout();
+								}
+							});
+						}
+					}
+				})
+			]
+		});
 	},
 	/**
 	 * 위지윅 필드를 추가한다.
@@ -1911,23 +1939,74 @@ var Admin = {
 	 */
 	wysiwygField:function(label,name,value,options) {
 		var options = typeof options == "object" ? options : {};
-		
+		console.log(name);
 		options.name = name;
 		options.fieldLabel = (label ? label : "");
 		options.width = options.width ? options.width : "100%";
 		options.listeners = options.listeners ? options.listeners : {};
 		options.listeners.render = function(form) {
 			var $textarea = $("textarea",$("#"+form.getId()));
+			
+			$textarea.on("froalaEditor.image.uploaded",function(e,editor,response) {
+				var result = JSON.parse(response);
+				if (result.success == true) {
+					var form = Ext.getCmp(editor.$oel.attr("id").replace("-inputEl","-files"));
+					var files = form.getValue().length > 0 ? form.getValue().split(",") : [];
+					files.push(result.fileInfo.idx);
+					
+					form.setValue(files.join(","));
+				}
+			});
+			
+			$textarea.on("froalaEditor.image.inserted",function(e,editor,$img,response) {
+				if (response) {
+					var result = typeof response == "object" ? response : JSON.parse(response);
+					if (result.success == true) {
+						$img.attr("data-idx",result.fileInfo.idx);
+					}
+				}
+			});
+			
+			$textarea.on("froalaEditor.file.uploaded",function(e,editor,response) {
+				var result = JSON.parse(response);
+				if (result.success == true) {
+					var form = Ext.getCmp(editor.$oel.attr("id").replace("-inputEl","-files"));
+					var files = form.getValue().length > 0 ? form.getValue().split(",") : [];
+					files.push(result.fileInfo.idx);
+					
+					form.setValue(files.join(","));
+				}
+			});
+			
+			$textarea.on("froalaEditor.file.inserted",function(e,editor,$file,response) {
+				console.log("froalaEditor.file.inserted",$file,response);
+				if (response) {
+					var result = typeof response == "object" ? response : JSON.parse(response);
+					if (result.success == true) {
+						$file.append($("<i>").addClass("size").html("("+iModule.getFileSize(result.fileInfo.size)+")"));
+						$file.attr("data-idx",result.fileInfo.idx);
+					}
+				}
+			});
+			
 			$textarea.froalaEditor({
 				key:"pFOFSAGLUd1AVKg1SN==", // Froala Wysiwyg OEM License Key For MoimzTools Only
 				heightMin:300,
-				toolbarButtons:["html","|","bold","italic","underline","strikeThrough","|","paragraphFormat","fontSize","color","|","align","formatOL","formatUL","outdent","indent","|","insertLink","insertTable"],
+				heightMax:300,
+				toolbarButtons:["bold","italic","underline","strikeThrough","align","|","paragraphFormat","fontSize","color","|","insertImage","insertFile","insertVideo","insertLink","insertTable","|","html"],
 				fontSize:["8","9","10","11","12","14","18","24"],
+				imageUploadURL:ENV.getProcessUrl("attachment","wysiwyg_upload"),
+				imageUploadParams:{_module:"admin",_target:form.getName("name")},
+				fileUploadURL:ENV.getProcessUrl("attachment","wysiwyg_upload"),
+				fileUploadParams:{_module:"admin",_target:form.getName("name")},
 				paragraphFormat:{N:"Normal",H1:"Heading 1",H2:"Heading 2",H3:"Heading 3"},
 				toolbarSticky:false,
-				pluginsEnabled:["align","codeView","colors","fontSize","lineBreaker","link","lists","paragraphFormat","table","url"]
+				pluginsEnabled:["align","codeView","colors","file","fontSize","image","lineBreaker","link","lists","paragraphFormat","insertCode","table","url","video"]
 			});
-		}
+			
+			form.ownerCt.add(new Ext.form.Hidden({id:form.getId()+"-files",name:form.getName()+"_files",allowBlank:true}));
+		};
+		
 		options.listeners.change = function(form,value) {
 			var $textarea = $("textarea",$("#"+form.getId()));
 			$textarea.froalaEditor("html.set",value);
