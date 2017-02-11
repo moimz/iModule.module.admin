@@ -766,6 +766,34 @@ class ModuleAdmin {
 		return false;
 	}
 	
+	/**
+	 * 위지윅 필드를 정리한다.
+	 *
+	 * @param string $field 위지윅필드명
+	 * @param string $module 모듈명
+	 * @param string $target 타겟명
+	 * @return int[] $files 정리된 파일고유번호
+	 */
+	function updateWysiwyg($field,$module,$target) {
+		$mAttachment = $this->IM->getModule('attachment');
+		
+		$content = Request($field);
+		$files = Request($field.'_files') ? explode(',',Request($field.'_files')) : array();
+		
+		$attachments = array();
+		for ($i=0, $loop=count($files);$i<$loop;$i++) {
+			if (preg_match('/<(a|img)(.*?)data-idx="'.$files[$i].'"(.*?)>/',$content) == true) {
+				$attachments[] = $files[$i];
+				
+				$mAttachment->db()->update($mAttachment->getTable('attachment'),array('module'=>$module,'target'=>$target,'status'=>'PUBLISHED'))->where('idx',$files[$i])->execute();
+			} else {
+				$mAttachment->fileDelete($files[$i]);
+			}
+		}
+		
+		return $attachments;
+	}
+	
 	function doLayout() {
 		global $_CONFIGS;
 		
