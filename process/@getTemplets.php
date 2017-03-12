@@ -17,9 +17,21 @@ $type = Request('type');
 $target = Request('target');
 $use_default = Request('use_default');
 
+$lists = array();
+
+if ($type == 'core') {
+	if ($target == 'site') {
+		$templets = $this->IM->getTemplets($this->IM);
+
+		for ($i=0, $loop=count($templets);$i<$loop;$i++) {
+			$lists[] = array('title'=>$templets[$i]->getTitle().' ('.$templets[$i]->getDir().')','templet'=>$templets[$i]->getName(),'sort'=>1);
+		}
+	}
+}
+
 if ($type == 'module') {
 	$templets = $this->IM->getModule($target)->getModule()->getTemplets();
-	$lists = array();
+	
 	for ($i=0, $loop=count($templets);$i<$loop;$i++) {
 		$lists[] = array('title'=>$templets[$i]->getTitle().' ('.$templets[$i]->getDir().')','templet'=>$templets[$i]->getName(),'sort'=>1);
 	}

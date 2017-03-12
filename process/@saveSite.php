@@ -29,13 +29,8 @@ $member = Request('member');
 $is_default = Request('is_default') ? 'TRUE' : 'FALSE';
 
 $templetConfigs = array();
-$templetConfigsAll = array();
-
 foreach ($this->IM->getTemplet($this->IM,$templet)->getConfigs() as $key=>$value) {
-	$templetConfigs[$key] = Request('@templet_configs-'.$key);
-	if (Request('@templet_configs-'.$key.'_all') == 'on') {
-		$templetConfigsAll[$key] = Request('@templet_configs-'.$key);
-	}
+	$templetConfigs[$key] = Request('templet_configs_'.$key);
 }
 $templetConfigs = json_encode($templetConfigs,JSON_UNESCAPED_UNICODE);
 
@@ -150,7 +145,10 @@ if (count($errors) == 0) {
 if ($results->success == true) {
 	$insert = array();
 	if (Request('is_default') != null) $insert['is_default'] = 'FALSE';
-	if (Request('templet_all') != null) $insert['templet'] = $templet;
+	if (Request('templet_all') != null) {
+		$insert['templet'] = $templet;
+		$insert['templet_configs'] = $templetConfigs;
+	}
 	if (Request('title_all') != null) $insert['title'] = $title;
 	if (Request('description_all') != null) $insert['description'] = $description;
 	
@@ -162,20 +160,5 @@ if ($results->success == true) {
 	$this->setSiteImage($domain,Request('emblem_all') == 'on' ? '*' : $language,'emblem');
 	$this->setSiteImage($domain,Request('maskicon_all') == 'on' ? '*' : $language,'maskicon');
 	$this->setSiteImage($domain,Request('image_all') == 'on' ? '*' : $language,'image');
-	
-	/**
-	 * 전체 템플릿 적용이 있을 경우, 해당 템플릿을 사용하고 있는 사이트에 적용한다.
-	 */
-	if (count($templetConfigsAll) > 0) {
-		$sites = $this->IM->db()->select($this->IM->getTable('site'))->where('templet',$templet)->get();
-		for ($i=0, $loop=count($sites);$i<$loop;$i++) {
-			$templetConfigs = $this->IM->getTemplet($this->IM,$templet)->setConfigs(json_decode($sites[$i]->templet_configs))->getConfigs();
-			foreach ($templetConfigs as $key=>$value) {
-				$templetConfigs->$key = isset($templetConfigsAll[$key]) == true ? $templetConfigsAll[$key] : $value->value;
-			}
-			$templetConfigs = json_encode($templetConfigs,JSON_UNESCAPED_UNICODE);
-			$this->IM->db()->update($this->IM->getTable('site'),array('templet_configs'=>$templetConfigs))->where('domain',$sites[$i]->domain)->where('language',$sites[$i]->language)->execute();
-		}
-	}
 }
 ?>

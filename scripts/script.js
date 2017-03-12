@@ -492,40 +492,7 @@ var Admin = {
 												})
 											]
 										}),
-										new Ext.form.FieldContainer({
-											fieldLabel:Admin.getText("configs/sites/form/templet"),
-											layout:"hbox",
-											items:[
-												new Ext.form.ComboBox({
-													name:"templet",
-													store:new Ext.data.JsonStore({
-														proxy:{
-															type:"ajax",
-															simpleSortMode:true,
-															url:ENV.getProcessUrl("admin","@getSiteTemplets"),
-															reader:{type:"json"}
-														},
-														autoLoad:true,
-														remoteSort:false,
-														sorters:[{property:"templet",direction:"ASC"}],
-														fields:["display","value"]
-													}),
-													displayField:"display",
-													valueField:"value",
-													flex:1,
-													listeners:{
-														change:function(form,value) {
-															Admin.configs.sites.getTempletConfigs(domain ? domain : "",language ? language : "",value);
-														}
-													}
-												}),
-												new Ext.form.Checkbox({
-													boxLabel:Admin.getText("configs/sites/form/apply_all_site"),
-													name:"templet_all",
-													style:{marginLeft:"5px"}
-												})
-											]
-										}),
+										Admin.templetField(Admin.getText("configs/sites/form/templet"),"templet","site",false),
 										new Ext.form.FieldContainer({
 											fieldLabel:Admin.getText("configs/sites/form/title"),
 											layout:"hbox",
@@ -565,13 +532,6 @@ var Admin = {
 										Admin.configs.sites.getSiteImageField("maskicon"),
 										Admin.configs.sites.getSiteImageField("image")
 									]
-								}),
-								new Ext.form.FieldSet({
-									id:"SiteConfigTempletConfigs",
-									title:Admin.getText("text/templet_configs"),
-									hidden:true,
-									fieldDefaults:{labelAlign:"right",labelWidth:100,anchor:"100%",allowBlank:true},
-									items:[]
 								})
 							]
 						})
@@ -1186,7 +1146,7 @@ var Admin = {
 																$.ajax({
 																	type:"POST",
 																	url:ENV.getProcessUrl("admin","@getModuleContextConfigs"),
-																	data:{domain:domain,language:language,target:form.getStore().getProxy().extraParams.target,context:value},
+																	data:{domain:domain,language:language,menu:menu,page:form.getForm().findField("page").getValue(),target:form.getStore().getProxy().extraParams.target,context:value},
 																	dataType:"json",
 																	success:function(result) {
 																		if (result.success == true) {
@@ -1194,6 +1154,11 @@ var Admin = {
 																			Ext.getCmp("SitemapConfigContextConfigs").removeAll();
 																			
 																			for (var i=0, loop=result.configs.length;i<loop;i++) {
+																				if (result.configs[i].type == "templet") {
+																					Ext.getCmp("SitemapConfigContextConfigs").add(Admin.templetField(result.configs[i].title,"@"+result.configs[i].name,result.configs[i].target,result.configs[i].use_default));
+																					form.getForm().findField("@"+result.configs[i].name).setValue(result.configs[i].value);
+																				}
+																				
 																				if (result.configs[i].type == "select") {
 																					Ext.getCmp("SitemapConfigContextConfigs").add(
 																						new Ext.form.ComboBox({
@@ -1761,6 +1726,27 @@ var Admin = {
 		}
 	},
 	/**
+	 * ExtJS Store 데이터를 가져온다.
+	 *
+	 * @param Grid grid ExtJS 그리드 객체
+	 * @param string[] fields 가져올 필드 (없을 경우 전체필드)
+	 * @return object[] data
+	 */
+	grid:function(grid,fields) {
+		var fields = fields == undefined ? [] : fields;
+		var datas = [];
+		for (var i=0, loop=grid.getStore().getCount();i<loop;i++) {
+			var data = {};
+			var oData = grid.getStore().getAt(i).data;
+			for (var field in oData) {
+				if (fields.length == 0 || $.inArray(field,fields) == true) data[field] = oData[field];
+			}
+			datas.push(data);
+		}
+		
+		return datas;
+	},
+	/**
 	 * ExtJS Store 를 저장한다.
 	 *
 	 * @param Grid grid ExtJS 그리드 객체
@@ -1805,126 +1791,157 @@ var Admin = {
 	 * @return object Ext.form.Combobox
 	 */
 	templetField:function(label,name,target,use_default,url,params) {
+		var url = url ? url : ENV.getProcessUrl("admin","@getTempletConfigs");
+		var params = params ? params : [];
+		
 		return new Ext.form.FieldContainer({
 			layout:{type:"vbox",align:"stretch"},
 			style:{marginBottom:"0px"},
 			items:[
-				new Ext.form.ComboBox({
+				new Ext.form.FieldContainer({
 					fieldLabel:label,
-					name:name,
-					url:url,
-					params:params,
-					store:new Ext.data.JsonStore({
-						proxy:{
-							type:"ajax",
-							simpleSortMode:true,
-							url:ENV.getProcessUrl("admin","@getTemplets"),
-							reader:{type:"json",root:"lists",totalProperty:"totalCount"}
-						},
-						remoteSort:false,
-						sorters:[{property:"sort",direction:"ASC"},{property:"name",direction:"ASC"}],
-						pageSize:0,
-						fields:["title","templet"]
-					}),
-					flex:1,
-					editable:false,
-					displayField:"title",
-					valueField:"templet",
-					value:use_default !== undefined ? "#" : "default",
-					listeners:{
-						render:function(form) {
-							var type = "module";
-							
-							if (form.getPanel().getId() == "ModuleConfigForm") {
-								
-							} else if (form.getPanel().getId() == "") {
-							}
-							
-							form.getStore().getProxy().setExtraParams({type:type,target:target,use_default:use_default === undefined ? false : use_default});
-							form.getStore().load();
-						},
-						change:function(form,value) {
-							if (Ext.getCmp(form.getName()+"-configs")) form.ownerCt.remove(Ext.getCmp(form.getName()+"-configs"));
-							if (value == "#") return;
-							
-							if (form.url) {
-								var url = form.url;
-								var params = {};
-								
-								if (form.params) {
-									for (var i=0, loop=form.params.length;i<loop;i++) {
-										params[form.params[i]] = form.getForm().findField(form.params[i]).getValue();
+					layout:"hbox",
+					items:[
+						new Ext.form.ComboBox({
+							name:name,
+							target:target,
+							url:url,
+							params:params,
+							store:new Ext.data.JsonStore({
+								proxy:{
+									type:"ajax",
+									simpleSortMode:true,
+									url:ENV.getProcessUrl("admin","@getTemplets"),
+									reader:{type:"json",root:"lists",totalProperty:"totalCount"}
+								},
+								remoteSort:false,
+								sorters:[{property:"sort",direction:"ASC"},{property:"name",direction:"ASC"}],
+								pageSize:0,
+								fields:["title","templet"]
+							}),
+							flex:1,
+							editable:false,
+							displayField:"title",
+							valueField:"templet",
+							value:use_default !== false ? "#" : "default",
+							listeners:{
+								render:function(form) {
+									var params = {type:"module",target:target,use_default:use_default !== false ? true : false};
+									if (form.getPanel().getId() == "SiteConfigForm") {
+										params.type = "core";
 									}
-								}
-								
-								params.name = form.getName();
-								params.templet = value;
-							} else {
-								var url = ENV.getProcessUrl("admin","@getTempletConfigs");
-								var params = {name:form.getName(),target:target,templet:value};
-								if (form.getPanel().getId() == "ModuleConfigForm") {
-									params.type = "module";
-									params.position = "module";
-								} else if (form.getPanel().getId() == "") {
-									params.position = "sitemap";
-								}
-							}
-							
-							$.send(url,params,function(result) {
-								if (result.success == true) {
-									var configs = result.configs;
-									if (configs == null) return;
 									
-									var container = new Ext.form.FieldSet({
-										id:form.getName()+"-configs",
-										title:"템플릿 세부설정",
-										style:{marginLeft:(form.getPanel().fieldDefaults.labelWidth + 5)+"px",marginBottom:"10px"}
-									});
+									form.getStore().getProxy().setExtraParams(params);
+									form.getStore().load();
 									
-									var preset = form.getName()+"_configs_";
-									for (var config in configs) {
-										var item = configs[config];
-										
-										var options = {
-											fieldLabel:item.title,
-											name:preset+config,
-											allowBlank:true
-										};
-										
-										if (item.help) options.afterBodyEl = '<div class="x-form-help">'+item.help+'</div>';
-										if (item.value) options.value = item.value;
-										
-										if (item.type == "string") {
-											if (item.is_multiline == true) {
-												options.height = 80;
+									form.fireEvent("change",form,form.getValue());
+								},
+								change:function(form,value) {
+									if (Ext.getCmp(form.getName()+"-configs")) form.ownerCt.ownerCt.remove(Ext.getCmp(form.getName()+"-configs"));
+									if (value == "#") return;
+									
+									var params = {type:"module"};
+									if (form.params.length > 0) {
+										for (var i=0, loop=form.params.length;i<loop;i++) {
+											params[form.params[i]] = form.getForm().findField(form.params[i]).getValue();
+										}
+									}
+									
+									params.target = form.target;
+									params.name = form.getName();
+									params.templet = value;
+									
+									if (form.getPanel().getId() == "SiteConfigForm") {
+										params.type = "core";
+										params.domain = form.getForm().findField("domain").getValue();
+										params.language = form.getForm().findField("language").getValue();
+									}
+									
+									if (form.getPanel().getId() == "ModuleConfigForm") {
+										params.position = "module";
+									}
+									
+									if (form.getPanel().getId() == "SitemapConfigForm") {
+										params.domain = form.getForm().findField("domain").getValue();
+										params.language = form.getForm().findField("language").getValue();
+										params.menu = form.getForm().findField("menu").getValue();
+										params.page = form.getForm().findField("page").getValue();
+										params.parent = form.getForm().findField("target").getValue();
+										params.position = "sitemap";
+									}
+									
+									$.send(form.url,params,function(result) {
+										if (result.success == true) {
+											var configs = result.configs;
+											if (configs == null) return;
+											
+											var container = new Ext.form.FieldSet({
+												id:form.getName()+"-configs",
+												title:"템플릿 세부설정",
+												style:{marginLeft:(form.getPanel().fieldDefaults.labelWidth + 5)+"px",marginBottom:"10px"}
+											});
+											
+											var preset = form.getName()+"_configs_";
+											for (var config in configs) {
+												var item = configs[config];
 												
-												container.add(
-													new Ext.form.TextArea(options)
-												);
-											} else {
-												container.add(
-													new Ext.form.TextField(options)
-												);
+												var options = {
+													fieldLabel:item.title,
+													name:preset+config,
+													allowBlank:true
+												};
+												
+												if (item.help) options.afterBodyEl = '<div class="x-form-help">'+item.help+'</div>';
+												if (item.value) options.value = item.value;
+												
+												if (item.type == "string") {
+													if (item.is_multiline == true) {
+														options.height = 80;
+														
+														container.add(
+															new Ext.form.TextArea(options)
+														);
+													} else {
+														container.add(
+															new Ext.form.TextField(options)
+														);
+													}
+												}
+												
+												if (item.type == "int") {
+													container.add(
+														new Ext.form.NumberField(options)
+													);
+												}
 											}
+											
+											if (container.items.length == 0) {
+												form.ownerCt.ownerCt.style = {marginBottom:"0px"};
+											} else {
+												form.ownerCt.ownerCt.add(container);
+											}
+											form.ownerCt.ownerCt.updateLayout();
 										}
-										
-										if (item.type == "int") {
-											container.add(
-												new Ext.form.NumberField(options)
-											);
-										}
-									}
-									
-									if (container.items.length == 0) {
-										form.ownerCt.style = {marginBottom:"0px"};
-									} else {
-										form.ownerCt.add(container);
-									}
-									form.ownerCt.updateLayout();
+									});
 								}
-							});
-						}
-					}
+							}
+						}),
+						new Ext.form.Checkbox({
+							boxLabel:Admin.getText("configs/sites/form/apply_all_site"),
+							name:"templet_all",
+							hidden:true,
+							disabled:true,
+							style:{marginLeft:"5px"},
+							listeners:{
+								render:function(form) {
+									if (form.getPanel().getId() == "SiteConfigForm") {
+										form.show();
+										form.setDisabled(false);
+									}
+								}
+							}
+						})
+					]
 				})
 			]
 		});
@@ -1939,7 +1956,6 @@ var Admin = {
 	 */
 	wysiwygField:function(label,name,value,options) {
 		var options = typeof options == "object" ? options : {};
-		console.log(name);
 		options.name = name;
 		options.fieldLabel = (label ? label : "");
 		options.width = options.width ? options.width : "100%";
@@ -1979,10 +1995,10 @@ var Admin = {
 			});
 			
 			$textarea.on("froalaEditor.file.inserted",function(e,editor,$file,response) {
-				console.log("froalaEditor.file.inserted",$file,response);
 				if (response) {
 					var result = typeof response == "object" ? response : JSON.parse(response);
 					if (result.success == true) {
+						$file.attr("href",result.fileInfo.download);
 						$file.append($("<i>").addClass("size").html("("+iModule.getFileSize(result.fileInfo.size)+")"));
 						$file.attr("data-idx",result.fileInfo.idx);
 					}

@@ -57,7 +57,10 @@ if ($type == 'MODULE') {
 		$context->context = Request('context') ? Request('context') : $errors['context'] = $this->getErrorText('REQUIRED');
 		$configs = array();
 		foreach ($_POST as $key=>$value) {
-			if (preg_match('/^@/',$key) == true) {
+			if (preg_match('/^@(.*?)_configs_(.*?)$/',$key,$match) == true && array_key_exists('@'.$match[1],$_POST) == true) {
+				if (isset($configs[$match[1].'_configs']) == false) $configs[$match[1].'_configs'] = array();
+				$configs[$match[1].'_configs'][$match[2]] = $value;
+			} elseif (preg_match('/^@/',$key) == true) {
 				$configs[preg_replace('/^@/','',$key)] = $value;
 			}
 		}

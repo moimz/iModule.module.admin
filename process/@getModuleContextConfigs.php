@@ -19,9 +19,11 @@ if (defined('__IM__') == false) exit;
 
 $domain = Request('domain');
 $language = Request('language');
+$menu = Request('menu');
+$page = Request('page');
 $module = Request('target');
 $context = Request('context');
 
 $results->success = true;
-$results->configs = $this->IM->Module->getContextConfigs($domain,$language,$module,$context);
+$results->configs = $this->IM->getModule()->getContextConfigs($domain,$language,$menu,$page,$module,$context);
 ?>
