@@ -774,24 +774,32 @@ class ModuleAdmin {
 	 * @param string $target 타겟명
 	 * @return int[] $files 정리된 파일고유번호
 	 */
-	function updateWysiwyg($field,$module,$target) {
+	function getWysiwygContent($field,$module,$target,$origin=null) {
 		$mAttachment = $this->IM->getModule('attachment');
 		
-		$content = Request($field);
+		$text = Request($field) ? Request($field) : '';
 		$files = Request($field.'_files') ? explode(',',Request($field.'_files')) : array();
 		
 		$attachments = array();
 		for ($i=0, $loop=count($files);$i<$loop;$i++) {
-			if (preg_match('/<(a|img)(.*?)data-idx="'.$files[$i].'"(.*?)>/',$content) == true) {
+			if (preg_match('/<(a|img)(.*?)data-idx="'.$files[$i].'"(.*?)>/',$text) == true) {
 				$attachments[] = $files[$i];
-				
 				$mAttachment->db()->update($mAttachment->getTable('attachment'),array('module'=>$module,'target'=>$target,'status'=>'PUBLISHED'))->where('idx',$files[$i])->execute();
 			} else {
 				$mAttachment->fileDelete($files[$i]);
 			}
 		}
 		
-		return $attachments;
+		if ($origin != null && is_object($origin) == true) {
+			$content = $origin;
+		} else {
+			$content = new stdClass();
+		}
+		
+		$content->text = $this->IM->getModule('wysiwyg')->encodeContent($text,$attachments);
+		$content->files = $attachments;
+		
+		return $content;
 	}
 	
 	function doLayout() {
