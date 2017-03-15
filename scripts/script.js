@@ -1959,36 +1959,42 @@ var Admin = {
 		options.name = name;
 		options.fieldLabel = (label ? label : "");
 		options.width = options.width ? options.width : "100%";
+		options.lastHeight = 0;
+		options.resizer = function(id) {
+			if (Ext.getCmp(id)) {
+				if (Ext.getCmp(id).isVisible() == true) {
+					if (Ext.getCmp(id).lastHeight != Ext.getCmp(id).getHeight()) {
+						Ext.getCmp(id).lastHeight = Ext.getCmp(id).getHeight();
+						Ext.getCmp(id).getPanel().updateLayout();
+					}
+				}
+			
+				Ext.getCmp(id).getHeight();
+				setTimeout(Ext.getCmp(id).resizer,500,id);
+			}
+		},
 		options.listeners = options.listeners ? options.listeners : {};
 		options.listeners.render = function(form) {
 			var $textarea = $("textarea",$("#"+form.getId()));
+			$textarea.data("panel",form.getPanel());
 			
 			$textarea.on("froalaEditor.image.uploaded",function(e,editor,response) {
 				var result = JSON.parse(response);
-				if (result.success == true) {
+				if (result.idx) {
 					var form = Ext.getCmp(editor.$oel.attr("id").replace("-inputEl","-files"));
 					var files = form.getValue().length > 0 ? form.getValue().split(",") : [];
-					files.push(result.fileInfo.idx);
-					
+					files.push(result.idx);
+					console.log("uploaded",form,files);
 					form.setValue(files.join(","));
-				}
-			});
-			
-			$textarea.on("froalaEditor.image.inserted",function(e,editor,$img,response) {
-				if (response) {
-					var result = typeof response == "object" ? response : JSON.parse(response);
-					if (result.success == true) {
-						$img.attr("data-idx",result.fileInfo.idx);
-					}
 				}
 			});
 			
 			$textarea.on("froalaEditor.file.uploaded",function(e,editor,response) {
 				var result = JSON.parse(response);
-				if (result.success == true) {
+				if (result.idx) {
 					var form = Ext.getCmp(editor.$oel.attr("id").replace("-inputEl","-files"));
 					var files = form.getValue().length > 0 ? form.getValue().split(",") : [];
-					files.push(result.fileInfo.idx);
+					files.push(result.idx);
 					
 					form.setValue(files.join(","));
 				}
@@ -1997,36 +2003,36 @@ var Admin = {
 			$textarea.on("froalaEditor.file.inserted",function(e,editor,$file,response) {
 				if (response) {
 					var result = typeof response == "object" ? response : JSON.parse(response);
-					if (result.success == true) {
-						$file.attr("href",result.fileInfo.download);
-						$file.append($("<i>").addClass("size").html("("+iModule.getFileSize(result.fileInfo.size)+")"));
-						$file.attr("data-idx",result.fileInfo.idx);
+					if (result.idx) {
+						$file.attr("data-idx",result.idx);
 					}
 				}
 			});
 			
 			$textarea.froalaEditor({
 				key:"pFOFSAGLUd1AVKg1SN==", // Froala Wysiwyg OEM License Key For MoimzTools Only
-				heightMin:300,
-				heightMax:300,
-				toolbarButtons:["bold","italic","underline","strikeThrough","align","|","paragraphFormat","fontSize","color","|","insertImage","insertFile","insertVideo","insertLink","insertTable","|","html"],
+				toolbarButtons:["html","|","bold","italic","underline","strikeThrough","align","|","paragraphFormat","fontSize","color","|","insertImage","insertFile","insertVideo","insertLink","insertTable"],
 				fontSize:["8","9","10","11","12","14","18","24"],
-				imageUploadURL:ENV.getProcessUrl("attachment","wysiwyg_upload"),
-				imageUploadParams:{_module:"admin",_target:form.getName("name")},
-				fileUploadURL:ENV.getProcessUrl("attachment","wysiwyg_upload"),
-				fileUploadParams:{_module:"admin",_target:form.getName("name")},
+				heightMin:300,
+				imageDefaultWidth:0,
+				imageUploadURL:ENV.getProcessUrl("attachment","wysiwyg"),
+				imageUploadParams:{module:"admin",target:form.getName("name")},
+				fileUploadURL:ENV.getProcessUrl("attachment","wysiwyg"),
+				fileUploadParams:{module:"admin",target:form.getName("name")},
+				imageEditButtons:["imageAlign","imageLink","linkOpen","linkEdit","linkRemove","imageDisplay","imageStyle","imageAlt","imageSize"],
 				paragraphFormat:{N:"Normal",H1:"Heading 1",H2:"Heading 2",H3:"Heading 3"},
 				toolbarSticky:false,
 				pluginsEnabled:["align","codeView","colors","file","fontSize","image","lineBreaker","link","lists","paragraphFormat","insertCode","table","url","video"]
 			});
 			
 			form.ownerCt.add(new Ext.form.Hidden({id:form.getId()+"-files",name:form.getName()+"_files",allowBlank:true}));
+			setTimeout(form.resizer,500,form.getId());
 		};
 		
 		options.listeners.change = function(form,value) {
 			var $textarea = $("textarea",$("#"+form.getId()));
 			$textarea.froalaEditor("html.set",value);
-		}
+		};
 		
 		return new Ext.form.TextArea(options);
 	},
