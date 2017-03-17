@@ -1695,7 +1695,17 @@ var Admin = {
 	 */
 	gridSort:function(grid,field,dir) {
 		var checked = grid.getSelectionModel().getSelection();
-		var selecter = new Array();
+		var selected = [];
+		
+		for (var i=0, loop=checked.length;i<loop;i++) {
+			checked[i] = checked[i].id;
+		}
+		
+		for (var i=0, loop=grid.getStore().getCount();i<loop;i++) {
+			if ($.inArray(grid.getStore().getAt(i).id,checked) > -1) {
+				selected.push(grid.getStore().getAt(i));
+			}
+		}
 		
 		var lowFixedCount = highFixedCount = 0;
 		for (var i=0, loop=grid.getStore().getCount();i<loop;i++) {
@@ -1704,8 +1714,11 @@ var Admin = {
 		}
 		
 		if (dir == "up") {
-			for (var i=0, loop=checked.length;i<loop;i++) {
-				var sort = checked[i].get(field);
+			var firstSort = selected[0].get(field);
+			if (firstSort <= 0 || firstSort >= 100000) return;
+			
+			for (var i=0, loop=selected.length;i<loop;i++) {
+				var sort = selected[i].get(field);
 				if (sort > 0 && sort < 10000) {
 					grid.getStore().getAt(lowFixedCount + sort).set(field,sort-1);
 					grid.getStore().getAt(lowFixedCount + sort - 1).set(field,sort);
@@ -1714,8 +1727,11 @@ var Admin = {
 				}
 			}
 		} else {
-			for (var i=checked.length-1;i>=0;i--) {
-				var sort = checked[i].get(field);
+			var lastSort = selected[selected.length - 1].get(field);
+			if (lastSort < 0 || lowFixedCount + lastSort >= grid.getStore().getCount() - highFixedCount - 1 || lastSort >= 10000) return;
+			
+			for (var i=selected.length-1;i>=0;i--) {
+				var sort = selected[i].get(field);
 				if (sort >= 0 && lowFixedCount + sort < grid.getStore().getCount() - highFixedCount - 1 && sort < 10000) {
 					grid.getStore().getAt(lowFixedCount + sort).set(field,sort+1);
 					grid.getStore().getAt(lowFixedCount + sort + 1).set(field,sort);
@@ -1978,15 +1994,23 @@ var Admin = {
 			var $textarea = $("textarea",$("#"+form.getId()));
 			$textarea.data("panel",form.getPanel());
 			
+			$textarea.on("froalaEditor.image.beforeUpload",function(e,editor,images) {
+				$textarea.data("panel").disable();
+			});
+			
 			$textarea.on("froalaEditor.image.uploaded",function(e,editor,response) {
 				var result = JSON.parse(response);
 				if (result.idx) {
 					var form = Ext.getCmp(editor.$oel.attr("id").replace("-inputEl","-files"));
 					var files = form.getValue().length > 0 ? form.getValue().split(",") : [];
 					files.push(result.idx);
-					console.log("uploaded",form,files);
 					form.setValue(files.join(","));
 				}
+				$textarea.data("panel").enable();
+			});
+			
+			$textarea.on("froalaEditor.file.beforeUpload",function(e,editor,images) {
+				$textarea.data("panel").disable();
 			});
 			
 			$textarea.on("froalaEditor.file.uploaded",function(e,editor,response) {
@@ -1998,6 +2022,7 @@ var Admin = {
 					
 					form.setValue(files.join(","));
 				}
+				$textarea.data("panel").enable();
 			});
 			
 			$textarea.on("froalaEditor.file.inserted",function(e,editor,$file,response) {
