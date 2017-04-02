@@ -403,6 +403,8 @@ class ModuleAdmin {
 		
 		$panel = $this->getPanelContext();
 		
+		$tab = Request('tab');
+		
 		/**
 		 * 컨텍스트 PHP 파일에서 iModule 코어클래스 및 관리자클래스에 접근하기 위한 변수 선언
 		 */

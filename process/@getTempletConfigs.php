@@ -39,7 +39,7 @@ if ($type == 'core') {
 }
 
 if ($type == 'module') {
-	$Templet = $this->IM->getModule($target)->getTemplet($templet);
+	$Templet = $this->IM->getModule($target,true)->getTemplet($templet);
 	
 	if ($position == 'module') {
 		if ($this->IM->getModule()->isInstalled($target) == true && $this->IM->getModule($target)->getModule()->getConfig($name.'_configs') != null) {

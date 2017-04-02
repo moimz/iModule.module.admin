@@ -9,7 +9,6 @@
  * @license MIT License
  * @version 3.0.0.160903
  */
-
 if (defined('__IM__') == false) exit;
 ?>
 <header id="iModuleAdminHeader">
@@ -60,6 +59,7 @@ if (panel == null) {
 	});
 } else {
 	var center = new Ext.Panel({
+		id:"iModuleAdminPanel",
 		title:"<?php echo $pageTitle->title; ?>",
 		iconCls:"<?php echo substr($pageTitle->icon,0,2); ?> <?php echo $pageTitle->icon; ?>",
 		region:"center",
@@ -68,7 +68,12 @@ if (panel == null) {
 		border:false,
 		items:[
 			panel
-		]
+		],
+		listeners:{
+			render:function() {
+				
+			}
+		}
 	});
 }
 
@@ -102,7 +107,39 @@ Ext.onReady(function () {
 				border:false,
 				contentEl:"iModuleAdminFooter"
 			})
-		]
+		],
+		listeners:{
+			render:function() {
+				if (Ext.getCmp("iModuleAdminPanel") && Ext.getCmp("iModuleAdminPanel").items.items.length == 1 && Ext.getCmp("iModuleAdminPanel").items.items[0].is("tabpanel") == true) {
+					var content = Ext.getCmp("iModuleAdminPanel").items.items[0];
+					
+					<?php if ($tab) { ?>
+					if (Ext.getCmp("<?php echo $tab; ?>")) {
+						setTimeout(function(tabs,tab) { tabs.setActiveTab(tab); },1000,Ext.getCmp(content.getId()),Ext.getCmp("<?php echo $tab; ?>"));
+					}
+					<?php } ?>
+					
+					if (Admin.getMenu() == "modules") {
+						content.on("tabchange",function(tabs,tab) {
+							if (Admin.getTab() != tab.getId() && history.replaceState) {
+								history.replaceState({tab:tab.getId()},tab.getTitle()+" - "+Ext.getCmp("iModuleAdminPanel").getTitle(),"/admin/modules/"+Admin.getPage()+"/"+tab.getId());
+								document.title = tab.getTitle()+" - "+Ext.getCmp("iModuleAdminPanel").getTitle();
+							}
+						});
+						
+						content.on("afterrender",function(tabs) {
+							var tab = tabs.getActiveTab();
+							
+							if (Admin.getTab() != tab.getId() && history.replaceState) {
+								history.replaceState({tab:tab.getId()},tab.getTitle()+" - "+Ext.getCmp("iModuleAdminPanel").getTitle(),"/admin/modules/"+Admin.getPage()+"/"+tab.getId());
+							}
+							
+							document.title = tab.getTitle()+" - "+Ext.getCmp("iModuleAdminPanel").getTitle();
+						});
+					}
+				}
+			}
+		}
 	}).updateLayout();
 	
 	try {
@@ -110,5 +147,9 @@ Ext.onReady(function () {
 			setTimeout(function() { Ext.getCmp("AdminViewport").updateLayout(); },1000);
 		});
 	} catch (e) {}
+});
+
+$(window).on("popstate",function(e) {
+	location.href = location.href;
 });
 </script>

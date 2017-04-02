@@ -30,7 +30,7 @@ if ($type == 'core') {
 }
 
 if ($type == 'module') {
-	$templets = $this->IM->getModule($target)->getModule()->getTemplets();
+	$templets = $this->IM->getModule($target,true)->getModule()->getTemplets();
 	
 	for ($i=0, $loop=count($templets);$i<$loop;$i++) {
 		$lists[] = array('title'=>$templets[$i]->getTitle().' ('.$templets[$i]->getDir().')','templet'=>$templets[$i]->getName(),'sort'=>1);

@@ -10,6 +10,30 @@
  */
 var Admin = {
 	/**
+	 * 페이지명을 가져온다.
+	 */
+	getMenu:function() {
+		var path = location.pathname.replace(/^\//,'').split("/");
+		if (path.length > 1) return path[1];
+		else return "";
+	},
+	/**
+	 * 페이지명을 가져온다.
+	 */
+	getPage:function() {
+		var path = location.pathname.replace(/^\//,'').split("/");
+		if (path.length > 2) return path[2];
+		else return "";
+	},
+	/**
+	 * 탭명을 가져온다.
+	 */
+	getTab:function() {
+		var path = location.pathname.replace(/^\//,'').split("/");
+		if (path.length > 3) return path[3];
+		else return "";
+	},
+	/**
 	 * 사이트관리자 로그인 처리
 	 */
 	login:function($form) {
@@ -1695,6 +1719,7 @@ var Admin = {
 	 */
 	gridSort:function(grid,field,dir) {
 		var checked = grid.getSelectionModel().getSelection();
+		if (checked.length == 0) return;
 		var selected = [];
 		
 		for (var i=0, loop=checked.length;i<loop;i++) {
@@ -1718,7 +1743,7 @@ var Admin = {
 			if (firstSort <= 0 || firstSort >= 100000) return;
 			
 			for (var i=0, loop=selected.length;i<loop;i++) {
-				var sort = selected[i].get(field);
+				var sort = parseInt(selected[i].get(field));
 				if (sort > 0 && sort < 10000) {
 					grid.getStore().getAt(lowFixedCount + sort).set(field,sort-1);
 					grid.getStore().getAt(lowFixedCount + sort - 1).set(field,sort);
@@ -1731,7 +1756,7 @@ var Admin = {
 			if (lastSort < 0 || lowFixedCount + lastSort >= grid.getStore().getCount() - highFixedCount - 1 || lastSort >= 10000) return;
 			
 			for (var i=selected.length-1;i>=0;i--) {
-				var sort = selected[i].get(field);
+				var sort = parseInt(selected[i].get(field));
 				if (sort >= 0 && lowFixedCount + sort < grid.getStore().getCount() - highFixedCount - 1 && sort < 10000) {
 					grid.getStore().getAt(lowFixedCount + sort).set(field,sort+1);
 					grid.getStore().getAt(lowFixedCount + sort + 1).set(field,sort);
@@ -1755,7 +1780,7 @@ var Admin = {
 			var data = {};
 			var oData = grid.getStore().getAt(i).data;
 			for (var field in oData) {
-				if (fields.length == 0 || $.inArray(field,fields) == true) data[field] = oData[field];
+				if (fields.length == 0 || $.inArray(field,fields) == true) data[field] = $.trim(oData[field]);
 			}
 			datas.push(data);
 		}
@@ -1787,6 +1812,9 @@ var Admin = {
 	saveStore:function(store,url,saving) {
 		var updated = store.getUpdatedRecords();
 		for (var i=0, loop=updated.length;i<loop;i++) {
+			for (var key in updated[i].data) {
+				updated[i].data[key] = $.trim(updated[i].data[key]);
+			}
 			updated[i] = updated[i].data;
 		}
 		
@@ -1911,22 +1939,28 @@ var Admin = {
 												if (item.value) options.value = item.value;
 												
 												if (item.type == "string") {
-													if (item.is_multiline == true) {
-														options.height = 80;
-														
-														container.add(
-															new Ext.form.TextArea(options)
-														);
-													} else {
-														container.add(
-															new Ext.form.TextField(options)
-														);
-													}
+													container.add(
+														new Ext.form.TextField(options)
+													);
 												}
 												
 												if (item.type == "int") {
 													container.add(
 														new Ext.form.NumberField(options)
+													);
+												}
+												
+												if (item.type == "color") {
+													options.preview = true;
+													container.add(
+														new Ext.ux.ColorField(options)
+													);
+												}
+												
+												if (item.type == "textarea") {
+													options.height = 80;
+													container.add(
+														new Ext.form.TextArea(options)
 													);
 												}
 											}
@@ -1995,7 +2029,7 @@ var Admin = {
 			$textarea.data("panel",form.getPanel());
 			
 			$textarea.on("froalaEditor.image.beforeUpload",function(e,editor,images) {
-				$textarea.data("panel").disable();
+				$textarea.data("panel").getRoot().mask("파일을 업로드중입니다...");
 			});
 			
 			$textarea.on("froalaEditor.image.uploaded",function(e,editor,response) {
@@ -2006,11 +2040,11 @@ var Admin = {
 					files.push(result.idx);
 					form.setValue(files.join(","));
 				}
-				$textarea.data("panel").enable();
+				$textarea.data("panel").getRoot().unmask();
 			});
 			
 			$textarea.on("froalaEditor.file.beforeUpload",function(e,editor,images) {
-				$textarea.data("panel").disable();
+				$textarea.data("panel").getRoot().mask("파일을 업로드중입니다...");
 			});
 			
 			$textarea.on("froalaEditor.file.uploaded",function(e,editor,response) {
@@ -2022,7 +2056,7 @@ var Admin = {
 					
 					form.setValue(files.join(","));
 				}
-				$textarea.data("panel").enable();
+				$textarea.data("panel").getRoot().unmask();
 			});
 			
 			$textarea.on("froalaEditor.file.inserted",function(e,editor,$file,response) {
