@@ -235,6 +235,7 @@ class ModuleAdmin {
 		$error = new stdClass();
 		$error->message = $message;
 		$error->description = $description;
+		$error->type = 'BACK';
 		
 		if ($isRawData === true) return $error;
 		else return $this->IM->getErrorText($error);

@@ -2084,7 +2084,7 @@ var Admin = {
 				pluginsEnabled:["align","codeView","colors","file","fontSize","image","lineBreaker","link","lists","paragraphFormat","insertCode","table","url","video"]
 			});
 			
-			form.ownerCt.add(new Ext.form.Hidden({id:form.getId()+"-files",name:form.getName()+"_files",allowBlank:true}));
+			form.ownerCt.add(new Ext.form.TextField({id:form.getId()+"-files",name:form.getName()+"_files",allowBlank:true}));
 			setTimeout(form.resizer,500,form.getId());
 		};
 		
