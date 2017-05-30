@@ -2022,7 +2022,8 @@ var Admin = {
 				Ext.getCmp(id).getHeight();
 				setTimeout(Ext.getCmp(id).resizer,500,id);
 			}
-		},
+		};
+		options.cls = "x-form-wysiwyg";
 		options.listeners = options.listeners ? options.listeners : {};
 		options.listeners.render = function(form) {
 			var $textarea = $("textarea",$("#"+form.getId()));
@@ -2073,6 +2074,7 @@ var Admin = {
 				toolbarButtons:["html","|","bold","italic","underline","strikeThrough","align","|","paragraphFormat","fontSize","color","|","insertImage","insertFile","insertVideo","insertLink","insertTable"],
 				fontSize:["8","9","10","11","12","14","18","24"],
 				heightMin:300,
+				zIndex:1000000,
 				imageDefaultWidth:0,
 				imageUploadURL:ENV.getProcessUrl("attachment","wysiwyg"),
 				imageUploadParams:{module:"admin",target:form.getName("name")},
@@ -2084,7 +2086,84 @@ var Admin = {
 				pluginsEnabled:["align","codeView","colors","file","fontSize","image","lineBreaker","link","lists","paragraphFormat","insertCode","table","url","video"]
 			});
 			
-			form.ownerCt.add(new Ext.form.Hidden({id:form.getId()+"-files",name:form.getName()+"_files",allowBlank:true}));
+			form.ownerCt.add(
+				new Ext.Panel({
+					id:form.getId()+"-lists",
+					border:0,
+					html:'<div data-module="attachment" class="wysiwyg"><ul data-role="files"></ul>'
+				})
+			);
+			form.ownerCt.add(
+				new Ext.form.Hidden({
+					id:form.getId()+"-files",
+					name:form.getName()+"_files",
+					allowBlank:true,
+					listeners:{
+						change:function(form,value) {
+							var $lists = $("ul[data-role=files]",$("#"+form.getId().replace(/-files$/,"-lists")));
+							$lists.empty();
+							
+							if (value) {
+								$.send(ENV.getProcessUrl("admin","@getWysiwygFiles"),{idx:value},function(result) {
+									if (result.success == true) {
+										for (var i=0, loop=result.lists.length;i<loop;i++) {
+											var file = result.lists[i];
+											var $file = $("<li>");
+											$file.append($("<i>").addClass("icon").attr("data-type",file.type).attr("data-extension",file.extension));
+											$file.append($("<a>").attr("href",file.path).attr("download",file.name).append($("<i>").html("("+iModule.getFileSize(file.size)+")")).append(file.name));
+											
+											var $insert = $("<button>").attr("type","button").attr("data-wysiwyg",form.getId().replace(/-files$/,"")).data("file",file).html('<i class="mi mi-upload"></i>');
+											$insert.on("click",function() {
+												var file = $(this).data("file");
+												var $wysiwyg = $("textarea",$("#"+$(this).attr("data-wysiwyg")));
+												
+												if (file.type == "image") {
+													$wysiwyg.froalaEditor("image.insert",file.path,false,{"idx":file.idx});
+												} else {
+													$wysiwyg.froalaEditor("file.insert",file.path,file.name,{idx:file.idx});
+												}
+											});
+											
+											$file.append($insert);
+											
+											var $delete = $("<button>").attr("type","button").attr("data-wysiwyg",form.getId().replace(/-files$/,"")).data("file",file).html('<i class="mi mi-trash"></i>');
+											$delete.on("click",function() {
+												var file = $(this).data("file");
+												var $wysiwyg = $("textarea",$("#"+$(this).attr("data-wysiwyg")));
+												
+												Ext.Msg.show({title:Admin.getText("alert/info"),msg:Admin.getText("action/deleteFile").replace("{FILE}",file.name),buttons:Ext.Msg.OKCANCEL,icon:Ext.Msg.QUESTION,fn:function(button) {
+													if (button == "ok") {
+														$.send(ENV.getProcessUrl("admin","@deleteWysiwygFile"),{idx:file.idx},function(result) {
+															if (result.success == true) {
+																var idxes = form.getValue().length > 0 ? form.getValue().toString().split(",") : [];
+																if ($.inArray(result.idx.toString(),idxes) > -1) idxes.splice($.inArray(result.idx.toString(),idxes),1);
+																form.setValue(idxes.join(","));
+															}
+														});
+													}
+												}});
+											});
+											$file.append($delete);
+											$lists.append($file);
+										}
+									}
+								});
+							}
+							
+							Ext.getCmp(form.getId().replace(/-files$/,"-lists")).updateLayout();
+						}
+					}
+				})
+			);
+			
+			var parent = form.ownerCt;
+			while (parent != null) {
+				if (parent.is("fieldset") == true) {
+					parent.addCls("x-form-wysiwyg");
+				}
+				
+				parent = parent.ownerCt;
+			}
 			setTimeout(form.resizer,500,form.getId());
 		};
 		

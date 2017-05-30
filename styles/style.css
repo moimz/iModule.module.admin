@@ -34,6 +34,15 @@ aside > ul > li.selected > a {color:#222;}
 
 footer {background:#343f4d; height:25px; line-height:25px; color:#aeb3b8; text-align:right; font-size:10px; font-family:OpenSans; padding-right:10px;}
 
+div[data-module=attachment].wysiwyg > ul[data-role=files] {list-style:none;}
+div[data-module=attachment].wysiwyg > ul[data-role=files]:empty {display:none;}
+div[data-module=attachment].wysiwyg > ul[data-role=files] > li {height:30px;}
+div[data-module=attachment].wysiwyg > ul[data-role=files] > li > i.icon {width:20px; height:20px; margin:5px 5px 5px 0px; float:left; background-size:contain; background-position:0 50%;}
+div[data-module=attachment].wysiwyg > ul[data-role=files] > li > a {display:inline-block; height:30px; line-height:30px; max-width:calc(100% - 100px); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-decoration:none; color:inherit; font-size:13px;}
+div[data-module=attachment].wysiwyg > ul[data-role=files] > li > a > i {color:#666; margin-left:10px; float:right; height:30px; line-height:30px; font-style:normal; font-size:11px;}
+div[data-module=attachment].wysiwyg > ul[data-role=files] > li > button {border:0px; width:18px; height:30px; margin:0px 2px; cursor:pointer; color:#666; background:transparent; font-size:14px;}
+div[data-module=attachment].wysiwyg > ul[data-role=files] > li > button:hover {color:#000;}
+
 /* ExtJS 스타일시트 추가 */
 .im-icon-default div[data-ref=innerCt] {border:1px solid #ccc; background:#fff; width:100%; height:118px; line-height:118px; text-align:center; border-radius:5px;}
 .im-icon-default div[data-ref=innerCt] i {font-size:64px; vertical-align:middle;}

@@ -783,24 +783,14 @@ class ModuleAdmin {
 		$text = Request($field) ? Request($field) : '';
 		$files = Request($field.'_files') ? explode(',',Request($field.'_files')) : array();
 		
-		$attachments = array();
-		for ($i=0, $loop=count($files);$i<$loop;$i++) {
-			if (preg_match('/<(a|img)(.*?)data-idx="'.$files[$i].'"(.*?)>/',$text) == true) {
-				$attachments[] = $files[$i];
-				$mAttachment->db()->update($mAttachment->getTable('attachment'),array('module'=>$module,'target'=>$target,'status'=>'PUBLISHED'))->where('idx',$files[$i])->execute();
-			} else {
-				$mAttachment->fileDelete($files[$i]);
-			}
-		}
-		
 		if ($origin != null && is_object($origin) == true) {
 			$content = $origin;
 		} else {
 			$content = new stdClass();
 		}
 		
-		$content->text = $this->IM->getModule('wysiwyg')->encodeContent($text,$attachments);
-		$content->files = $attachments;
+		$content->text = $this->IM->getModule('wysiwyg')->encodeContent($text,$files);
+		$content->files = $files;
 		
 		return $content;
 	}
