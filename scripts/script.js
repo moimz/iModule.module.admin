@@ -1775,12 +1775,13 @@ var Admin = {
 	 */
 	grid:function(grid,fields) {
 		var fields = fields == undefined ? [] : fields;
+		
 		var datas = [];
 		for (var i=0, loop=grid.getStore().getCount();i<loop;i++) {
 			var data = {};
 			var oData = grid.getStore().getAt(i).data;
 			for (var field in oData) {
-				if (fields.length == 0 || $.inArray(field,fields) == true) data[field] = $.trim(oData[field]);
+				if (fields.length == 0 || $.inArray(field,fields) > -1) data[field] = typeof oData[field] == "string" ? $.trim(oData[field]) : oData[field];
 			}
 			datas.push(data);
 		}
@@ -2146,6 +2147,8 @@ var Admin = {
 											$file.append($delete);
 											$lists.append($file);
 										}
+										
+										Ext.getCmp(form.getId().replace(/-files$/,"-lists")).updateLayout();
 									}
 								});
 							}
