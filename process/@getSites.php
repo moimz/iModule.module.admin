@@ -18,7 +18,7 @@ for ($i=0, $loop=count($lists);$i<$loop;$i++) {
 	$lists[$i]->grouping = $lists[$i]->sort.'@'.$lists[$i]->domain;
 	$lists[$i]->url = ($lists[$i]->is_ssl == 'TRUE' ? 'https://' : 'http://').$lists[$i]->domain.__IM_DIR__.'/'.$lists[$i]->language.'/';
 	$lists[$i]->favicon = $lists[$i]->favicon == -1 ? __IM_DIR__.'/images/logo/favicon.ico' : ($lists[$i]->favicon == 0 ? null : __IM_DIR__.'/attachment/view/'.$lists[$i]->favicon.'/favicon.ico');
-	$lists[$i]->emblem = $lists[$i]->emblem == -1 ? __IM_DIR__.'/images/logo/emblem.png' : ($lists[$i]->emblem == 0 ? $this->AdminModule->getDir().'/images/empty_square.png' : __IM_DIR__.'/attachment/view/'.$lists[$i]->emblem.'/emblem.png');
+	$lists[$i]->emblem = $lists[$i]->emblem == -1 ? __IM_DIR__.'/images/logo/emblem.png' : ($lists[$i]->emblem == 0 ? $this->getModule()->getDir().'/images/empty_square.png' : __IM_DIR__.'/attachment/view/'.$lists[$i]->emblem.'/emblem.png');
 	$lists[$i]->favicon = $lists[$i]->favicon == null ? $lists[$i]->emblem : $lists[$i]->favicon;
 	$lists[$i]->sort = $lists[$i]->sort * 1000 + ($lists[$i]->is_default == 'TRUE' ? 0 : $i + 1);
 	
