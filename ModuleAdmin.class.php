@@ -792,6 +792,10 @@ class ModuleAdmin {
 		$content->text = $this->IM->getModule('wysiwyg')->encodeContent($text,$files);
 		$content->files = $files;
 		
+		for ($i=0, $loop=count($content->files);$i<$loop;$i++) {
+			$mAttachment->filePublish($content->files[$i],$module,$target);
+		}
+		
 		return $content;
 	}
 	
