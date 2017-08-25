@@ -1789,6 +1789,92 @@ var Admin = {
 		return datas;
 	},
 	/**
+	 * 그리드 내용을 엑셀로 변환한다.
+	 *
+	 * @param Grid grid ExtJS 그리드 객체
+	 */
+	gridExcel:function(grid,title) {
+		var cells = [];
+		var datas = [];
+		var columns = grid.getColumns();
+		
+		for (var i=0, loop=grid.getStore().getCount();i<loop;i++) {
+			var data = {};
+			var oData = grid.getStore().getAt(i).data;
+			
+			for (var column in columns) {
+				if (columns[column].dataIndex) {
+					var cell = {};
+					
+					cell.title = columns[column].text;
+					cell.dataIndex = columns[column].dataIndex;
+					cell.align = columns[column].align;
+					
+					if (i == 0) cells.push(cell);
+					
+					data[cell.dataIndex] = typeof columns[column].renderer == "function" ? columns[column].renderer(oData[cell.dataIndex],{},oData) : oData[cell.dataIndex];
+				}
+			}
+			
+			datas.push(data);
+		}
+		
+		new Ext.Window({
+			id:"ModuleAdminExcelProgressWindow",
+			title:"엑셀 변환중 ...",
+			width:500,
+			modal:true,
+			bodyPadding:5,
+			closable:false,
+			items:[
+				new Ext.ProgressBar({
+					id:"ModuleAdminExcelProgressBar"
+				})
+			],
+			listeners:{
+				show:function() {
+					Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(0,"데이터 준비중입니다. 잠시만 기다려주십시오.");
+					
+					$.ajax({
+						url:ENV.getProcessUrl("admin","@getExcel"),
+						method:"POST",
+						timeout:0,
+						data:{cells:JSON.stringify(cells),datas:JSON.stringify(datas)},
+						xhr:function() {
+							var xhr = $.ajaxSettings.xhr();
+							
+							xhr.addEventListener("progress",function(e) {
+								if (e.lengthComputable) {
+									Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(e.loaded/e.total,Ext.util.Format.number(e.loaded - 1,"0,000")+" / "+Ext.util.Format.number(e.total,"0,000")+" ("+(e.loaded / e.total * 100).toFixed(2)+"%)",true);
+								}
+							});
+			
+							return xhr;
+						},
+						success:function(result,b,xhr) {
+							var hash = xhr.getResponseHeader("X-Excel-File");
+							if (hash && hash.length == 32) {
+								Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(1,"변환완료. 곧 다운로드가 시작됩니다.",true);
+								setTimeout(function() {
+									Ext.getCmp("ModuleAdminExcelProgressWindow").close();
+									
+									location.href = ENV.getProcessUrl("admin","@downloadExcel")+"?hash="+hash+"&title="+encodeURIComponent(title);
+								},1000);
+							} else {
+								Ext.getCmp("ModuleAdminExcelProgressWindow").close();
+								Ext.Msg.show({title:Admin.getText("alert/error"),msg:"엑셀변환 중 에러가 발생하였거나, 엑셀로 변환할 데이터가 없습니다.",buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+							}
+						},
+						error:function() {
+							Ext.Msg.show({title:Admin.getText("alert/error"),msg:"엑셀변환 중 에러가 발생하였습니다. 잠시후 다시 시도하여 주십시오.",buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+							Ext.getCmp("ModuleAdminExcelProgressWindow").close();
+						}
+					});
+				}
+			}
+		}).show();
+	},
+	/**
 	 * ExtJS Store 를 저장한다.
 	 *
 	 * @param Grid grid ExtJS 그리드 객체
@@ -1996,6 +2082,335 @@ var Admin = {
 				})
 			]
 		});
+	},
+	imageField:function(label,name,width,height) {
+		return new Ext.form.FieldContainer({
+			fieldLabel:label,
+			items:[
+				new Ext.form.Hidden({
+					name:name,
+					listeners:{
+						render:function(form) {
+							var $container = $("#"+form.ownerCt.items.items[1].getId());
+							form.getPanel().on("beforeaction",function(form,action) {
+								if (action.type == "submit") {
+									var image = $(".photo-editor",$container).cropit("export");
+									form.findField(name).setRawValue(image);
+								}
+							})
+						},
+						change:function(form,value) {
+							var $container = $("#"+form.ownerCt.items.items[1].getId());
+							$(".photo-editor",$container).cropit("imageSrc",value);
+						}
+					}
+				}),
+				new Ext.Panel({
+					border:false,
+					html:(function(width,height) {
+						var html = [
+							'<div data-role="image" style="width:'+(width + 22)+'px;">',
+							'	<div class="photo-editor" style="width:'+(width + 2)+'px; height:'+(height + 42)+'px;">',
+							'		<input type="file" class="cropit-image-input">',
+							'		<div class="cropit-image-preview-container">',
+							'			<div class="cropit-image-preview"></div>',
+							'		</div>',
+							'		<div class="cropit-image-zoom-container">',
+							'			<span class="cropit-image-zoom-out"><i class="fa fa-picture-o"></i></span>',
+							'			<input type="range" class="cropit-image-zoom-input">',
+							'			<span class="cropit-image-zoom-in"><i class="fa fa-picture-o"></i></span>',
+							'		</div>',
+							'	</div>',
+							'	<button type="button" data-action="select"><i class="xi xi-book"></i><span>이미지 선택</span></button>',
+							'	<button type="button" data-action="reset"><i class="xi xi-trash"></i><span>이미지 초기화</span></button>',
+							'</div>'
+						];
+						
+						return html.join("");
+					})(width,height),
+					listeners:{
+						render:function(panel) {
+							var $container = $("#"+panel.getId());
+							$("button[data-action]",$container).on("click",function() {
+								if ($(this).attr("data-action") == "select") {
+									$("input.cropit-image-input",$container).click();
+								} else if ($(this).attr("data-action") == "reset") {
+									$(".photo-editor",$container).cropit("resetImage");
+								}
+							});
+							
+							$(".photo-editor",$container).cropit({
+								exportZoom:2,
+								imageBackground:true,
+								imageBackgroundBorderWidth:20,
+								imageState:{
+//									src:$(".photo-editor",$form).attr("data-path")
+								}
+							});
+							
+							panel.updateLayout();
+						}
+					}
+				})
+			]
+		});
+	},
+	tagField:function(label,name,value,searchUrl) {
+		if (typeof label == "string") {
+			var searchUrl = searchUrl ? searchUrl : "";
+			return new Ext.form.FieldContainer({
+				fieldLabel:label,
+				items:[
+					new Ext.form.Hidden({
+						name:name,
+						value:value ? value : "",
+						allowBlank:true,
+						listeners:{
+							change:function(form,value) {
+								var panel = form.ownerCt.items.items[1];
+								Admin.tagField(panel,$("div[data-role=tags]",$("#"+panel.getId())));
+							}
+						}
+					}),
+					new Ext.Panel({
+						html:'<div data-role="tags" data-search="'+searchUrl+'"></div>',
+						border:false,
+						listeners:{
+							render:function(panel) {
+								Admin.tagField(panel,$("div[data-role=tags]",$("#"+panel.getId())));
+							}
+						}
+					})
+				]
+			});
+		} else {
+			var panel = label;
+			var $container = name;
+			
+			if ($container.is("div[data-role=tags]") == true) {
+				$container.empty();
+				var tags = panel.ownerCt.items.items[0].getValue().length > 0 ? panel.ownerCt.items.items[0].getValue().split(",") : [];
+				
+				for (var i=0, loop=tags.length;i<loop;i++) {
+					var $tag = $("<div>").attr("data-role","tag").attr("data-tag",tags[0]);
+					$tag.append($("<span>").text(tags[i]));
+					$tag.append($("<button>").attr("type","button").append($("<i>").addClass("mi mi-close")));
+					$container.append($tag);
+					
+					Admin.tagField(panel,$tag);
+				}
+				
+				var $insert = $("<div>").attr("data-role","tag");
+				$insert.append($("<input>").attr("type","text"));
+				$container.append($insert);
+				Admin.tagField(panel,$insert);
+			} else if ($container.is("div[data-role=tag]") == true) {
+				if ($("input",$container).length == 0) {
+					$container.attr("data-tag",$("span",$container).text());
+					$("span",$container).on("click",function() {
+						var tag = $(this).text();
+						
+						$(this).parents("div[data-role=tags]").children().has("input").remove();
+						
+						var $insert = $("<div>").attr("data-role","tag");
+						$insert.append($("<input>").attr("type","text").data("last",tag).val(tag));
+						$container.replaceWith($insert);
+						Admin.tagField(panel,$insert);
+						$("input",$insert).select();
+					});
+					
+					$("button",$container).on("click",function() {
+						var $parent = $container.parents("div[data-role=tags]");
+						$container.remove();
+						
+						var tags = [];
+						var $tags = $("div[data-role=tag][data-tag]",$parent);
+						$tags.each(function() {
+							tags.push($(this).attr("data-tag"));
+						});
+						panel.ownerCt.items.items[0].setRawValue(tags.join(","));
+						panel.updateLayout();
+					});
+				} else {
+					var $input = $("input",$container);
+					$input.on("keydown",function(e) {
+						if (e.keyCode == 32 || e.keyCode == 222 || e.keyCode == 191 || e.keyCode == 220 || e.keyCode == 186 || e.keyCode == 187) {
+							e.preventDefault();
+							return;
+						}
+						
+						if ((e.keyCode == 188 || e.keyCode == 190) && e.shiftKey == true) {
+							e.preventDefault();
+							return;
+						}
+						
+						if (e.keyCode == 188) {
+							var tag = $input.val().replace(/(#| )/,"");
+							
+							if (tag.length > 0) {
+								var $tag = $("<div>").attr("data-role","tag");
+								$tag.append($("<span>").html(tag));
+								$tag.append($("<button>").attr("type","button").append($("<i>").addClass("mi mi-close")));
+								Admin.tagField(panel,$tag);
+								$container.replaceWith($tag);
+								
+								var $insert = $("<div>").attr("data-role","tag");
+								$insert.append($("<input>").attr("type","text"));
+								$tag.parents("div[data-role=tags]").append($insert);
+								Admin.tagField(panel,$insert);
+								$("input",$insert).focus();
+							
+								var $parent = $tag.parents("div[data-role=tags]");
+							} else {
+								var $parent = $container.parents("div[data-role=tags]");
+								
+								if ($container.next().length > 0) {
+									$container.remove();
+									
+									var $insert = $("<div>").attr("data-role","tag");
+									$insert.append($("<input>").attr("type","text").data("last",tag).val(tag));
+									$parent.append($insert);
+									Admin.tagField(panel,$insert);
+									e.preventDefault();
+									$("input",$insert).focus();
+								}
+							}
+							
+							var tags = [];
+							var $tags = $("div[data-role=tag][data-tag]",$parent);
+							$tags.each(function() {
+								tags.push($(this).attr("data-tag"));
+							});
+							
+							panel.ownerCt.items.items[0].setRawValue(tags.join(","));
+							panel.updateLayout();
+							
+							e.preventDefault();
+							return;
+						}
+						
+						if (e.keyCode == 51 && e.shiftKey == true) {
+							e.preventDefault();
+							return;
+						}
+						
+						if (e.keyCode == 8) {
+							if ($(this).val().length == 0 && $container.prev("div[data-role=tag]").length > 0) {
+								var $prev = $container.prev("div[data-role=tag]");
+								var tag = $("span",$prev).text();
+								
+								$container.remove();
+								
+								var $insert = $("<div>").attr("data-role","tag");
+								$insert.append($("<input>").attr("type","text").data("last",tag).val(tag));
+								$prev.replaceWith($insert);
+								Admin.tagField(panel,$insert);
+								e.preventDefault();
+								$("input",$insert).focus();
+							}
+						}
+						
+						if (e.keyCode == 13) {
+							e.preventDefault();
+						}
+						
+						if (e.keyCode == 9) {
+							var tag = $input.val().replace(/(#| )/,"");
+							
+							if (tag.length > 0) {
+								var $tag = $("<div>").attr("data-role","tag");
+								$tag.append($("<span>").html(tag));
+								$tag.append($("<button>").attr("type","button").append($("<i>").addClass("mi mi-close")));
+								Admin.tagField(panel,$tag);
+								$container.replaceWith($tag);
+								
+								var $insert = $("<div>").attr("data-role","tag");
+								$insert.append($("<input>").attr("type","text"));
+								$tag.parents("div[data-role=tags]").append($insert);
+								Admin.tagField(panel,$insert);
+								$("input",$insert).focus();
+							
+								var $parent = $tag.parents("div[data-role=tags]");
+							} else {
+								var $parent = $container.parents("div[data-role=tags]");
+								
+								if ($container.next().length > 0) {
+									$container.remove();
+									
+									var $insert = $("<div>").attr("data-role","tag");
+									$insert.append($("<input>").attr("type","text").data("last",tag).val(tag));
+									$parent.append($insert);
+									Admin.tagField(panel,$insert);
+									e.preventDefault();
+									$("input",$insert).focus();
+								}
+							}
+							
+							var tags = [];
+							var $tags = $("div[data-role=tag][data-tag]",$parent);
+							$tags.each(function() {
+								tags.push($(this).attr("data-tag"));
+							});
+							
+							panel.ownerCt.items.items[0].setRawValue(tags.join(","));
+							panel.updateLayout();
+							
+							if (tag.length > 0) e.preventDefault();
+						}
+					});
+					
+					$input.on("focus",function(e) {
+						panel.ownerCt.items.items[0].getPanel().addCls("x-form-tags");
+					});
+					
+					$input.on("blur",function(e) {
+						panel.ownerCt.items.items[0].getPanel().removeCls("x-form-tags");
+						
+						setTimeout(function($input) {
+							var tag = $input.val().replace(/(#| )/,"");
+							
+							if (tag.length > 0) {
+								var $tag = $("<div>").attr("data-role","tag");
+								$tag.append($("<span>").html(tag));
+								$tag.append($("<button>").attr("type","button").append($("<i>").addClass("mi mi-close")));
+								Admin.tagField(panel,$tag);
+								$container.replaceWith($tag);
+								
+								var $insert = $("<div>").attr("data-role","tag");
+								$insert.append($("<input>").attr("type","text"));
+								$tag.parents("div[data-role=tags]").append($insert);
+								Admin.tagField(panel,$insert);
+							
+								var $parent = $tag.parents("div[data-role=tags]");
+							} else {
+								var $parent = $container.parents("div[data-role=tags]");
+								
+								if ($container.next().length > 0) {
+									$container.remove();
+									
+									var $insert = $("<div>").attr("data-role","tag");
+									$insert.append($("<input>").attr("type","text").data("last",tag).val(tag));
+									$parent.append($insert);
+									Admin.tagField(panel,$insert);
+									e.preventDefault();
+								}
+							}
+							
+							var tags = [];
+							var $tags = $("div[data-role=tag][data-tag]",$parent);
+							$tags.each(function() {
+								tags.push($(this).attr("data-tag"));
+							});
+							
+							panel.ownerCt.items.items[0].setRawValue(tags.join(","));
+							panel.updateLayout();
+						},100,$input);
+					});
+					
+					if ($input.parents("div[data-role=tags]").attr("data-search")) $input.keyword($input.parents("div[data-role=tags]").attr("data-search"));
+				}
+			}
+		}
 	},
 	/**
 	 * 위지윅 필드를 추가한다.
