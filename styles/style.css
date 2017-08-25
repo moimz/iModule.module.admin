@@ -49,3 +49,52 @@ div[data-module=attachment].wysiwyg > ul[data-role=files] > li > button:hover {c
 .im-icon-default div[data-ref=innerCt] i.mi-loading {font-size:14px !important;}
 
 .helpBlock {border:1px solid #e0d0bc; background:#fffeeb; padding:8px; font-size:12px; line-height:1.6;}
+
+.x-form-tags .x-fieldset {overflow:visible;}
+.x-form-tags .x-fieldset-body-default {overflow:visible;}
+
+.x-form-tags .x-panel-default {overflow:visible;}
+.x-form-tags .x-panel-body {overflow:visible;}
+
+
+div[data-role=tags] > div[data-role=tag] {height:32px; z-index:10000;}
+div[data-role=tags] > div[data-role=tag] > span {height:32px; line-height:32px; font-size:12px;}
+div[data-role=tags] > div[data-role=tag] > button {width:18px; height:18px; margin:7px;}
+div[data-role=tags] > div[data-role=tag] > button > i {width:18px; height:18px; font-size:12px; margin:0px; line-height:18px;}
+
+div[data-role=tags] > div[data-role=tag] > input {font-size:12px; padding:5px 10px 4px 10px; height:32px; border-color:#d0d0d0;}
+div[data-role=tags] > div[data-role=tag] > input:focus {border-color:#3892d4;}
+
+div[data-role=tags] > div[data-role=tag] > ul {top:31px;}
+div[data-role=tags] > div[data-role=tag] > ul > li {font-size:12px; height:30px; line-height:30px;}
+
+
+div[data-role=image] {padding:10px; text-align:center;}
+div[data-role=image] .photo-editor .cropit-image-preview-container {width:100%; height:calc(100% - 42px); background:rgba(0,0,0,0.1);}
+div[data-role=image] .photo-editor .cropit-image-preview {background-size:cover; width:100%; height:100%; cursor:move; border:1px solid #ccc; box-sizing:border-box;}
+div[data-role=image] .photo-editor .cropit-image-preview:after {background-color:black !important;}
+div[data-role=image] .photo-editor input.cropit-image-input {display:none;}
+div[data-role=image] .photo-editor .cropit-image-background {opacity:0.3; cursor:auto;}
+
+div[data-role=image] .photo-editor .cropit-image-zoom-container {height:20px; width:100%; margin:0px auto; margin-top:20px; font-size:0px; text-align:center;}
+div[data-role=image] .photo-editor .cropit-image-zoom-container span {width:20px; height:17px; display:inline-block; vertical-align:middle; line-height:17px; margin-top:3px;}
+div[data-role=image] .photo-editor .cropit-image-zoom-container span.cropit-image-zoom-out i {font-size:10px; margin-top:2px;}
+div[data-role=image] .photo-editor .cropit-image-zoom-container span.cropit-image-zoom-in i {font-size:14px;}
+div[data-role=image] .photo-editor input.cropit-image-zoom-input {-webkit-appearance:none; border:1px solid white; width:140px; position:relative; z-index:10; vertical-align:middle; margin:0px 10px;}
+div[data-role=image] .photo-editor input.cropit-image-zoom-input::-webkit-slider-runnable-track {width:100%; height:5px; background:#ddd; border:none; border-radius:3px;}
+div[data-role=image] .photo-editor input.cropit-image-zoom-input::-webkit-slider-thumb {-webkit-appearance:none; border:none; height:16px; width:16px; border-radius:50%; background:#e4232c; margin-top:-5px;}
+div[data-role=image] .photo-editor input.cropit-image-zoom-input:focus {outline:none;}
+div[data-role=image] .photo-editor input.cropit-image-zoom-input:focus::-webkit-slider-runnable-track {background:#ccc;}
+div[data-role=image] .photo-editor input.cropit-image-zoom-input::-moz-range-track {width:100%; height:5px; background:#ddd; border:none; border-radius:3px;}
+div[data-role=image] .photo-editor input.cropit-image-zoom-input::-moz-range-thumb {border:none; height:16px; width:16px; border-radius:50%; background:#e4232c;}
+div[data-role=image] .photo-editor input.cropit-image-zoom-input:-moz-focusring{outline:1px solid white; outline-offset:-1px;}
+div[data-role=image] .photo-editor input.cropit-image-zoom-input::-ms-track {width:300px; height:5px; background:transparent; border-color:transparent; border-width:6px 0; color:transparent;}
+div[data-role=image] .photo-editor input.cropit-image-zoom-input::-ms-fill-lower {background:#777; border-radius:10px;}
+div[data-role=image] .photo-editor input.cropit-image-zoom-input::-ms-fill-upper {background:#ddd; border-radius:10px;}
+div[data-role=image] .photo-editor input.cropit-image-zoom-input::-ms-thumb {border:none; height:16px; width:16px; border-radius:50%; background:#e4232c;}
+div[data-role=image] .photo-editor input.cropit-image-zoom-input:focus::-ms-fill-lower {background:#888;}
+div[data-role=image] .photo-editor input.cropit-image-zoom-input:focus::-ms-fill-upper {background:#ccc;}
+div[data-role=image] > button {width:auto; background:#b5b7c0; border:0px; color:#fff; font-size:13px; line-height:32px; height:32px; font-size:0; font-size:13px; cursor:pointer; padding:0px; margin-top:10px;}
+div[data-role=image] > button > i {display:inline-block; width:32px; height:32px; line-height:32px; vertical-align:top; text-align:center; font-size:16px; margin-top:0px;}
+div[data-role=image] > button > span {display:inline-block; padding-right:15px; height:32px; line-height:32px; font-size:12px;}
+div[data-role=image] > button:hover {background:#828595; color:#fff;}
