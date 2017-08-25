@@ -360,6 +360,7 @@ class ModuleAdmin {
 		 */
 		$this->IM->loadExtJs();
 		$this->Module->loadLanguage('admin');
+		$this->IM->addHeadResource('script',$this->Module->getDir().'/scripts/jquery.cropit.min.js');
 		
 		/**
 		 * Wysiwyg 에디터를 사용하기 위한 코드를 불러온다.
