@@ -56,13 +56,31 @@ while ($templet = @readdir($templetsPath)) {
  */
 $modules = $this->IM->db()->select($this->IM->getModule()->getTable('module'))->where('is_templet','TRUE')->get();
 for ($i=0, $loop=count($modules);$i<$loop;$i++) {
-	$externalsPath = @opendir($this->IM->getModule()->getPath($modules[$i]->module).'/templets/externals');
-	while ($external = @readdir($externalsPath)) {
-		if ($external != '.' && $external != '..' && is_file($this->IM->getModule()->getPath($modules[$i]->module).'/templets/externals/'.$external) == true) {
-			$lists[] = array(
-				'path'=>$this->IM->getModule()->getDir($modules[$i]->module).'/templets/externals/'.$external
-			);
+	if (is_file($this->IM->getModule()->getPath($modules[$i]->module).'/templets/package.json') == true) {
+		$externalsPath = @opendir($this->IM->getModule()->getPath($modules[$i]->module).'/templets/externals');
+		while ($external = @readdir($externalsPath)) {
+			if ($external != '.' && $external != '..' && is_file($this->IM->getModule()->getPath($modules[$i]->module).'/templets/externals/'.$external) == true) {
+				$lists[] = array(
+					'path'=>$this->IM->getModule()->getDir($modules[$i]->module).'/templets/externals/'.$external
+				);
+			}
 		}
+	} else {
+		$templetsPath = @opendir($this->IM->getModule()->getPath($modules[$i]->module).'/templets');
+		while ($templet = @readdir($templetsPath)) {
+			if ($templet != '.' && $templet != '..' && is_dir($this->IM->getModule()->getPath($modules[$i]->module).'/templets/'.$templet) == true) {
+				$externalsPath = @opendir($this->IM->getModule()->getPath($modules[$i]->module).'/templets/'.$templet.'/externals');
+				while ($external = @readdir($externalsPath)) {
+					if ($external != '.' && $external != '..' && is_file($this->IM->getModule()->getPath($modules[$i]->module).'/templets/'.$templet.'/externals/'.$external) == true) {
+						$lists[] = array(
+							'path'=>$this->IM->getModule()->getDir($modules[$i]->module).'/templets/'.$templet.'/externals/'.$external
+						);
+					}
+				}
+				@closedir($externalsPath);
+			}
+		}
+		@closedir($templetsPath);
 	}
 }
 
