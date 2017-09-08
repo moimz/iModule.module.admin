@@ -2506,9 +2506,11 @@ var Admin = {
 				new Ext.Panel({
 					id:form.getId()+"-lists",
 					border:0,
+					style:{paddingLeft:(label ? (form.labelWidth + 5)+"px" : "0px")},
 					html:'<div data-module="attachment" class="wysiwyg"><ul data-role="files"></ul>'
 				})
 			);
+			
 			form.ownerCt.add(
 				new Ext.form.Hidden({
 					id:form.getId()+"-files",
