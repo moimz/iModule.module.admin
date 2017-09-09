@@ -466,40 +466,7 @@ class ModuleAdmin {
 				ob_end_clean();
 			} else {
 				$panel = $this->Module->getAdminPanel($this->page);
-				
-				
-				/*
-				$this->loadLangaugeJs($page);
-			
-			if (file_exists(__IM_PATH__.'/modules/'.$page.'/admin/config.php') == true) {
-				ob_start();
-				INCLUDE_ONCE __IM_PATH__.'/modules/'.$page.'/admin/config.php';
-				$config = ob_get_contents();
-				ob_end_clean();
-			} else {
-				$config = null;
 			}
-			
-			$mModule = $this->IM->getModule($page);
-			if (method_exists($mModule,'getAdminPanel') == true) {
-				$panel = $mModule->getAdminPanel($this);
-			} elseif (file_exists(__IM_PATH__.'/modules/'.$page.'/admin/index.php') == true) {
-				if (file_exists(__IM_PATH__.'/modules/'.$page.'/admin/scripts/'.$page.'.js') == true) {
-					$this->addSiteHeader('script',__IM_DIR__.'/modules/'.$page.'/admin/scripts/'.$page.'.js');
-				}
-				
-				ob_start();
-				INCLUDE_ONCE __IM_PATH__.'/modules/'.$page.'/admin/index.php';
-				$panel = ob_get_contents();
-				ob_end_clean();
-				
-				if ($config != null) {
-					$panel.= PHP_EOL.$config.PHP_EOL.'<script>Admin.module.addConfigPanel("'.$page.'",config);</script>'.PHP_EOL;
-				}
-			} else {
-				$panel = '';
-			}*/
-			}	
 		}
 		
 		return $panel;
