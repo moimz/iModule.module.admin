@@ -2531,7 +2531,7 @@ var Admin = {
 			);
 			
 			form.ownerCt.add(
-				new Ext.form.TextField({
+				new Ext.form.Hidden({
 					id:form.getId()+"-files",
 					name:form.getName()+"_files",
 					allowBlank:true,
@@ -2605,7 +2605,7 @@ var Admin = {
 				
 				parent = parent.ownerCt;
 			}
-//			setTimeout(form.resizer,500,form.getId());
+			setTimeout(form.resizer,500,form.getId());
 		};
 		
 		options.listeners.change = function(form,value) {
