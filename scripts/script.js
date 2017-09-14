@@ -2486,7 +2486,7 @@ var Admin = {
 			});
 			
 			$textarea.froalaEditor({
-				key:"pFOFSAGLUd1AVKg1SN==", // Froala Wysiwyg OEM License Key For MoimzTools Only
+				key:"pFOFSAGLUd1AVKg1SN==",
 				toolbarButtons:["html","|","bold","italic","underline","strikeThrough","align","|","paragraphFormat","fontSize","color","|","insertImage","insertFile","insertVideo","insertLink","insertTable"],
 				fontSize:["8","9","10","11","12","14","18","24"],
 				heightMin:300,
@@ -2502,23 +2502,43 @@ var Admin = {
 				pluginsEnabled:["align","codeView","colors","file","fontSize","image","lineBreaker","link","lists","paragraphFormat","insertCode","table","url","video"]
 			});
 			
+			setTimeout(function(form) {
+				if (!form) return;
+				
+				var index = form.ownerCt.items.indexOf(form);
+				form.ownerCt.insert(index+1,
+					new Ext.Panel({
+						id:form.getId()+"-lists",
+						border:0,
+						style:{paddingLeft:(label ? (form.labelWidth + 5)+"px" : "0px")},
+						html:'<div data-module="attachment" class="wysiwyg"><ul data-role="files"></ul>',
+						listeners:{
+							render:function(panel) {
+								var form = Ext.getCmp(panel.getId().replace(/-lists$/,"-files"));
+								if (form.getValue()) form.fireEvent("change",form,form.getValue());
+							}
+						}
+					})
+				);
+			},500,form);
+			
 			form.ownerCt.add(
-				new Ext.Panel({
-					id:form.getId()+"-lists",
-					border:0,
-					style:{paddingLeft:(label ? (form.labelWidth + 5)+"px" : "0px")},
-					html:'<div data-module="attachment" class="wysiwyg"><ul data-role="files"></ul>'
+				new Ext.form.Hidden({
+					id:form.getId()+"-delete-files",
+					name:form.getName()+"_delete_files",
+					allowBlank:true
 				})
 			);
 			
 			form.ownerCt.add(
-				new Ext.form.Hidden({
+				new Ext.form.TextField({
 					id:form.getId()+"-files",
 					name:form.getName()+"_files",
 					allowBlank:true,
 					listeners:{
 						change:function(form,value) {
 							var $lists = $("ul[data-role=files]",$("#"+form.getId().replace(/-files$/,"-lists")));
+							if ($lists.length == 0) return;
 							$lists.empty();
 							
 							if (value) {
@@ -2547,29 +2567,30 @@ var Admin = {
 											var $delete = $("<button>").attr("type","button").attr("data-wysiwyg",form.getId().replace(/-files$/,"")).data("file",file).html('<i class="mi mi-trash"></i>');
 											$delete.on("click",function() {
 												var file = $(this).data("file");
+												var $file = $(this).parents("li");
 												var $wysiwyg = $("textarea",$("#"+$(this).attr("data-wysiwyg")));
 												
 												Ext.Msg.show({title:Admin.getText("alert/info"),msg:Admin.getText("action/deleteFile").replace("{FILE}",file.name),buttons:Ext.Msg.OKCANCEL,icon:Ext.Msg.QUESTION,fn:function(button) {
-													if (button == "ok") {
-														$.send(ENV.getProcessUrl("admin","@deleteWysiwygFile"),{idx:file.idx},function(result) {
-															if (result.success == true) {
-																var idxes = form.getValue().length > 0 ? form.getValue().toString().split(",") : [];
-																if ($.inArray(result.idx.toString(),idxes) > -1) idxes.splice($.inArray(result.idx.toString(),idxes),1);
-																form.setValue(idxes.join(","));
-															}
-														});
-													}
+													var delete_files = Ext.getCmp(form.getId().replace(/-files$/,"-delete-files")).getValue().length > 0 ? Ext.getCmp(form.getId().replace(/-files$/,"-delete-files")).getValue().split(",") : [];
+													delete_files.push(file.idx);
+													Ext.getCmp(form.getId().replace(/-files$/,"-delete-files")).setValue(delete_files.join(","));
+													$file.remove();
+													
+													
+													Ext.getCmp(form.getId().replace(/-files$/,"-lists")).updateLayout();
 												}});
 											});
 											$file.append($delete);
 											$lists.append($file);
 										}
 										
+										$lists.height("auto");
 										Ext.getCmp(form.getId().replace(/-files$/,"-lists")).updateLayout();
 									}
 								});
 							}
 							
+							$lists.height("auto");
 							Ext.getCmp(form.getId().replace(/-files$/,"-lists")).updateLayout();
 						}
 					}
@@ -2584,7 +2605,7 @@ var Admin = {
 				
 				parent = parent.ownerCt;
 			}
-			setTimeout(form.resizer,500,form.getId());
+//			setTimeout(form.resizer,500,form.getId());
 		};
 		
 		options.listeners.change = function(form,value) {
