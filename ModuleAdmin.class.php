@@ -385,7 +385,13 @@ class ModuleAdmin {
 		/**
 		 * 현재메뉴가 없을 경우, 첫번째 메뉴를 선택한다.
 		 */
-		$this->menu = $this->menu == null ? $menus[0]->menu : $this->menu;
+		if ($this->menu == null) {
+			$this->menu = $menus[0]->menu;
+			if ($menus[0]->page !== false) $this->page = $menus[0]->page;
+		}
+		
+		$permissions = $this->checkPermission();
+		if ($permissions !== true && ($this->menu != 'modules' || in_array($this->page,$permissions) == false)) return $this->IM->printError('FORBIDDEN');
 		
 		/**
 		 * 현재 메뉴에 대한 2차 메뉴(페이지)를 구성한다.
@@ -525,80 +531,98 @@ class ModuleAdmin {
 		 */
 		$permissions = $this->checkPermission();
 		
-		/**
-		 * 기본메뉴를 구성한다. 사이트관리자 환경설정에 따라 비활성화 된 메뉴는 제외한다.
-		 * 접근권한이 없는 메뉴도 제외한다.
-		 */
 		$menus = array();
 		
 		/**
-		 * 대시보드
+		 * 전체 관리자의 경우 관리자 메뉴를 구성한다. 사이트관리자 환경설정에 따라 비활성화 된 메뉴는 제외한다.
 		 */
-		if (in_array('dashboard',$disabledMenus) == false || $permissions === true || in_array('dashboard',$permissions) == true) {
-			$menu = new stdClass();
-			$menu->menu = 'dashboard';
-			$menu->page = false;
-			$menu->tab = false;
-			$menu->icon = 'fa-dashboard';
-			$menu->title = $this->getText('menus/dashboard');
-			$menus[] = $menu;
+		if ($permissions === true) {
+			$allowed = $permissions === true ? array() : array();
+			
+			/**
+			 * 대시보드
+			 */
+			if (in_array('dashboard',$disabledMenus) == false) {
+				$menu = new stdClass();
+				$menu->menu = 'dashboard';
+				$menu->page = false;
+				$menu->tab = false;
+				$menu->icon = 'fa-dashboard';
+				$menu->title = $this->getText('menus/dashboard');
+				$menus[] = $menu;
+			}
+			
+			/**
+			 * 모듈관리
+			 */
+			if (in_array('modules',$disabledMenus) == false) {
+				$menu = new stdClass();
+				$menu->menu = 'modules';
+				$menu->page = false;
+				$menu->tab = false;
+				$menu->icon = 'fa-cube';
+				$menu->title = $this->getText('menus/modules');
+				$menus[] = $menu;
+			}
+			
+			/**
+			 * 에드온관리
+			 */
+			if (in_array('addons',$disabledMenus) == false) {
+				$menu = new stdClass();
+				$menu->menu = 'addons';
+				$menu->page = false;
+				$menu->tab = false;
+				$menu->icon = 'fa-puzzle-piece';
+				$menu->title = $this->getText('menus/addons');
+				$menus[] = $menu;
+			}
+			
+			/**
+			 * 위젯관리
+			 */
+			if (in_array('widgets',$disabledMenus) == false) {
+				$menu = new stdClass();
+				$menu->menu = 'widgets';
+				$menu->page = false;
+				$menu->tab = false;
+				$menu->icon = 'fa-sticky-note-o';
+				$menu->title = $this->getText('menus/widgets');
+				$menus[] = $menu;
+			}
+			
+			/**
+			 * 사이트환경설정
+			 */
+			if (in_array('configs',$disabledMenus) == false) {
+				$menu = new stdClass();
+				$menu->menu = 'configs';
+				$menu->page = false;
+				$menu->tab = false;
+				$menu->icon = 'fa-cog';
+				$menu->title = $this->getText('menus/configs');
+				$menus[] = $menu;
+			}
+			
+			/**
+			 * @todo 추가 메뉴 구성
+			 */
+		} else {
+			/**
+			 * 관리권한이 있는 모듈로 관리자 메뉴를 구성한다.
+			 */
+			foreach ($permissions as $module) {
+				$mModule = $this->IM->getModule($module);
+				
+				$menu = new stdClass();
+				$menu->menu = 'modules';
+				$menu->page = $module;
+				$menu->tab = false;
+				$menu->icon = $mModule->getModule()->getPackage()->icon;
+				$menu->title = $mModule->getModule()->getTitle();
+				$menus[] = $menu;
+			}
 		}
-		
-		/**
-		 * 모듈관리
-		 */
-		if (in_array('modules',$disabledMenus) == false || $permissions === true || in_array('modules',$permissions) == true) {
-			$menu = new stdClass();
-			$menu->menu = 'modules';
-			$menu->page = false;
-			$menu->tab = false;
-			$menu->icon = 'fa-cube';
-			$menu->title = $this->getText('menus/modules');
-			$menus[] = $menu;
-		}
-		
-		/**
-		 * 에드온관리
-		 */
-		if (in_array('addons',$disabledMenus) == false || $permissions === true || in_array('addons',$permissions) == true) {
-			$menu = new stdClass();
-			$menu->menu = 'addons';
-			$menu->page = false;
-			$menu->tab = false;
-			$menu->icon = 'fa-puzzle-piece';
-			$menu->title = $this->getText('menus/addons');
-			$menus[] = $menu;
-		}
-		
-		/**
-		 * 위젯관리
-		 */
-		if (in_array('widgets',$disabledMenus) == false || $permissions === true || in_array('widgets',$permissions) == true) {
-			$menu = new stdClass();
-			$menu->menu = 'widgets';
-			$menu->page = false;
-			$menu->tab = false;
-			$menu->icon = 'fa-sticky-note-o';
-			$menu->title = $this->getText('menus/widgets');
-			$menus[] = $menu;
-		}
-		
-		/**
-		 * 사이트환경설정
-		 */
-		if (in_array('configs',$disabledMenus) == false || $permissions === true || in_array('configs',$permissions) == true) {
-			$menu = new stdClass();
-			$menu->menu = 'configs';
-			$menu->page = false;
-			$menu->tab = false;
-			$menu->icon = 'fa-cog';
-			$menu->title = $this->getText('menus/configs');
-			$menus[] = $menu;
-		}
-		
-		/**
-		 * @todo 추가 메뉴 구성
-		 */
 		
 		$this->menus = $menus;
 		
@@ -621,7 +645,7 @@ class ModuleAdmin {
 		/**
 		 * 현재 권한을 가지고 온다.
 		 */
-		$permissions = $this->checkPermission() === true || in_array($menu.'/*',$this->checkPermission()) == true;
+		$permissions = $this->checkPermission();
 		
 		/**
 		 * 1차 메뉴별 2차메뉴를 구성한다. 사이트관리자 환경설정에 따라 비활성화 된 메뉴는 제외한다.
@@ -635,7 +659,7 @@ class ModuleAdmin {
 		 */
 		if ($menu == 'modules') {
 			/**
-			 * 전체 모듈을 관리할 수 있는 메뉴를 구성한다.
+			 * 사이트 관리자의 경우 전체 모듈을 관리할 수 있는 메뉴를 구성한다.
 			 */
 			$page = new stdClass();
 			$page->menu = 'modules';
@@ -734,7 +758,35 @@ class ModuleAdmin {
 	function checkPermission() {
 		if ($this->IM->getModule('member')->isAdmin() == true) return true;
 		
-		return false;
+		/**
+		 * 모듈별 관리자 권한을 가지고 있는 모듈을 검색한다.
+		 */
+		$modules = $this->IM->getModule()->getAdminModules();
+		$permissions = array();
+		foreach ($modules as $module) {
+			$mModule = $this->IM->getModule($module->module);
+			if (method_exists($mModule,'isAdmin') == true && $mModule->isAdmin() == true) {
+				$permissions[] = $module->module;
+			}
+		}
+		
+		return count($permissions) == 0 ? false : $permissions;
+	}
+	
+	/**
+	 * 관리자 process 처리권한이 있는지 확인한다.
+	 *
+	 * @param string $module 모듈명
+	 * @return boolean $hasPermission
+	 */
+	function checkProcessPermission($module,$action=null) {
+		$values = new stdClass();
+		$values->action = $action;
+		$values->permission = false;
+		
+		$this->IM->fireEvent('checkProcessPermission','admin',$module,$values);
+		
+		return $values->permission;
 	}
 	
 	/**

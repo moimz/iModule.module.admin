@@ -43,7 +43,8 @@ var Admin = {
 					if (result.success == true) {
 						location.href = location.href;
 					} else {
-						iModule.alert.show("error",result.message);
+						$("main").addClass("error").shake();
+						$form.status("error");
 					}
 				});
 			} else {

@@ -16,7 +16,7 @@ if (defined('__IM__') == false) exit;
 	
 	<ul>
 		<?php for ($i=0, $loop=count($menus);$i<$loop;$i++) { ?>
-		<li<?php echo $menus[$i]->menu == $this->menu && ($menus[$i]->page == false || $menus[$i]->menu == $this->page) ? ' class="selected"' : ''; ?>><a href="<?php echo $this->getUrl($menus[$i]->menu,$menus[$i]->page,$menus[$i]->tab); ?>"><i class="<?php echo substr($menus[$i]->icon,0,2); ?> <?php echo $menus[$i]->icon; ?>"></i><?php echo $menus[$i]->title; ?></a></li>
+		<li<?php echo $menus[$i]->menu == $this->menu && ($menus[$i]->page == false || $menus[$i]->page == $this->page) ? ' class="selected"' : ''; ?>><a href="<?php echo $this->getUrl($menus[$i]->menu,$menus[$i]->page,$menus[$i]->tab); ?>"><i class="<?php echo substr($menus[$i]->icon,0,2); ?> <?php echo $menus[$i]->icon; ?>"></i><?php echo $menus[$i]->title; ?></a></li>
 		<?php } ?>
 	</ul>
 	
@@ -42,41 +42,6 @@ if (defined('__IM__') == false) exit;
 </footer>
 
 <script>
-var panel = null;
-</script>
-
-<?php echo $panel; ?>
-
-<script>
-if (panel == null) {
-	var center = new Ext.Panel({
-		title:"<?php echo $pageTitle->title; ?>",
-		iconCls:"<?php echo substr($pageTitle->icon,0,2); ?> <?php echo $pageTitle->icon; ?>",
-		region:"center",
-		cls:"<?php echo count($pages) == 0 ? '' : 'x-main-panel'; ?>",
-		border:false,
-		html:"NOPE"
-	});
-} else {
-	var center = new Ext.Panel({
-		id:"iModuleAdminPanel",
-		title:"<?php echo $pageTitle->title; ?>",
-		iconCls:"<?php echo substr($pageTitle->icon,0,2); ?> <?php echo $pageTitle->icon; ?>",
-		region:"center",
-		cls:"<?php echo count($pages) == 0 ? '' : 'x-main-panel'; ?>",
-		layout:"fit",
-		border:false,
-		items:[
-			panel
-		],
-		listeners:{
-			render:function() {
-				
-			}
-		}
-	});
-}
-
 Ext.onReady(function () {
 	new Ext.Viewport({
 		id:"AdminViewport",
@@ -88,7 +53,7 @@ Ext.onReady(function () {
 				border:false,
 				contentEl:"iModuleAdminHeader"
 			}),
-			<?php if (count($pages) > 0) { ?>
+			<?php if (count($pages) > 0 && $permissions === true) { ?>
 			new Ext.Panel({
 				title:"<?php echo $menuTitle->title; ?>",
 				iconCls:"<?php echo substr($menuTitle->icon,0,2); ?> <?php echo $menuTitle->icon; ?>",
@@ -100,18 +65,95 @@ Ext.onReady(function () {
 				contentEl:"iModuleAdminPages"
 			}),
 			<?php } ?>
-			center,
+			new Ext.Panel({
+				id:"iModuleAdminPanel",
+				<?php if ($permissions === true) { ?>
+				title:"<?php echo $pageTitle->title; ?>",
+				iconCls:"<?php echo substr($pageTitle->icon,0,2); ?> <?php echo $pageTitle->icon; ?>",
+				<?php } ?>
+				region:"center",
+				cls:"<?php echo count($pages) == 0 ? '' : 'x-main-panel'; ?>",
+				layout:"fit",
+				border:false,
+				items:[
+					
+				],
+				listeners:{
+					add:function(panel,content) {
+						if (content.is("tabpanel") == true) {
+							<?php if ($tab) { ?>
+							if (Ext.getCmp("<?php echo $tab; ?>")) {
+								setTimeout(function(tabs,tab) { tabs.setActiveTab(tab); },1000,Ext.getCmp(content.getId()),Ext.getCmp("<?php echo $tab; ?>"));
+							}
+							<?php } ?>
+							
+							if (Admin.getMenu() == "modules") {
+								content.on("tabchange",function(tabs,tab) {
+									if (Admin.getTab() != tab.getId() && history.replaceState) {
+										history.replaceState({tab:tab.getId()},tab.getTitle()+" - "+Ext.getCmp("iModuleAdminPanel").getTitle(),"/admin/modules/"+Admin.getPage()+"/"+tab.getId());
+										document.title = tab.getTitle()+" - "+Ext.getCmp("iModuleAdminPanel").getTitle();
+									}
+								});
+								
+								content.on("afterrender",function(tabs) {
+									var tab = tabs.getActiveTab();
+									
+									if (Admin.getTab() != tab.getId() && history.replaceState) {
+										history.replaceState({tab:tab.getId()},tab.getTitle()+" - "+Ext.getCmp("iModuleAdminPanel").getTitle(),"/admin/modules/"+Admin.getPage()+"/"+tab.getId());
+									}
+									
+									document.title = tab.getTitle()+" - "+Ext.getCmp("iModuleAdminPanel").getTitle();
+								});
+							}
+						}
+					}
+				}
+			}),
+			/*
+			(function() {
+				if (panel == null) {
+					return new Ext.Panel({
+						title:"<?php echo $pageTitle->title; ?>",
+						iconCls:"<?php echo substr($pageTitle->icon,0,2); ?> <?php echo $pageTitle->icon; ?>",
+						region:"center",
+						cls:"<?php echo count($pages) == 0 ? '' : 'x-main-panel'; ?>",
+						border:false,
+						html:"NOPE"
+					});
+				} else {
+					return new Ext.Panel({
+						id:"iModuleAdminPanel",
+						<?php if ($permissions === true) { ?>
+						title:"<?php echo $pageTitle->title; ?>",
+						iconCls:"<?php echo substr($pageTitle->icon,0,2); ?> <?php echo $pageTitle->icon; ?>",
+						<?php } ?>
+						region:"center",
+						cls:"<?php echo count($pages) == 0 ? '' : 'x-main-panel'; ?>",
+						layout:"fit",
+						border:false,
+						items:[
+							panel
+						],
+						listeners:{
+							render:function() {
+								
+							}
+						}
+					});
+				}
+			})(panel),*/
 			new Ext.Panel({
 				region:"south",
 				height:25,
 				border:false,
 				contentEl:"iModuleAdminFooter"
 			})
-		],
+		]/*,
 		listeners:{
 			render:function() {
-				if (Ext.getCmp("iModuleAdminPanel") && Ext.getCmp("iModuleAdminPanel").items.items.length == 1 && Ext.getCmp("iModuleAdminPanel").items.items[0].is("tabpanel") == true) {
+				if (Ext.getCmp("iModuleAdminPanel") && Ext.getCmp("iModuleAdminPanel").items.items.length > 0 && Ext.getCmp("iModuleAdminPanel").items.items[0].is("tabpanel") == true) {
 					var content = Ext.getCmp("iModuleAdminPanel").items.items[0];
+					console.log(content);
 					
 					<?php if ($tab) { ?>
 					if (Ext.getCmp("<?php echo $tab; ?>")) {
@@ -139,7 +181,7 @@ Ext.onReady(function () {
 					}
 				}
 			}
-		}
+		}*/
 	}).updateLayout();
 	
 	try {
@@ -153,3 +195,5 @@ $(window).on("popstate",function(e) {
 	location.href = location.href;
 });
 </script>
+
+<?php echo $panel; ?>
