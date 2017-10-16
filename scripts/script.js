@@ -329,7 +329,6 @@ var Admin = {
 							id:"ModuleConfigsWindow",
 							title:Admin.getText("modules/lists/window/"+type),
 							width:800,
-							height:600,
 							modal:true,
 							border:false,
 							resizeable:false,
