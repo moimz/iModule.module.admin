@@ -1789,6 +1789,90 @@ var Admin = {
 		return datas;
 	},
 	/**
+	 * 그리드를 출력한다.
+	 *
+	 * @param Grid grid ExtJS 그리드 객체
+	 */
+	gridPrint:function(grid,title) {
+		new Ext.Window({
+			id:grid.getId()+"PrintWindow",
+			title:"인쇄 미리보기",
+			width:980,
+			height:500,
+			modal:true,
+			autoScroll:false,
+			border:false,
+			layout:"fit",
+			items:[
+				new Ext.form.Panel({
+					html:'<iframe id="'+grid.getId()+'PrintFrame" style="width:100%; height:100%;" frameborder="0"></iframe>'
+				})
+			],
+			buttons:[
+				new Ext.Button({
+					iconCls:"xi xi-print",
+					text:"인쇄",
+					handler:function() {
+						document.getElementById(grid.getId()+"PrintFrame").contentWindow.focus();
+						document.getElementById(grid.getId()+"PrintFrame").contentWindow.print();
+					}
+				}),
+				new Ext.Button({
+					text:"취소",
+					handler:function() {
+						Ext.getCmp(grid.getId()+"PrintWindow").close();
+					}
+				})
+			],
+			listeners:{
+				show:function(window) {
+					var content = document.getElementById(grid.getId()+"PrintFrame").contentDocument;
+					content.open();
+					content.write('<!DOCTYPE HTML>');
+					content.write('<html>');
+					content.write('<head>');
+					content.write('<title>'+(title ? title : grid.getTitle())+'</title>');
+					content.write('<style>body {zoom:80%; -ms-zoom:80%;}</style>');
+					content.write('<style>.x-panel {overflow: visible !important; border:1px solid #e9e9e9 !important; padding-bottom:32px !important;}</style>');
+					content.write('<style>.x-panel-body {overflow: visible !important;}</style>');
+					content.write('<style>.x-column-header.x-box-item {position:static !important; display:inline-block; box-sizing:border-box; z-index:0;}</style>');
+					content.write('<meta charset="utf-8">');
+					
+					for (var i=0;i<document.styleSheets.length;i++) {
+						content.write(Ext.String.format('<link rel="stylesheet" href="{0}" type="text/css">',document.styleSheets[i].href));
+					}
+					
+					content.write('</head>');
+					content.write('<body></body>');
+					content.write('</html>');
+					content.close();
+					
+					var $body = $("body",$(content));
+					var $dom = $(grid.getEl().dom).clone();
+					
+					$dom.css("height","auto");
+					$(".x-grid-body",$dom).css("height","auto");
+					$(".x-grid-view",$dom).css("height","auto");
+					$(".x-docked-bottom",$dom).remove();
+					$(".x-domscroller-spacer",$dom).remove();
+					
+					var zoom = 100 / $dom.width();
+					
+					$dom.css("width","calc(100% - 2px)");
+					$("*[style*=width]",$dom).each(function() {
+						$(this).css("width",($(this).width() * zoom)+"%");
+					});
+					
+					$(".x-grid-item",$dom).width("100%");
+					$(".x-grid-item-container",$dom).width("100%");
+					
+					$body.append($dom);
+					console.log($body.html());
+				}
+			}
+		}).show();
+	},
+	/**
 	 * 그리드 내용을 엑셀로 변환한다.
 	 *
 	 * @param Grid grid ExtJS 그리드 객체
