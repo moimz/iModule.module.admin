@@ -83,8 +83,10 @@ Ext.onReady(function () {
 						if (content.is("tabpanel") == true) {
 							<?php if ($tab) { ?>
 							if (Ext.getCmp("<?php echo $tab; ?>")) {
-								setTimeout(function(tabs,tab) { tabs.setActiveTab(tab); },1000,Ext.getCmp(content.getId()),Ext.getCmp("<?php echo $tab; ?>"));
+								setTimeout(function(tabs,tab) { if (tabs.getActiveTab().getId() == "<?php echo $tab; ?>") { tabs.fireEvent("tabchange",tabs,tab); } else { tabs.setActiveTab(tab); } },1000,Ext.getCmp(content.getId()),Ext.getCmp("<?php echo $tab; ?>"));
 							}
+							<?php } else { ?>
+							content.fireEvent("tabchange",content,content.getActiveTab());
 							<?php } ?>
 							
 							if (Admin.getMenu() == "modules") {
