@@ -275,6 +275,7 @@
 		"deleteFile":"{FILE} 파일을 삭제하시겠습니까?"
 	},
 	"error":{
+		"ACCESS_DENIED":"현재 접속한 디바이스는 관리자모드에 접근이 불가능합니다.",
 		"SITEMAP_FROM_MODULE":"해당 사이트는 {MODULE} 모듈에서 사이트맵을 관리하므로 직접 사이트맵 설정을 할 수 없습니다.",
 		"NOT_ALLOWED_MODULE_IN_MENU":"1차 메뉴에 모듈을 넣을 수 없습니다. 해당 모듈을 사용중인 서브페이지를 연결하여 사용하시기 바랍니다.",
 		"NOT_ALLOWED_SUBPAGE_IN_PAGE":"2차 페이지에는 서브페이지를 연결할 수 없습니다.",

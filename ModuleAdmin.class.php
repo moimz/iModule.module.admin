@@ -155,6 +155,26 @@ class ModuleAdmin {
 	}
 	
 	/**
+	 * [사이트관리자] 모듈 설정패널을 구성한다.
+	 *
+	 * @return string $panel 설정패널 HTML
+	 */
+	function getConfigPanel() {
+		/**
+		 * 설정패널 PHP에서 iModule 코어클래스와 모듈코어클래스에 접근하기 위한 변수 선언
+		 */
+		$IM = $this->IM;
+		$Module = $this->getModule();
+		
+		ob_start();
+		INCLUDE $this->getModule()->getPath().'/admin/configs.php';
+		$panel = ob_get_contents();
+		ob_end_clean();
+		
+		return $panel;
+	}
+	
+	/**
 	 * 언어셋파일에 정의된 코드를 이용하여 사이트에 설정된 언어별로 텍스트를 반환한다.
 	 * 코드에 해당하는 문자열이 없을 경우 1차적으로 package.json 에 정의된 기본언어셋의 텍스트를 반환하고, 기본언어셋 텍스트도 없을 경우에는 코드를 그대로 반환한다.
 	 *
@@ -354,6 +374,8 @@ class ModuleAdmin {
 		 * 관리자권한이 없는 경우, 로그인 컨텍스트를 반환한다.
 		 */
 		if ($this->checkPermission() === false) return $this->getLoginContext();
+		
+		$this->IM->addHeadResource('meta',array('name'=>'viewport','content'=>'width=1200'));
 		
 		/**
 		 * ExtJS 라이브러리와 관리자 언어셋을 불러온다.
@@ -832,6 +854,33 @@ class ModuleAdmin {
 		if ($_CONFIGS->installed === false) {
 			header('location:'.__IM_DIR__.'/install');
 			exit;
+		}
+		
+		/**
+		 * IP접근제한이 활성화되어 있을 경우
+		 */
+		if ($this->getModule()->getConfig('enable_security_mode') === true) {
+			if (Request('menu') === $this->getModule()->getConfig('emergency_code')) {
+				$_SESSION['iModuleAdminAccess'] = 'TRUE';
+				header('location:'.__IM_DIR__.'/admin');
+				exit;
+			}
+			
+			$ips = explode("\n",$this->getModule()->getConfig('allow_ip'));
+			$allowed = Request('iModuleAdminAccess','session') === 'TRUE';
+			foreach ($ips as $ip) {
+				$reg_ip = '/^'.$ip.'$/';
+				$reg_ip = str_replace('.','\.',$reg_ip);
+				$reg_ip = str_replace('*','[0-9]{1,3}',$reg_ip);
+				
+				$allowed = $allowed === true || preg_match($reg_ip,$_SERVER['REMOTE_ADDR']) == true;
+				if ($allowed === true) break;
+			}
+			
+			if ($allowed === false) {
+				$this->getError('ACCESS_DENIED');
+				exit;
+			}
 		}
 		
 		/**

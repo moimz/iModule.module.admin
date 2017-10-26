@@ -29,6 +29,20 @@
 	"global":false,
 	"article":false,
 	"widget":true,
+	"configs":{
+		"enable_security_mode":{
+			"type":"boolean",
+			"default":false
+		},
+		"allow_ip":{
+			"type":"string",
+			"default":""
+		},
+		"emergency_code":{
+			"type":"string",
+			"default":""
+		}
+	},
 	"databases":{
 		"admin_log_table":{
 			"columns":{
