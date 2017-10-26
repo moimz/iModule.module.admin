@@ -1832,15 +1832,20 @@ var Admin = {
 					content.write('<html>');
 					content.write('<head>');
 					content.write('<title>'+(title ? title : grid.getTitle())+'</title>');
-					content.write('<style>body {zoom:80%; -ms-zoom:80%;}</style>');
-					content.write('<style>.x-panel {overflow: visible !important; border:1px solid #e9e9e9 !important; padding-bottom:32px !important;}</style>');
-					content.write('<style>.x-panel-body {overflow: visible !important;}</style>');
-					content.write('<style>.x-column-header.x-box-item {position:static !important; display:inline-block; box-sizing:border-box; z-index:0;}</style>');
 					content.write('<meta charset="utf-8">');
 					
 					for (var i=0;i<document.styleSheets.length;i++) {
 						content.write(Ext.String.format('<link rel="stylesheet" href="{0}" type="text/css">',document.styleSheets[i].href));
 					}
+					
+					var agent = navigator.userAgent.toLowerCase();
+					if ((navigator.appName == 'Netscape' && agent.indexOf('trident') != -1) || (agent.indexOf("msie") != -1)) {
+					} else {
+						content.write('<style>body {zoom:85%;}</style>');
+					}
+					content.write('<style>.x-panel {overflow: visible !important; border:1px solid #e9e9e9 !important; padding-bottom:32px !important;}</style>');
+					content.write('<style>.x-panel-body {overflow: visible !important;}</style>');
+					content.write('<style>.x-column-header.x-box-item {position:static !important; display:inline-block; box-sizing:border-box; z-index:0;}</style>');
 					
 					content.write('</head>');
 					content.write('<body></body>');
@@ -1884,7 +1889,7 @@ var Admin = {
 		
 		for (var i=0, loop=grid.getStore().getCount();i<loop;i++) {
 			var data = {};
-			var oData = grid.getStore().getAt(i).data;
+			var oData = grid.getStore().getAt(i);
 			
 			for (var column in columns) {
 				if (columns[column].dataIndex) {
@@ -1896,7 +1901,7 @@ var Admin = {
 					
 					if (i == 0) cells.push(cell);
 					
-					data[cell.dataIndex] = typeof columns[column].renderer == "function" ? columns[column].renderer(oData[cell.dataIndex],{},oData) : oData[cell.dataIndex];
+					data[cell.dataIndex] = typeof columns[column].renderer == "function" ? columns[column].renderer(oData.data[cell.dataIndex],{},oData) : oData.data[cell.dataIndex];
 				}
 			}
 			
