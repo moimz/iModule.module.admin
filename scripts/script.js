@@ -37,7 +37,7 @@ var Admin = {
 	 * 사이트관리자 로그인 처리
 	 */
 	login:function($form) {
-		$form.send(ENV.getProcessUrl("member","login"),function(result) {
+		$form.send(ENV.getProcessUrl("admin","login"),function(result) {
 			if (result.success == true) {
 				$.send(ENV.getProcessUrl("admin","checkPermission"),function(result) {
 					if (result.success == true) {

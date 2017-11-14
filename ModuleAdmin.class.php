@@ -934,6 +934,8 @@ class ModuleAdmin {
 	 * @see /process/index.php
 	 */
 	function doProcess($action) {
+		define('__IM_ADMIN__',true);
+		
 		$values = new stdClass();
 		$results = new stdClass();
 		

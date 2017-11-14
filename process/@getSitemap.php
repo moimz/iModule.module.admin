@@ -22,7 +22,7 @@ $menu = Request('menu');
 /**
  * 사이트정보를 가져온다.
  */
-$site = $this->IM->getSites($domain,$language);
+$site = $this->IM->getSites($domain,$language,true);
 
 if (strpos($site->templet,'#') === 0 && $this->IM->getModule()->isSitemap(substr($site->templet,1)) == true) {
 	$results->success = false;
