@@ -802,13 +802,9 @@ class ModuleAdmin {
 	 * @return boolean $hasPermission
 	 */
 	function checkProcessPermission($module,$action=null) {
-		$values = new stdClass();
-		$values->action = $action;
-		$values->permission = false;
-		
-		$this->IM->fireEvent('checkProcessPermission','admin',$module,$values);
-		
-		return $values->permission;
+		$permission = false;
+		$this->IM->fireEvent('checkProcessPermission','admin',$module,$action,$permission);
+		return $permission;
 	}
 	
 	/**
@@ -916,7 +912,10 @@ class ModuleAdmin {
 		 * 전체 사이트 HTML 을 생성한 뒤 afterDoLayout 이벤트를 발생시킨다.
 		 * 전체 사이트 HTML 코드인 $html 변수는 pass by object 로 전달되기 때문에 이벤트리스너에서 조작할 경우 최종출력되는 HTML 코드가 변경된다.
 		 */
-		$this->IM->fireEvent('afterDoLayout','admin','*',null,null,$html);
+		$values = new stdClass();
+		$values->header = $header;
+		$values->footer = $footer;
+		$this->IM->fireEvent('afterDoLayout','admin','*',$values,$html);
 		
 		/**
 		 * 사이트 HTML 코드를 출력한다.
