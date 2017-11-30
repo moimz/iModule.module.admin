@@ -4,16 +4,13 @@
  * 
  * 엑셀변환
  *
- * @file /modules/admin/process/@getExcel.php
+ * @file /modules/admin/process/getExcel.php
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
- * @version 3.0.0.160923
- *
- * @return object $results
+ * @version 3.0.0
+ * @modified 2017. 11. 29.
  */
-
 if (defined('__IM__') == false) exit;
-
 
 $document = Request('document');
 $attachments = array();
