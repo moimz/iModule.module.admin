@@ -6,7 +6,8 @@
  * @file /modules/admin/scripts/admin.js
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
- * @version 3.0.0.160903
+ * @version 3.0.0
+ * @modified 2017. 11. 29.
  */
 var Admin = {
 	/**
@@ -1872,7 +1873,6 @@ var Admin = {
 					$(".x-grid-item-container",$dom).width("100%");
 					
 					$body.append($dom);
-					console.log($body.html());
 				}
 			}
 		}).show();
@@ -1925,7 +1925,7 @@ var Admin = {
 					Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(0,"데이터 준비중입니다. 잠시만 기다려주십시오.");
 					
 					$.ajax({
-						url:ENV.getProcessUrl("admin","@getExcel"),
+						url:ENV.getProcessUrl("admin","getExcel"),
 						method:"POST",
 						timeout:0,
 						data:{cells:JSON.stringify(cells),datas:JSON.stringify(datas)},
@@ -1989,7 +1989,7 @@ var Admin = {
 		var updated = store.getUpdatedRecords();
 		for (var i=0, loop=updated.length;i<loop;i++) {
 			for (var key in updated[i].data) {
-				updated[i].data[key] = $.trim(updated[i].data[key]);
+				updated[i].data[key] = typeof updated[i].data[key] == "string" ? $.trim(updated[i].data[key]) : updated[i].data[key];
 			}
 			updated[i] = updated[i].data;
 		}
