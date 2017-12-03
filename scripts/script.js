@@ -1971,13 +1971,13 @@ var Admin = {
 	 * @param int timer 대기시간 (마이크로타임)
 	 */
 	savingGrid:{},
-	gridSave:function(grid,url,timer) {
+	gridSave:function(grid,url,timer,callback) {
 		if (Admin.savingGrid[grid.getId()]) {
 			clearTimeout(Admin.savingGrid[grid.getId()]);
 			delete Admin.savingGrid[grid.getId()];
 		}
 		
-		Admin.savingGrid[grid.getId()] = setTimeout(Admin.saveStore,timer,grid.getStore(),url);
+		Admin.savingGrid[grid.getId()] = setTimeout(Admin.saveStore,timer,grid.getStore(),url,callback);
 	},
 	/**
 	 * ExtJS Store 를 저장한다.
@@ -1985,7 +1985,7 @@ var Admin = {
 	 * @param Store store ExtJS store 객체
 	 * @param string url 저장주소
 	 */
-	saveStore:function(store,url,saving) {
+	saveStore:function(store,url,callback) {
 		var updated = store.getUpdatedRecords();
 		for (var i=0, loop=updated.length;i<loop;i++) {
 			for (var key in updated[i].data) {
@@ -1996,6 +1996,9 @@ var Admin = {
 		
 		$.send(url,{updated:JSON.stringify(updated)},function(result) {
 			if (result.success == true) {
+				if (typeof callback == "function") {
+					callback(store);
+				}
 				store.commitChanges();
 			} else {
 				Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("DATA_SAVE_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
@@ -2568,9 +2571,7 @@ var Admin = {
 			$textarea.on("froalaEditor.file.inserted",function(e,editor,$file,response) {
 				if (response) {
 					var result = typeof response == "object" ? response : JSON.parse(response);
-					if (result.idx) {
-						$file.attr("data-idx",result.idx);
-					}
+					$file.remove();
 				}
 			});
 			
