@@ -7,7 +7,8 @@
  * @file /modules/admin/panels/modules.lists.php
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
- * @version 3.0.0.160903
+ * @version 3.0.0
+ * @modified 2017. 12. 1.
  */
 if (defined('__IM__') == false) exit;
 ?>
@@ -57,7 +58,6 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 				}
 			}
 		}),
-		width:"100%",
 		columns:[{
 			text:Admin.getText("modules/lists/columns/title"),
 			width:150,
