@@ -7,11 +7,8 @@
  * @file /modules/admin/process/@getExternals.php
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
- * @version 3.0.0.160903
- *
- * @post string $domain 사이트도메인
- * @post string $language 사이트언어셋
- * @return object $results
+ * @version 3.0.0
+ * @modified 2017. 12. 1.
  */
 if (defined('__IM__') == false) exit;
 
