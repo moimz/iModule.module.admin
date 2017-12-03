@@ -1060,7 +1060,7 @@ class ModuleAdmin {
 						$this->IM->getModule('attachment')->fileDelete($oFile);
 					}
 					
-					$this->IM->db()->update($this->IM->getTable('site'),array($type=>$oFile))->where('domain',$sites[$i]->domain)->where('language',$sites[$i]->language)->execute();
+					$this->IM->db()->update($this->IM->getTable('site'),array($type=>-1))->where('domain',$sites[$i]->domain)->where('language',$sites[$i]->language)->execute();
 				} elseif ($file != null) {
 					if ($oFile > 0) {
 						$this->IM->getModule('attachment')->fileReplace($oFile,$type.'.'.$extension,$file,false);
@@ -1072,6 +1072,30 @@ class ModuleAdmin {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * 특정 요청에 대하여 관리자 권한을 확인한다.
+	 */
+	function isAdmin() {
+		if ($this->IM->getModule('member')->isAdmin() == true) return true;
+		$action = Request('_action');
+		
+		if ($action == '@getWysiwygFiles') {
+			$idx = Request('idx') ? explode(',',Request('idx')) : array();
+			$lists = array();
+			for ($i=0, $loop=count($idx);$i<$loop;$i++) {
+				$file = $this->IM->getModule('attachment')->getFileInfo($idx[$i]);
+				if ($file->status != 'DRAFT') {
+					if ($this->IM->getModule()->isInstalled($file->module) == false) return false;
+					$mModule = $this->IM->getModule($file->module);
+					if (method_exists($mModule,'isAdmin') == false || $this->IM->getModule($file->module)->isAdmin() == false) return false;
+				}
+			}
+			return true;
+		}
+		
+		return $this->checkPermission();
 	}
 }
 ?>
