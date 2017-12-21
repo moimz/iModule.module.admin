@@ -48,22 +48,26 @@
 			"columns":{
 				"midx":{
 					"type":"int",
-					"length":11
+					"length":11,
+					"comment":"관리자정보"
 				},
 				"action":{
 					"type":"varchar",
-					"length":20
+					"length":20,
+					"comment":"로그활동"
 				},
 				"reg_date":{
 					"type":"int",
-					"length":11
+					"length":11,
+					"comment":"등록일"
 				}
 			},
 			"indexes":{
 				"midx,action,reg_date":"primary_key",
 				"midx":"index",
 				"reg_date":"index"
-			}
+			},
+			"comment":"관리자로그관리"
 		}
 	}
 }
