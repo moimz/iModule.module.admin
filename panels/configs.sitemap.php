@@ -204,6 +204,30 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 							},
 							itemdblclick:function(grid,record) {
 								Admin.configs.sitemap.menu(record.data.menu);
+							},
+							itemcontextmenu:function(grid,record,item,index,e) {
+								var menu = new Ext.menu.Menu();
+			
+								menu.add('<div class="x-menu-title">'+record.data.title+'</div>');
+								
+								menu.add({
+									iconCls:"xi xi-form",
+									text:"메뉴수정",
+									handler:function() {
+										Admin.configs.sitemap.menu(record.data.menu);
+									}
+								});
+								
+								menu.add({
+									iconCls:"mi mi-trash",
+									text:"메뉴삭제",
+									handler:function() {
+										Admin.configs.sitemap.delete(record.data.menu);
+									}
+								});
+								
+								e.stopEvent();
+								menu.showAt(e.getXY());
 							}
 						}
 					}),
@@ -312,6 +336,30 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 						listeners:{
 							itemdblclick:function(grid,record) {
 								Admin.configs.sitemap.page(record.data.page);
+							},
+							itemcontextmenu:function(grid,record,item,index,e) {
+								var menu = new Ext.menu.Menu();
+			
+								menu.add('<div class="x-menu-title">'+record.data.title+'</div>');
+								
+								menu.add({
+									iconCls:"xi xi-form",
+									text:"페이지수정",
+									handler:function() {
+										Admin.configs.sitemap.page(record.data.page);
+									}
+								});
+								
+								menu.add({
+									iconCls:"mi mi-trash",
+									text:"페이지삭제",
+									handler:function() {
+										Admin.configs.sitemap.delete(record.data.menu,record.data.page);
+									}
+								});
+								
+								e.stopEvent();
+								menu.showAt(e.getXY());
 							}
 						}
 					})

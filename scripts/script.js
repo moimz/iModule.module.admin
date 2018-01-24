@@ -1461,6 +1461,42 @@ var Admin = {
 				}).show();
 			},
 			/**
+			 * 사이트맵의 메뉴 또는 페이지를 삭제한다.
+			 *
+			 * @param string menu 메뉴명
+			 * @param string page 페이지명 (없을경우 메뉴를 삭제한다.)
+			 */
+			delete:function(menu,page) {
+				/**
+				 * 선택된 사이트 정보를 가져온다.
+				 */
+				var site = Ext.getCmp("SiteList").getValue().split("@");
+				
+				var domain = site[0];
+				var language = site[1];
+				
+				Ext.Msg.show({title:Admin.getText("alert/info"),msg:"선택한 메뉴 또는 페이지를 삭제하시겠습니까?<br>메뉴를 삭제할 경우 하위에 포함된 페이지도 함께 삭제됩니다.",buttons:Ext.Msg.OKCANCEL,icon:Ext.Msg.QUESTION,fn:function(button) {
+					if (button == "ok") {
+						var params = {domain:domain,language:language,menu:menu}
+						if (page !== undefined && page) params.page = page;
+						
+						Ext.Msg.wait(Admin.getText("action/working"),Admin.getText("action/wait"));
+						$.send(ENV.getProcessUrl("admin","@deleteSitemap"),params,function(result) {
+							if (result.success == true) {
+								Ext.Msg.show({title:Admin.getText("alert/info"),msg:Admin.getText("action/worked"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO,fn:function() {
+									Ext.getCmp("MenuList").getStore().load(function() {
+										var index = Ext.getCmp("MenuList").getStore().findExact("menu",menu);
+										if (index !== -1) {
+											Ext.getCmp("MenuList").getSelectionModel().select(index);
+										}
+									});
+								}});
+							}
+						});
+					}
+				}});
+			},
+			/**
 			 * 사이트맵을 복사할 대상으로 부터 복사한다.
 			 *
 			 * @param string mode 복사대상 (menu or page)
@@ -1941,13 +1977,13 @@ var Admin = {
 							return xhr;
 						},
 						success:function(result,b,xhr) {
+							console.log("success");
 							var hash = xhr.getResponseHeader("X-Excel-File");
 							if (hash && hash.length == 32) {
 								Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(1,"변환완료. 곧 다운로드가 시작됩니다.",true);
 								setTimeout(function() {
 									Ext.getCmp("ModuleAdminExcelProgressWindow").close();
-									
-									location.href = ENV.getProcessUrl("admin","@downloadExcel")+"?hash="+hash+"&title="+encodeURIComponent(title);
+									location.href = ENV.getProcessUrl("admin","downloadExcel")+"?hash="+hash+"&title="+encodeURIComponent(title);
 								},1000);
 							} else {
 								Ext.getCmp("ModuleAdminExcelProgressWindow").close();
