@@ -50,6 +50,8 @@ for ($i=0, $loop=count($cells);$i<$loop;$i++) {
 
 $loopnum = 1;
 foreach ($datas as $data) {
+	echo '.';
+	if ($loopnum % 10) ForceFlush();
 	for ($i=0, $loop=count($cells);$i<$loop;$i++) {
 		$column = $mPHPExcel->getActiveSheet()->getCell()->stringFromColumnIndex($i);
 		
