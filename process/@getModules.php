@@ -23,6 +23,7 @@ while ($module = @readdir($modulesPath)) {
 			$item = array(
 				'id'=>$package->id,
 				'module'=>$module,
+				'icon'=>$this->getModule()->getPackage($module)->icon,
 				'title'=>$this->getModule()->getTitle($module),
 				'version'=>$package->version,
 				'description'=>$this->getModule()->getDescription($module),

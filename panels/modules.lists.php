@@ -60,10 +60,15 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 		}),
 		columns:[{
 			text:Admin.getText("modules/lists/columns/title"),
-			width:150,
+			width:180,
 			summaryType:"count",
 			dataIndex:"title",
 			sortable:true,
+			renderer:function(value,p,record) {
+				var icon = record.data.icon.split("-");
+				
+				return '<i class="'+icon.shift()+" "+record.data.icon+'" style="width:16px; text-align:center; margin-right:5px;"></i>'+value;
+			},
 			summaryRenderer:function(value) {
 				return value+" module"+(value > 1 ? "s" : "");
 			}
