@@ -24,6 +24,8 @@ $page = Request('page');
 $module = Request('target');
 $context = Request('context');
 
+$this->IM->initSites(true);
+
 $results->success = true;
 $results->configs = $this->IM->getModule()->getContextConfigs($domain,$language,$menu,$page,$module,$context);
 ?>

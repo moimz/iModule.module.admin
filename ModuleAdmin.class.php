@@ -9,7 +9,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.0.0
- * @modified 2017. 11. 22.
+ * @modified 2018. 3. 5.
  */
 class ModuleAdmin {
 	/**
@@ -892,7 +892,7 @@ class ModuleAdmin {
 		/**
 		 * 사이트관리자 권한이 없을 경우 로그인 컨텍스트를, 로그인이 되어있다면 사이트 관리자 컨텍스트를 가져온다.
 		 */
-		if ($this->checkPermission() === false) {
+		if ($this->IM->getModule('member')->isLogged() === false || $this->checkPermission() === false) {
 			$body = $this->getLoginContext();
 		} else {
 			$body = $this->getAdminContext();
