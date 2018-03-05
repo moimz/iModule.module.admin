@@ -42,7 +42,7 @@ var Admin = {
 			if (result.success == true) {
 				$.send(ENV.getProcessUrl("admin","checkPermission"),function(result) {
 					if (result.success == true) {
-						location.href = location.href;
+						location.replace(location.href);
 					} else {
 						$("main").addClass("error").shake();
 						$form.status("error");
@@ -59,7 +59,7 @@ var Admin = {
 	logout:function() {
 		$.send(ENV.getProcessUrl("member","logout"),function(result) {
 			if (result.success == true) {
-				location.href = ENV.DIR + "/admin/";
+				location.replace(ENV.DIR + "/admin/");
 			}
 		});
 	},
