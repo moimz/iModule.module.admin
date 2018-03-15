@@ -371,6 +371,12 @@ class ModuleAdmin {
 		$html = ob_get_contents();
 		ob_end_clean();
 		
+		/**
+		 * 이벤트를 발생시킨다.
+		 */
+		$values = (object)get_defined_vars();
+		$this->IM->fireEvent('afterGetContext',$this->getModule()->getName(),'login',$values,$html);
+		
 		return $html;
 	}
 	
@@ -456,6 +462,12 @@ class ModuleAdmin {
 		INCLUDE $this->Module->getPath().'/includes/index.php';
 		$html = ob_get_contents();
 		ob_end_clean();
+		
+		/**
+		 * 이벤트를 발생시킨다.
+		 */
+		$values = (object)get_defined_vars();
+		$this->IM->fireEvent('afterGetContext',$this->getModule()->getName(),'index',$values,$html);
 		
 		return $html;
 	}
