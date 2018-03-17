@@ -2,21 +2,16 @@
 /**
  * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodule.kr)
  *
- * 사이트를 추가하거나 관리한다.
+ * 사이트 설정 패널을 구성한다.
  * 
  * @file /modules/admin/panels/configs.sites.php
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
- * @version 3.0.0.160903
+ * @version 3.0.0
+ * @modified 2018. 3. 18.
  */
 if (defined('__IM__') == false) exit;
 ?>
-<style>
-.groupHeader span.label {float:right; font-size:12px; height:18px; border:1px solid transparent; padding:0px 3px; line-height:18px; margin-left:5px; border-radius:3px;}
-.groupHeader span.label.merge {border-color:#f44336; background-color:#f44336; color:#fff;}
-.groupHeader span.label.unique {border-color:#2196F3; background-color:#2196F3; color:#fff;}
-</style>
-
 <script>
 Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 	new Ext.grid.Panel({

@@ -6,7 +6,8 @@
  * @file /modules/admin/styles/style.css
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
- * @version 3.0.0.160831
+ * @version 3.0.0
+ * @modified 2018. 3. 18.
  */
 html {width:100%; height:100%; -webkit-font-smoothing:antialiased;}
 header {background:#2d3845; height:52px; font-size:0px;}
@@ -16,7 +17,7 @@ header > h1 > small {font-size:15px; font-weight:300; color:#aeb3b8; letter-spac
 header > ul {list-style:none; display:inline-block; width:calc(100% - 230px - 230px); vertical-align:middle; font-size:0px;}
 header > ul > li {display:inline-block; height:52px; border-bottom:2px solid transparent;}
 header > ul > li > a {display:block; height:50px; line-height:52px; font-size:15px; padding:0px 18px; color:#aeb3b8; text-decoration:none;}
-header > ul > li > a > i {margin-right:5px; font-size:14px;}
+header > ul > li > a > i {margin-right:8px; font-size:14px; float:left; height:50px; line-height:52px;}
 header > ul > li:hover {background:#000;}
 header > ul > li.selected {border-color:#4cb9f3; background:#000;}
 header > ul > li.selected > a {color:#fff;}
@@ -98,3 +99,8 @@ div[data-role=image] > button {width:auto; background:#b5b7c0; border:0px; color
 div[data-role=image] > button > i {display:inline-block; width:32px; height:32px; line-height:32px; vertical-align:top; text-align:center; font-size:16px; margin-top:0px;}
 div[data-role=image] > button > span {display:inline-block; padding-right:15px; height:32px; line-height:32px; font-size:12px;}
 div[data-role=image] > button:hover {background:#828595; color:#fff;}
+
+
+#SiteList .groupHeader span.label {float:right; font-size:12px; height:18px; border:1px solid transparent; padding:0px 3px; line-height:18px; margin-left:5px; border-radius:3px;}
+#SiteList .groupHeader span.label.merge {border-color:#f44336; background-color:#f44336; color:#fff;}
+#SiteList .groupHeader span.label.unique {border-color:#2196F3; background-color:#2196F3; color:#fff;}

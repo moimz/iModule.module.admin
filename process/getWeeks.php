@@ -6,9 +6,9 @@
  *
  * @file /modules/admin/process/getWeeks.php
  * @author Arzz (arzz@arzz.com)
- * @license GPLv3
+ * @license MIT License
  * @version 3.0.0
- * @modified 2017. 11. 29.
+ * @modified 2018. 3. 18.
  */
 if (defined('__IM__') == false) exit;
 

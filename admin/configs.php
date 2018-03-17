@@ -2,12 +2,13 @@
 /**
  * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodule.kr)
  *
- * 관리자모듈 환경설정 패널을 가져온다.
+ * 모듈 환경설정 패널을 구성한다.
  * 
  * @file /modules/admin/admin/configs.php
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
- * @version 3.0.0.160903
+ * @version 3.0.0
+ * @modified 2018. 3. 18.
  */
 if (defined('__IM__') == false) exit;
 ?>
@@ -16,6 +17,7 @@ new Ext.form.Panel({
 	id:"ModuleConfigForm",
 	border:false,
 	bodyPadding:10,
+	width:700,
 	fieldDefaults:{labelAlign:"right",labelWidth:100,anchor:"100%",allowBlank:true},
 	items:[
 		new Ext.form.FieldSet({

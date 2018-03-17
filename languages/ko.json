@@ -2,7 +2,7 @@
 	"menus":{
 		"dashboard":"대시보드",
 		"modules":"모듈",
-		"addons":"애드온",
+		"plugins":"플러그인",
 		"widgets":"위젯",
 		"configs":"사이트설정"
 	},

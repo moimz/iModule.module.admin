@@ -2,16 +2,13 @@
 /**
  * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodule.kr)
  * 
- * 사이트 상세정보를 가져온다.
+ * 사이트정보를 가져온다.
  *
  * @file /modules/admin/process/@getSite.php
  * @author Arzz (arzz@arzz.com)
- * @license GPLv3
- * @version 3.0.0.160903
- *
- * @post string $domain 사이트도메인
- * @post string $language 사이트언어셋
- * @return object $results
+ * @license MIT License
+ * @version 3.0.0
+ * @modified 2018. 3. 18.
  */
 if (defined('__IM__') == false) exit;
 

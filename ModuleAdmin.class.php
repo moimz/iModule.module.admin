@@ -7,9 +7,9 @@
  * 
  * @file /modules/admin/ModuleAdmin.class.php
  * @author Arzz (arzz@arzz.com)
- * @license GPLv3
+ * @license MIT License
  * @version 3.0.0
- * @modified 2018. 3. 5.
+ * @modified 2018. 3. 18.
  */
 class ModuleAdmin {
 	/**
@@ -591,7 +591,7 @@ class ModuleAdmin {
 				$menu->menu = 'dashboard';
 				$menu->page = false;
 				$menu->tab = false;
-				$menu->icon = 'fa-dashboard';
+				$menu->icon = 'xi-presentation';
 				$menu->title = $this->getText('menus/dashboard');
 				$menus[] = $menu;
 			}
@@ -604,7 +604,7 @@ class ModuleAdmin {
 				$menu->menu = 'modules';
 				$menu->page = false;
 				$menu->tab = false;
-				$menu->icon = 'fa-cube';
+				$menu->icon = 'xi-box';
 				$menu->title = $this->getText('menus/modules');
 				$menus[] = $menu;
 			}
@@ -612,13 +612,13 @@ class ModuleAdmin {
 			/**
 			 * 에드온관리
 			 */
-			if (in_array('addons',$disabledMenus) == false) {
+			if (in_array('plugins',$disabledMenus) == false) {
 				$menu = new stdClass();
-				$menu->menu = 'addons';
+				$menu->menu = 'plugins';
 				$menu->page = false;
 				$menu->tab = false;
-				$menu->icon = 'fa-puzzle-piece';
-				$menu->title = $this->getText('menus/addons');
+				$menu->icon = 'xi-plug';
+				$menu->title = $this->getText('menus/plugins');
 				$menus[] = $menu;
 			}
 			
@@ -630,7 +630,7 @@ class ModuleAdmin {
 				$menu->menu = 'widgets';
 				$menu->page = false;
 				$menu->tab = false;
-				$menu->icon = 'fa-sticky-note-o';
+				$menu->icon = 'xi-stack-paper';
 				$menu->title = $this->getText('menus/widgets');
 				$menus[] = $menu;
 			}
@@ -643,7 +643,7 @@ class ModuleAdmin {
 				$menu->menu = 'configs';
 				$menu->page = false;
 				$menu->tab = false;
-				$menu->icon = 'fa-cog';
+				$menu->icon = 'xi-cog';
 				$menu->title = $this->getText('menus/configs');
 				$menus[] = $menu;
 			}

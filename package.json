@@ -2,7 +2,7 @@
 	"id":"com.moimz.imodule.module.admin",
 	"icon":"xi-crown",
 	"title":{
-		"ko":"iModule관리자"
+		"ko":"iModule 관리자"
 	},
 	"version":"3.0.0",
 	"description":{

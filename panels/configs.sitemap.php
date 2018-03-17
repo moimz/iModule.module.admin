@@ -2,12 +2,13 @@
 /**
  * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodule.kr)
  *
- * 사이트맵을 구성한다.
+ * 사이트맵 설정 패널을 구성한다.
  * 
  * @file /modules/admin/panels/configs.sitemap.php
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
- * @version 3.0.0.160903
+ * @version 3.0.0
+ * @modified 2018. 3. 18.
  */
 if (defined('__IM__') == false) exit;
 ?>

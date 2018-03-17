@@ -6,12 +6,9 @@
  *
  * @file /modules/admin/process/@getSitemap.php
  * @author Arzz (arzz@arzz.com)
- * @license GPLv3
- * @version 3.0.0.160903
- *
- * @post string $domain 사이트도메인
- * @post string $language 사이트언어셋
- * @return object $results
+ * @license MIT License
+ * @version 3.0.0
+ * @modified 2018. 3. 18.
  */
 if (defined('__IM__') == false) exit;
 

@@ -6,14 +6,9 @@
  *
  * @file /modules/admin/process/@getMenu.php
  * @author Arzz (arzz@arzz.com)
- * @license GPLv3
- * @version 3.0.0.160903
- *
- * @post string $domain 사이트 도메인
- * @post string $language 사이트 언어셋
- * @post string $menu 1차 메뉴명
- * @post string $page 2차 메뉴명
- * @return object $results
+ * @license MIT License
+ * @version 3.0.0
+ * @modified 2018. 3. 18.
  */
 if (defined('__IM__') == false) exit;
 

@@ -6,17 +6,9 @@
  *
  * @file /modules/admin/process/@copySitemap.php
  * @author Arzz (arzz@arzz.com)
- * @license GPLv3
- * @version 3.0.0.160903
- *
- * @post string $mode 복제모드 (menu or page)
- * @post string $domain 사이트도메인
- * @post string $language 사이트언어셋
- * @post string $menu 메뉴명
- * @post string $oDomain 복제해올 사이트도메인
- * @post string $oLanguage 복제해올 사이트언어셋
- * @post string $oMenu 복제해올 사이트 1차메뉴
- * @return object $results
+ * @license MIT License
+ * @version 3.0.0
+ * @modified 2018. 3. 18.
  */
 if (defined('__IM__') == false) exit;
 

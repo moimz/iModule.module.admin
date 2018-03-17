@@ -5,8 +5,9 @@
  * 
  * @file /modules/admin/styles/login.css
  * @author Arzz (arzz@arzz.com)
- * @license GPLv3
- * @version 3.0.0.160903
+ * @license MIT License
+ * @version 3.0.0
+ * @modified 2018. 3. 18.
  */
 * {padding:0px; margin:0px; -webkit-font-smoothing:antialiased;}
 html, body {width:100%; height:100%; overflow:hidden;}

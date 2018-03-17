@@ -2,15 +2,13 @@
 /**
  * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodule.kr)
  * 
- * 모듈의 설정패널을 불러온다. 모듈의 설정패널은 각 모듈폴더의 admin/config.php 파일에 정의되어 있다.
+ * 모듈의 설정패널을 불러온다. 모듈의 설정패널은 각 모듈폴더의 admin/configs.php 파일에 정의되어 있다.
  *
  * @file /modules/admin/process/@getModuleConfigPanel.php
  * @author Arzz (arzz@arzz.com)
- * @license GPLv3
- * @version 3.0.0.160903
- *
- * @post string $target 대상 모듈명
- * @return object $results
+ * @license MIT License
+ * @version 3.0.0
+ * @modified 2018. 3. 18.
  */
 if (defined('__IM__') == false) exit;
 

@@ -1,14 +1,14 @@
 <?php
 /**
- * 이 파일은 iModule CTL 모듈의 일부입니다. (https://www.imodule.kr)
+ * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodule.kr)
  * 
- * 엑셀변환
+ * ExtJS GridPanel 의 데이터를 엑셀파일로 변환한다.
  *
  * @file /modules/admin/process/getExcel.php
  * @author Arzz (arzz@arzz.com)
- * @license GPLv3
+ * @license MIT License
  * @version 3.0.0
- * @modified 2017. 11. 29.
+ * @modified 2018. 3. 18.
  */
 if (defined('__IM__') == false) exit;
 

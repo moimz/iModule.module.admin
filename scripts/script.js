@@ -1,13 +1,13 @@
 /**
  * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodule.kr)
  *
- * 사이트관리자를 위한 컴포넌트를 정의한다.
+ * 관리자모듈 UI를 구성한다.
  * 
- * @file /modules/admin/scripts/admin.js
+ * @file /modules/admin/scripts/script.js
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.0.0
- * @modified 2017. 11. 29.
+ * @modified 2018. 3. 18.
  */
 var Admin = {
 	/**
@@ -279,11 +279,23 @@ var Admin = {
 			
 			$.send(ENV.getProcessUrl("admin","@getModuleConfigPanel"),{target:module},function(result) {
 				if (result.success == true) {
+					if (result.isLatest === true) {
+						var type = "config";
+					} else if (result.isInstalled == true) {
+						var type = "update";
+					} else {
+						var type = "install";
+					}
+					
 					if (result.panel == null) {
 						$.send(ENV.getProcessUrl("admin","@installModule"),{target:module},function(result) {
 							if (result.success == true) {
 								Ext.Msg.show({title:Admin.getText("alert/info"),msg:Admin.getText("modules/lists/installed"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO,fn:function(button) {
-									Ext.getCmp("ModuleList").getStore().reload();
+									if (type == "install") {
+										location.replace(location.href);
+									} else {
+										Ext.getCmp("ModuleList").getStore().reload();
+									}
 								}});
 							}
 						});
@@ -318,18 +330,9 @@ var Admin = {
 						
 						Ext.Msg.hide();
 						
-						if (result.isLatest === true) {
-							var type = "config";
-						} else if (result.isInstalled == true) {
-							var type = "update";
-						} else {
-							var type = "install";
-						}
-						
 						new Ext.Window({
 							id:"ModuleConfigsWindow",
 							title:Admin.getText("modules/lists/window/"+type),
-							width:800,
 							modal:true,
 							border:false,
 							resizeable:false,
@@ -349,8 +352,13 @@ var Admin = {
 											waitMsg:Admin.getText("modules/lists/installing"),
 											success:function(form,action) {
 												Ext.Msg.show({title:Admin.getText("alert/info"),msg:Admin.getText("modules/lists/installed"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO,fn:function(button) {
-													Ext.getCmp("ModuleConfigsWindow").close();
-													Ext.getCmp("ModuleList").getStore().reload();
+													if (type == "install") {
+														Ext.getCmp("ModuleConfigsWindow").close();
+														location.replace(location.href);
+													} else {
+														Ext.getCmp("ModuleConfigsWindow").close();
+														Ext.getCmp("ModuleList").getStore().reload();
+													}
 												}});
 											},
 											failure:function(form,action) {
