@@ -492,8 +492,7 @@ class ModuleAdmin {
 			if (is_file($this->Module->getPath().'/panels/'.$this->menu.'.'.$this->page.'.php') == true) {
 				INCLUDE_ONCE $this->Module->getPath().'/panels/'.$this->menu.'.'.$this->page.'.php';
 			}
-			$panel = ob_get_contents();
-			ob_end_clean();
+			$panel = ob_get_clean();
 		}
 		
 		/**
@@ -512,14 +511,60 @@ class ModuleAdmin {
 				if (is_file($this->Module->getPath().'/panels/modules.lists.php') == true) {
 					INCLUDE $this->Module->getPath().'/panels/modules.lists.php';
 				}
-				$panel = ob_get_contents();
-				ob_end_clean();
+				$panel = ob_get_clean();
 			} else {
 				$panel = $this->Module->getAdminPanel($this->page);
 			}
 		}
 		
 		return $panel;
+	}
+	
+	/**
+	 * HTML 컨텍스트 에디터를 구성한다.
+	 *
+	 * @param string $domain 도메인
+	 * @param string $language 언어셋
+	 * @param string $menu 메뉴
+	 * @param string $page 페이지
+	 * @param object $context 컨텍스트 설정
+	 * @return string $editor
+	 */
+	function getHtmlEditorContext($domain,$language,$menu,$page,$context) {
+		if ($this->IM->getModule('member')->isLogged() == false) return $this->getError('REQUIRED_LOGIN');
+		if ($this->IM->getModule('member')->isAdmin() == false) return $this->getError('FORBIDDEN');
+		
+		$html = $context != null && isset($context->html) == true ? $context->html : '';
+		$css = $context != null && isset($context->css) == true ? $context->css : '';
+		
+		$this->IM->addHeadResource('style',$this->getModule()->getDir().'/styles/html.css');
+		$this->IM->addHeadResource('script',$this->getModule()->getDir().'/scripts/html.js');
+		$this->IM->getModule('wysiwyg')->addCodeMirrorMode('css')->preload();
+		$this->IM->addHeadResource('script',$this->IM->getModule('wysiwyg')->getModule()->getDir().'/scripts/codemirror/addon/edit/closetag.js');
+		
+		$uploader = $this->IM->getModule('attachment')->setTemplet('default')->setModule('admin')->setWysiwyg('wysiwyg')->setLoader($this->IM->getProcessUrl('admin','@getHtmlEditorFiles',array('context'=>Encoder(json_encode(array('domain'=>$domain,'language'=>$language,'menu'=>$menu,'page'=>$page))))))->get();
+		$wysiwyg = $this->IM->getModule('wysiwyg')->setId('ModuleAdminHtmlEditor')->setModule('admin')->setName('wysiwyg')->setContent($html)->get(true);
+		
+		ob_start();
+		
+		echo PHP_EOL.'<form id="ModuleAdminHtmlEditorForm">'.PHP_EOL;
+		echo '<input type="hidden" name="domain" value="'.$domain.'">'.PHP_EOL;
+		echo '<input type="hidden" name="language" value="'.$language.'">'.PHP_EOL;
+		echo '<input type="hidden" name="menu" value="'.$menu.'">'.PHP_EOL;
+		if ($page != null) echo '<input type="hidden" name="page" value="'.$page.'">'.PHP_EOL;
+		
+		echo '<style data-role="style">'.$css.'</style>';
+		
+		$IM = $this->IM;
+		INCLUDE $this->getModule()->getPath().'/includes/html.php';
+		
+		echo PHP_EOL.'</form>'.PHP_EOL.'<script>$(document).ready(function() { HtmlEditor.init(); });</script>'.PHP_EOL;
+		
+		$context = ob_get_clean();
+		
+		
+		
+		return $context;
 	}
 	
 	/**

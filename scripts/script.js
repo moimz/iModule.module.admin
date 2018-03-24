@@ -1048,7 +1048,7 @@ var Admin = {
 												fields:["display","value"],
 												data:(mode == "menu" ? 
 													[[Admin.getText("configs/sitemap/type/EXTERNAL"),"EXTERNAL"],[Admin.getText("configs/sitemap/type/PAGE"),"PAGE"],[Admin.getText("configs/sitemap/type/WIDGET"),"WIDGET"],[Admin.getText("configs/sitemap/type/LINK"),"LINK"],[Admin.getText("configs/sitemap/type/EMPTY"),"EMPTY"]] : 
-													[[Admin.getText("configs/sitemap/type/MODULE"),"MODULE"],[Admin.getText("configs/sitemap/type/EXTERNAL"),"EXTERNAL"],[Admin.getText("configs/sitemap/type/WIDGET"),"WIDGET"],[Admin.getText("configs/sitemap/type/LINK"),"LINK"],[Admin.getText("configs/sitemap/type/EMPTY"),"EMPTY"]]
+													[[Admin.getText("configs/sitemap/type/MODULE"),"MODULE"],[Admin.getText("configs/sitemap/type/EXTERNAL"),"EXTERNAL"],[Admin.getText("configs/sitemap/type/WIDGET"),"WIDGET"],[Admin.getText("configs/sitemap/type/HTML"),"HTML"],[Admin.getText("configs/sitemap/type/LINK"),"LINK"],[Admin.getText("configs/sitemap/type/EMPTY"),"EMPTY"]]
 												)
 											}),
 											displayField:"display",
@@ -1062,7 +1062,7 @@ var Admin = {
 													Ext.getCmp("SitemapConfigWIDGET").hide().disable();
 													Ext.getCmp("SitemapConfigLINK").hide().disable();
 													
-													if (value != "EMPTY") Ext.getCmp("SitemapConfig"+value).show().enable();
+													if (value != "EMPTY" && value != "HTML") Ext.getCmp("SitemapConfig"+value).show().enable();
 													
 													if (value == "PAGE") {
 														Ext.getCmp("SitemapConfigForm").getForm().findField("subpage").getStore().load();

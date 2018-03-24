@@ -1,0 +1,30 @@
+/**
+ * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodule.kr)
+ *
+ * HTML 컨텍스트 에디터를 위한 스타일을 정의한다.
+ * 
+ * @file /modules/admin/styles/html.css
+ * @author Arzz (arzz@arzz.com)
+ * @license MIT License
+ * @version 3.0.0
+ * @modified 2018. 3. 24.
+ */
+#ModuleAdminHtmlEditorForm {padding-bottom:60px;}
+#ModuleAdminHtmlEditorForm div[data-role=box] {border:1px solid transparent; margin:10px 0px; padding:10px 15px;}
+#ModuleAdminHtmlEditorForm div[data-role=box] > p {padding-left:15px; position:relative; line-height:24px; margin:5px 0px;}
+#ModuleAdminHtmlEditorForm div[data-role=box] > p > i {width:2px; height:2px; display:block; position:absolute; top:11px; left:4px;}
+#ModuleAdminHtmlEditorForm div[data-role=box] > p > i.hidden {visibility:hidden;}
+#ModuleAdminHtmlEditorForm div[data-role=box].blue {border-color:#bbdefb; background:#e3f2fd;}
+#ModuleAdminHtmlEditorForm div[data-role=box].blue > p {color:#0d47a1;}
+#ModuleAdminHtmlEditorForm div[data-role=box].blue > p > i {background:#0d47a1;}
+
+#ModuleAdminHtmlEditorForm div[data-role=box].yellow {border-color:#FFE082; background:#FFF8E1;}
+#ModuleAdminHtmlEditorForm div[data-role=box].yellow > p {color:#FF6F00;}
+#ModuleAdminHtmlEditorForm div[data-role=box].yellow > p > i {background:#FFA000;}
+
+#ModuleAdminHtmlEditorForm div[data-role=line] {margin-top:30px; border-top:1px dotted #ccc; height:30px; text-align:center;}
+#ModuleAdminHtmlEditorForm div[data-role=line] > span {display:inline-block; position:relative; top:-10px; background:#fff; padding:0px 10px;}
+
+#ModuleAdminHtmlEditorForm .CodeMirror {border:1px solid #ccc;}
+
+#ModuleAdminHtmlEditorForm div[data-role=button] {position:fixed; left:0; bottom:0; z-index:1000; width:100%; height:60px; background:#f4f4f4; border-top:1px solid #ccc; box-shadow:0px 0px 5px rgba(0,0,0,0.15); box-sizing:border-box; padding-top:10px;}
