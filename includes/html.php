@@ -66,6 +66,3 @@ if (defined('__IM__') == false) exit;
 	<button type="submit">저장하기</button>
 	<a href="<?php echo $IM->getUrl($menu,$page,false); ?>">돌아가기</a>
 </div>
-
-<script src="http://jsbeautifier.org/js/lib/beautify-html.js"></script>
-<script src="http://jsbeautifier.org/js/lib/beautify-css.js"></script>
