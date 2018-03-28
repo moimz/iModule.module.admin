@@ -53,8 +53,9 @@ var HtmlEditor = {
 				if (cssCodeMirror == null) {
 					cssCodeMirror = CodeMirror.fromTextArea($css.get(0),{
 						mode:"css",
-						indentUnit:1,
+						indentUnit:4,
 						indentWithTabs:true,
+						tabSize:4,
 						lineNumbers:true,
 						lineWrapping:true,
 						autoCloseTags:true
