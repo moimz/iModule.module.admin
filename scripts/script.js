@@ -1019,9 +1019,9 @@ var Admin = {
 													text:Admin.getText("configs/sitemap/form/icon_search"),
 													handler:function() {
 														var iconType = Ext.getCmp("SitemapConfigForm").getForm().findField("icon_type").getValue();
-														if (iconType == "fa") window.open("https://fortawesome.github.io/Font-Awesome/icons/");
-														if (iconType == "xi") window.open("http://xpressengine.github.io/XEIcon/1.0.4/library_common.html");
-														if (iconType == "xi2") window.open("http://xpressengine.github.io/XEIcon/2.2.0/library_common.html");
+														if (iconType == "fa") window.open("https://fontawesome.com/v4.7.0/icons/");
+														if (iconType == "xi") window.open("https://xpressengine.github.io/XEIcon/library-1.0.4.html");
+														if (iconType == "xi2") window.open("https://xpressengine.github.io/XEIcon/library-2.3.3.html");
 													}
 												})
 											]
