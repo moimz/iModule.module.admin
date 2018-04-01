@@ -947,6 +947,67 @@ class ModuleAdmin {
 		}
 		
 		/**
+		 * 현재 접속한 도메인에 해당하는 사이트가 없을 경우, 유사한 사이트를 찾아 페이지를 이동한다.
+		 */
+		$domain = $_SERVER['HTTP_HOST'];
+		if ($this->db()->select($this->IM->getTable('site'))->where('domain',$domain)->has() == false) {
+			$sites = $this->db()->select($this->IM->getTable('site'))->orderBy('sort','asc')->get();
+			$isSSL = false;
+			$isAlias = false;
+			for ($i=0, $loop=count($sites);$i<$loop;$i++) {
+				if ($sites[$i]->alias == '') continue;
+				
+				/**
+				 * 현재 접속한 도메인을 alias 로 가지고 있는 사이트를 탐색한다.
+				 */
+				$domains = explode(',',$sites[$i]->alias);
+				for ($j=0, $loopj=count($domains);$j<$loopj;$j++) {
+					if ($domains[$j] == $_SERVER['HTTP_HOST']) {
+						$domain = $sites[$i]->domain;
+						$isSSL = $sites[$i]->is_ssl == 'TRUE';
+						$isAlias = true;
+						break;
+					}
+					
+					if (preg_match('/\*\./',$domains[$j]) == true) {
+						$aliasToken = explode('.',$domains[$j]);
+						$domainToken = explode('.',$domain);
+						$isMatch = true;
+						while (count($aliasToken) > 0) {
+							$token = array_pop($aliasToken);
+							if ($token != '*' && $token != array_pop($domainToken)) {
+								$isMatch = false;
+							}
+						}
+						
+						if ($isMatch == true) {
+							$domain = $sites[$i]->domain;
+							$isSSL = $sites[$i]->is_ssl == 'TRUE';
+							$isAlias = true;
+							break;
+						}
+					}
+				}
+			}
+			
+			/**
+			 * 전체 사이트 정보를 참고해도 현재 접속한 도메인의 사이트를 찾을 수 없을 경우 에러메세지를 출력한다.
+			 */
+			if ($isAlias == false) {
+				$this->IM->printError('SITE_NOT_FOUND');
+			} else {
+				$redirectUrl = ($isSSL == true ? 'https://' : 'http://').$domain.__IM_DIR__.'/admin/';
+				if ($this->menu != 'dashboard') {
+					$redirectUrl.= $this->menu ? $this->menu : '';
+					$redirectUrl.= $this->page ? '/'.$this->page : '';
+				}
+				header("HTTP/1.1 301 Moved Permanently");
+				header("location:".$redirectUrl);
+				exit;
+			}
+		}
+		
+		/**
 		 * 사이트관리자 권한이 없을 경우 로그인 컨텍스트를, 로그인이 되어있다면 사이트 관리자 컨텍스트를 가져온다.
 		 */
 		if ($this->IM->getModule('member')->isLogged() === false || $this->checkPermission() === false) {
