@@ -2554,7 +2554,7 @@ var Admin = {
 	 * @param string value 필드값
 	 * @param object options 필드속성
 	 */
-	wysiwygField:function(label,name,value,options) {
+	wysiwygField:function(label,name,options) {
 		var options = typeof options == "object" ? options : {};
 		options.name = name;
 		options.fieldLabel = (label ? label : "");
