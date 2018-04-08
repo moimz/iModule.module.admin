@@ -60,6 +60,7 @@ foreach ($datas as $data) {
 		}
 		
 		$value = isset($data->{$cells[$i]->dataIndex}) == true ? $data->{$cells[$i]->dataIndex} : '';
+		$value = str_replace(array('<i class="fa fa-angle-right"></i>'),array('>'),$value);
 		$columnLengths[$i] = $columnLengths[$i] < strlen($value) ? strlen($value) : $columnLengths[$i];
 		
 		$mPHPExcel->getActiveSheet()->setCellValue($column.($loopnum+1),$value);
