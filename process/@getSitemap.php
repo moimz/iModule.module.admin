@@ -48,6 +48,8 @@ if (strpos($site->templet,'#') === 0 && $this->IM->getModule()->isSitemap(substr
 			$lists[$i]->context = $this->IM->getPages($lists[$i]->menu,$context->page,$lists[$i]->domain,$lists[$i]->language)->title.'('.$context->page.')';
 		} elseif ($lists[$i]->type == 'LINK') {
 			$lists[$i]->context = $context->link;
+		} elseif ($lists[$i]->type == 'HTML') {
+			$lists[$i]->context = $context != null && isset($context->html) == true && isset($context->css) == true ? '본문 : '.GetFileSize(strlen($context->html)).' / 스타일시트 : '.GetFileSize(strlen($context->css)) : '내용없음';
 		}
 		
 		$this->IM->db()->update($this->IM->getTable('sitemap'),array('sort'=>$i))->where('domain',$domain)->where('language',$language)->where('menu',$lists[$i]->menu)->where('page',$lists[$i]->page)->execute();
