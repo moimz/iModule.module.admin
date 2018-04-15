@@ -2551,7 +2551,6 @@ var Admin = {
 	 *
 	 * @param string label 라벨명
 	 * @param string name 필드명
-	 * @param string value 필드값
 	 * @param object options 필드속성
 	 */
 	wysiwygField:function(label,name,options) {
@@ -2746,6 +2745,230 @@ var Admin = {
 		};
 		
 		return new Ext.form.TextArea(options);
+	},
+	/**
+	 * 멀티파일업로더 필드를 추가한다.
+	 *
+	 * @param string label 라벨명
+	 * @param string name 필드명
+	 * @param object options 필드속성
+	 */
+	uploadField:function(label,name,options) {
+		var options = typeof options == "object" ? options : {};
+		options.id = "hello";
+		options.name = name;
+		options.fieldLabel = (label ? label : "");
+		options.layout = {type:"vbox",align:"stretch"};
+		options.items = [
+			new Ext.form.FieldContainer({
+				layout:"hbox",
+				items:[
+					new Ext.Button({
+						iconCls:options.iconCls ? options.iconCls : "xi xi-upload",
+						text:options.buttonText ? options.buttonText : "파일선택",
+						handler:function(button) {
+							var $input = $("input[type=file]",$(button.ownerCt.el.dom));
+							$input.trigger("click");
+						}
+					}),
+					new Ext.form.Hidden({
+						name:options.name+"_loader",
+						listeners:{
+							change:function(form,value) {
+								var files = JSON.parse(value);
+								for (var i=0, loop=files.length;i<loop;i++) {
+									form.ownerCt.print(files[i]);
+								}
+							}
+						}
+					}),
+					new Ext.form.DisplayField({
+						value:'<span style="display:none;"><input type="file" name="'+name+'_input" accept="'+(options.accept ? options.accept : "*/*")+'" multiple></span>업로드할 파일을 선택(다중선택가능)하면 업로드가 시작됩니다',
+						fieldStyle:{textAlign:"right",fontSize:"11px",color:"#666"},
+						flex:1,
+						listeners:{
+							render:function(form) {
+								var button = form.ownerCt.items.items[0];
+								var $input = $("input[type=file]",$(form.el.dom));
+								$input.data("parent",form.ownerCt.getId());
+								$input.data("button",button);
+								$input.data("files",[]);
+								$input.data("total",0);
+								$input.data("uploaded",0);
+								$input.data("queue",[]);
+								console.log(form.ownerCt,form.ownerCt.getId());
+								
+								$input.on("change",function(e) {
+									$input.data("button").setDisabled(true);
+									
+									var files = [];
+									for (var i=0, loop=e.target.files.length;i<loop;i++) {
+										var file = e.target.files[i];
+										files.push(file);
+									}
+									
+									$input.val("");
+									
+									var drafts = [];
+									for (var i=0, loop=files.length;i<loop;i++) {
+										var draft = {};
+										draft.name = files[i].name;
+										draft.size = files[i].size;
+										draft.type = files[i].type;
+										
+										drafts.push(draft);
+									}
+									
+									$.send(ENV.getProcessUrl("attachment","draft"),{module:(options.module ? options.module : "admin"),target:(options.target ? options.target : ""),files:JSON.stringify(drafts)},function(result) {
+										if (result.success == true) {
+											for (var i=0, loop=result.files.length;i<loop;i++) {
+												if (result.files[i].code != null) {
+													files[i].idx = result.files[i].idx;
+													files[i].code = result.files[i].code;
+													files[i].mime = result.files[i].mime;
+													files[i].uploaded = result.files[i].uploaded;
+													files[i].extension = result.files[i].extension;
+													files[i].status = result.files[i].status;
+													
+													$input.data("total",$input.data("total") + files[i].size);
+													if (files[i].status == "COMPLETE") $input.data("uploaded",$input.data("uploaded") + files[i].size);
+													else $input.data("queue").push(files[i]);
+													
+													Ext.getCmp($input.data("parent")).print(result.files[i],files[i]);
+												}
+											}
+										}
+										
+										$input.data("button").setDisabled(false);
+										Ext.getCmp($input.data("parent")).start();
+									});
+								})
+							}
+						}
+					})
+				],
+				print:function(file,oFile) {
+					console.log("print",file,this.ownerCt.getWidth());
+					var parent = this.ownerCt;
+					for (var i=0, loop=parent.items.items.length;i<loop;i++) {
+						if (parent.items.items[i].idx == file.idx) {
+							
+							return;
+						}
+					}
+					
+					parent.add(new Ext.form.FieldContainer({
+						idx:file.idx,
+						file:file,
+						layout:"hbox",
+						style:{marginTop:"3px",marginBottom:"3px"},
+						items:[
+							new Ext.form.DisplayField({
+								fieldStyle:{paddingTop:0,minHeight:"24px"},
+								value:'<div style="width:calc(100% - 10px); text-overflow:ellipsis; white-space:nowrap; overflow:hidden; height:24px; line-height:24px;"><span style="float:right; margin-left:5px; color:#666;">(' + iModule.getFileSize(file.size)+')</span>' + file.name +'</div>',
+								width:this.getWidth() - 130
+							}),
+							new Ext.ProgressBar({
+								flex:1,
+								value:file.status != "WAIT" ? 1 : null
+							}),
+							new Ext.Button({
+								width:24,
+								iconCls:"mi mi-trash",
+								cls:"x-btn-danger",
+								style:{width:"24px",height:"24px",paddingTop:"2px",paddingBottom:"2px"}
+							}),
+							new Ext.form.Hidden({
+								name:options.name+"[]",
+								value:file.idx
+							})
+						]
+					}));
+				},
+				update:function(idx,status) {
+					var parent = this.ownerCt;
+					for (var i=0, loop=parent.items.items.length;i<loop;i++) {
+						if (parent.items.items[i].idx == idx) {
+							parent.items.items[i].items.items[1].updateProgress(status/parent.items.items[i].file.size,status == parent.items.items[i].file.size ? "100%" : Ext.util.Format.number(status/parent.items.items[i].file.size * 100,"0.00")+"%");
+							return;
+						}
+					}
+				},
+				start:function() {
+					var $input = $("input[type=file]",$(this.el.dom));
+					if ($input.data("uploading") != null) return;
+					if ($input.data("queue").length == 0) return this.complete();
+					
+					$input.data("uploading",$input.data("queue").shift());
+					this.upload();
+				},
+				upload:function() {
+					var $input = $("input[type=file]",$(this.el.dom));
+					if ($input.data("uploading") == null) return this.start();
+					
+					var file = $input.data("uploading");
+					this.update(file.idx,file.uploaded);
+					
+					var chunkSize = 2 * 1000 * 1000;
+					file.chunk = file.size > file.uploaded + chunkSize ? file.uploaded + chunkSize : file.size;
+					
+					$.ajax({
+						url:ENV.getProcessUrl("attachment","upload")+"?code="+encodeURIComponent(file.code),
+						method:"POST",
+						contentType:file.mime,
+						headers:{
+							"Content-Range":"bytes " + file.uploaded + "-" + (file.chunk - 1) + "/" + file.size
+						},
+						xhr:function() {
+							var xhr = $.ajaxSettings.xhr();
+			
+							if (xhr.upload) {
+								xhr.upload.addEventListener("progress",function(e) {
+									if (e.lengthComputable) {
+										Ext.getCmp($input.data("parent")).update(file.idx,file.uploaded + e.loaded);
+									}
+								},false);
+							}
+			
+							return xhr;
+						},
+						processData:false,
+						data:file.slice(file.uploaded,file.chunk)
+					}).done(function(result) {
+						if (result.success == true) {
+							file.failCount = 0;
+							
+							if (file.chunk == file.size) {
+								Ext.getCmp($input.data("parent")).print(result.file);
+								$input.data("uploaded",$input.data("uploaded") + file.size);
+								$input.data("uploading",null);
+								Ext.getCmp($input.data("parent")).start();
+							} else {
+								file.uploaded = result.uploaded;
+								Ext.getCmp($input.data("parent")).upload();
+							}
+						} else {
+							if (file.failCount < 3) {
+								file.failCount++;
+								Ext.getCmp($input.data("parent")).upload();
+							} else {
+								file.status = "FAIL";
+							}
+						}
+					}).fail(function() {
+						if (file.failCount < 3) {
+							file.failCount++;
+							Ext.getCmp($input.data("parent")).upload();
+						}
+					});
+				},
+				complete:function() {
+					
+				}
+			})
+		];
+		
+		return new Ext.form.FieldContainer(options);
 	},
 	/**
 	 * 권한을 설정하는 필드셋을 정의한다.
