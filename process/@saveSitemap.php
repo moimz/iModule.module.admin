@@ -84,8 +84,8 @@ if ($type == 'MODULE') {
 	$context->target = Request('link_target') ? Request('link_target') : $errors['link_target'] = $this->getErrorText('REQUIRED');
 }
 
-if ($type == 'LINK') {
-	$layout = 'empty';
+if ($type == 'LINK' || $type == 'PAGE') {
+	$layout = 'NONE';
 } else {
 	$layout = Request('layout') ? Request('layout') : $errors['layout'] = $this->getErrorText('REQUIRED');
 }

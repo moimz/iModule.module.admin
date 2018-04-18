@@ -910,7 +910,7 @@ var Admin = {
 						new Ext.form.Panel({
 							id:"SitemapConfigForm",
 							border:false,
-							bodyPadding:10,
+							bodyPadding:"10 10 5 10",
 							fieldDefaults:{labelAlign:"right",labelWidth:100,anchor:"100%",allowBlank:false},
 							items:[
 								new Ext.form.Hidden({
@@ -1068,7 +1068,7 @@ var Admin = {
 														Ext.getCmp("SitemapConfigForm").getForm().findField("subpage").getStore().load();
 													}
 													
-													if (value == "LINK") {
+													if (value == "LINK" || value == "PAGE") {
 														Ext.getCmp("SitemapConfigForm").getForm().findField("layout").setDisabled(true).setHidden(true);
 													} else {
 														Ext.getCmp("SitemapConfigForm").getForm().findField("layout").setDisabled(false).setHidden(false);
