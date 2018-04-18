@@ -78,9 +78,7 @@ Ext.onReady(function () {
 				<?php } ?>
 				border:false,
 				layout:"fit",
-				items:[
-					
-				],
+				items:[],
 				listeners:{
 					add:function(panel,content) {
 						if (content.is("tabpanel") == true) {
@@ -110,6 +108,8 @@ Ext.onReady(function () {
 									document.title = tab.getTitle()+" - <?php echo $pageTitle->title; ?>";
 								});
 							}
+							
+							$(document).triggerHandler("render");
 						}
 					}
 				}
