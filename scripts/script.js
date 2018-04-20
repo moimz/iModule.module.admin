@@ -608,6 +608,7 @@ var Admin = {
 					listeners:{
 						show:function() {
 							if (type == "modify") {
+								Ext.getCmp("SiteConfigForm").getForm().findField("templet").setValue(null);
 								Ext.getCmp("SiteConfigForm").getForm().load({
 									url:ENV.getProcessUrl("admin","@getSite"),
 									params:{domain:domain,language:language},
