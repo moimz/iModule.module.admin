@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2018. 3. 18.
+ * @modified 2018. 4. 28.
  */
 if (defined('__IM__') == false) exit;
 
@@ -38,6 +38,7 @@ if (strpos($site->templet,'#') === 0 && $this->IM->getModule()->isSitemap(substr
 		
 		$lists[$i]->sort = $i;
 		$lists[$i]->icon = $this->IM->parseIconString($lists[$i]->icon);
+		$lists[$i]->is_hide = $lists[$i]->is_hide == 'TRUE';
 		
 		$context = json_decode($lists[$i]->context);
 		if ($lists[$i]->type == 'EXTERNAL') {

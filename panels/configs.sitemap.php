@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.0.0
- * @modified 2018. 3. 18.
+ * @modified 2018. 4. 28.
  */
 if (defined('__IM__') == false) exit;
 ?>
@@ -150,8 +150,15 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 						}),
 						columns:[{
 							text:Admin.getText("configs/sitemap/columns/menu"),
-							width:100,
-							dataIndex:"menu"
+							width:120,
+							dataIndex:"menu",
+							renderer:function(value,p,record) {
+								var sHTML = "";
+								if (record.data.is_hide == true) sHTML+= '<i class="xi xi-eye-slash"></i> ';
+								sHTML+= value;
+								
+								return sHTML;
+							}
 						},{
 							text:Admin.getText("configs/sitemap/columns/menu_title"),
 							minWidth:150,
@@ -289,8 +296,15 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 						}),
 						columns:[{
 							text:Admin.getText("configs/sitemap/columns/page"),
-							width:100,
-							dataIndex:"page"
+							width:120,
+							dataIndex:"page",
+							renderer:function(value,p,record) {
+								var sHTML = "";
+								if (record.data.is_hide == true) sHTML+= '<i class="xi xi-eye-slash"></i> ';
+								sHTML+= value;
+								
+								return sHTML;
+							}
 						},{
 							text:Admin.getText("configs/sitemap/columns/page_title"),
 							minWidth:150,
