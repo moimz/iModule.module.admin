@@ -548,7 +548,6 @@ var Admin = {
 												new Ext.form.TextArea({
 													name:"description",
 													flex:1,
-													height:80,
 													allowBlank:true,
 													margin:"0 5 5 0",
 												}),
@@ -1335,7 +1334,6 @@ var Admin = {
 										new Ext.form.TextArea({
 											fieldLabel:Admin.getText("configs/sitemap/form/widget"),
 											name:"widget",
-											height:100,
 											value:"[]",
 											afterBodyEl:'<div class="x-form-help">'+Admin.getText("configs/sitemap/form/widget_help")+'</div>'
 										})
@@ -2180,7 +2178,6 @@ var Admin = {
 												}
 												
 												if (item.type == "textarea") {
-													options.height = 80;
 													container.add(
 														new Ext.form.TextArea(options)
 													);
