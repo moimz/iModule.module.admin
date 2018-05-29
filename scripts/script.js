@@ -2056,7 +2056,7 @@ var Admin = {
 	 */
 	templetField:function(label,name,target,use_default,url,params) {
 		var url = url ? url : ENV.getProcessUrl("admin","@getTempletConfigs");
-		var params = params ? params : [];
+		var params = params ? params : {};
 		
 		return new Ext.form.FieldContainer({
 			layout:{type:"vbox",align:"stretch"},
@@ -2090,7 +2090,10 @@ var Admin = {
 							value:use_default !== false ? "#" : "default",
 							listeners:{
 								render:function(form) {
-									var params = {type:"module",target:target,use_default:use_default !== false ? true : false};
+									params.type = "module";
+									params.target = target;
+									params.use_default = use_default !== false ? true : false;
+									
 									if (form.getPanel().getId() == "SiteConfigForm") {
 										params.type = "core";
 									}
@@ -2104,7 +2107,7 @@ var Admin = {
 									if (Ext.getCmp(form.getName()+"-configs")) form.ownerCt.ownerCt.remove(Ext.getCmp(form.getName()+"-configs"));
 									if (value == "#") return;
 									
-									var params = {type:"module"};
+									var params = form.getStore().getProxy().extraParams;
 									if (form.params.length > 0) {
 										for (var i=0, loop=form.params.length;i<loop;i++) {
 											params[form.params[i]] = form.getForm().findField(form.params[i]).getValue();
@@ -2130,7 +2133,7 @@ var Admin = {
 										params.language = form.getForm().findField("language").getValue();
 										params.menu = form.getForm().findField("menu").getValue();
 										params.page = form.getForm().findField("page").getValue();
-										params.parent = form.getForm().findField("target").getValue();
+										params.module = form.getForm().findField("target").getValue();
 										params.position = "sitemap";
 									}
 									

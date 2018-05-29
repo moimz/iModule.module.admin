@@ -562,8 +562,6 @@ class ModuleAdmin {
 		
 		$context = ob_get_clean();
 		
-		
-		
 		return $context;
 	}
 	

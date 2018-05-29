@@ -82,13 +82,11 @@ var HtmlEditor = {
 		$("textarea[name=css]",$form).val($style.text());
 		$("textarea[name=html]",$form).val($wysiwyg.froalaEditor("html.get"));
 		
-		$form.send(ENV.getProcessUrl("admin","@saveHtmlContext"),function(result) {
+		var submit = $form.attr("data-submit") ? $form.attr("data-submit") : ENV.getProcessUrl("admin","@saveHtmlContext");
+		
+		$form.send(submit,function(result) {
 			if (result.success == true) {
-				if ($("input[name=page]",$form).length == 1) {
-					location.replace(ENV.getUrl($("input[name=menu]",$form).val(),$("input[name=page]",$form).val(),false));
-				} else {
-					location.replace(ENV.getUrl($("input[name=menu]",$form).val(),false));
-				}
+				location.replace(location.href.replace(/\/edit$/,''));
 			}
 		});
 	}

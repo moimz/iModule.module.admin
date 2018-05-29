@@ -10,7 +10,7 @@
  * @modified 2018. 3. 24.
  */
 #ModuleAdminHtmlEditorForm {padding-bottom:60px;}
-#ModuleAdminHtmlEditorForm div[data-role=box] {border:1px solid transparent; margin:10px 0px; padding:10px 15px;}
+#ModuleAdminHtmlEditorForm div[data-role=box] {border:1px solid transparent; margin:0px 0px 10px 0px; padding:10px 15px;}
 #ModuleAdminHtmlEditorForm div[data-role=box] > p {padding-left:15px; position:relative; line-height:24px; margin:5px 0px;}
 #ModuleAdminHtmlEditorForm div[data-role=box] > p > i {width:2px; height:2px; display:block; position:absolute; top:11px; left:4px;}
 #ModuleAdminHtmlEditorForm div[data-role=box] > p > i.hidden {visibility:hidden;}
@@ -18,7 +18,7 @@
 #ModuleAdminHtmlEditorForm div[data-role=box].blue > p {color:#0d47a1;}
 #ModuleAdminHtmlEditorForm div[data-role=box].blue > p > i {background:#0d47a1;}
 
-#ModuleAdminHtmlEditorForm div[data-role=box].yellow {border-color:#FFE082; background:#FFF8E1;}
+#ModuleAdminHtmlEditorForm div[data-role=box].yellow {border-color:#FFE082; background:#FFF8E1; margin-top:10px;}
 #ModuleAdminHtmlEditorForm div[data-role=box].yellow > p {color:#FF6F00;}
 #ModuleAdminHtmlEditorForm div[data-role=box].yellow > p > i {background:#FFA000;}
 
