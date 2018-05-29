@@ -35,8 +35,6 @@ if (strpos($site->templet,'#') === 0 && $this->IM->getModule()->isSitemap(substr
 		$lists[$i]->url = ($site->is_ssl == 'TRUE' ? 'https://' : 'http://').$site->domain.__IM_DIR__.'/'.$site->language.'/';
 		if ($lists[$i]->page) $lists[$i]->url.= $lists[$i]->menu.'/';
 		
-		
-		$lists[$i]->sort = $i;
 		$lists[$i]->icon = $this->IM->parseIconString($lists[$i]->icon);
 		$lists[$i]->is_hide = $lists[$i]->is_hide == 'TRUE';
 		
@@ -53,7 +51,10 @@ if (strpos($site->templet,'#') === 0 && $this->IM->getModule()->isSitemap(substr
 			$lists[$i]->context = $context != null && isset($context->html) == true && isset($context->css) == true ? '본문 : '.GetFileSize(strlen($context->html)).' / 스타일시트 : '.GetFileSize(strlen($context->css)) : '내용없음';
 		}
 		
-		$this->IM->db()->update($this->IM->getTable('sitemap'),array('sort'=>$i))->where('domain',$domain)->where('language',$language)->where('menu',$lists[$i]->menu)->where('page',$lists[$i]->page)->execute();
+		if ($lists[$i]->sort != $i) {
+			$this->IM->db()->update($this->IM->getTable('sitemap'),array('sort'=>$i))->where('domain',$domain)->where('language',$language)->where('menu',$lists[$i]->menu)->where('page',$lists[$i]->page)->execute();
+			$lists[$i]->sort = $i;
+		}
 	}
 	
 	$results->success = true;

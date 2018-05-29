@@ -51,7 +51,7 @@ if ($type == 'module') {
 		$language = Request('language');
 		$menu = Request('menu');
 		$page = Request('page');
-		$parent = Request('parent');
+		$module = Request('module');
 		
 		if ($menu && $page) {
 			$sitemap = $this->IM->db()->select($this->IM->getTable('sitemap'))->where('domain',$domain)->where('language',$language)->where('menu',$menu)->where('page',$page)->getOne();
@@ -59,7 +59,7 @@ if ($type == 'module') {
 				$name = preg_replace('/^@/','',$name);
 				$context = json_decode($sitemap->context);
 				
-				if ($context->module == $parent && $context->configs->{$name} == $templet && isset($context->configs->{$name.'_configs'}) == true) {
+				if ($context->module == $module && $context->configs->{$name} == $templet && isset($context->configs->{$name.'_configs'}) == true) {
 					$Templet->setConfigs($context->configs->{$name.'_configs'});
 				}
 			}
