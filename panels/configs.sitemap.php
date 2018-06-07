@@ -154,7 +154,8 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 							dataIndex:"menu",
 							renderer:function(value,p,record) {
 								var sHTML = "";
-								if (record.data.is_hide == true) sHTML+= '<i class="xi xi-eye-slash"></i> ';
+								if (record.data.is_hide == true) sHTML+= '<i class="icon xi xi-eye-slash"></i>';
+								if (record.data.is_footer == true) sHTML+= '<i class="icon xi xi-pin"></i>';
 								sHTML+= value;
 								
 								return sHTML;
@@ -165,7 +166,7 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 							flex:1,
 							dataIndex:"title",
 							renderer:function(value,p,record) {
-								return record.data.icon+" "+value;
+								return record.data.icon + value;
 							}
 						},{
 							text:Admin.getText("configs/sitemap/columns/type"),
@@ -182,14 +183,14 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 						selModel:new Ext.selection.RowModel(),
 						bbar:[
 							new Ext.Button({
-								text:'<i class="fa fa-caret-up"></i>',
+								iconCls:"fa fa-caret-up",
 								handler:function() {
 									Admin.gridSort(Ext.getCmp("MenuList"),"sort","up");
 									Admin.gridSave(Ext.getCmp("MenuList"),ENV.getProcessUrl("admin","@saveSitemapSort"),500);
 								}
 							}),
 							new Ext.Button({
-								text:'<i class="fa fa-caret-down"></i>',
+								iconCls:"fa fa-caret-down",
 								handler:function() {
 									Admin.gridSort(Ext.getCmp("MenuList"),"sort","down");
 									Admin.gridSave(Ext.getCmp("MenuList"),ENV.getProcessUrl("admin","@saveSitemapSort"),500);
@@ -300,7 +301,8 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 							dataIndex:"page",
 							renderer:function(value,p,record) {
 								var sHTML = "";
-								if (record.data.is_hide == true) sHTML+= '<i class="xi xi-eye-slash"></i> ';
+								if (record.data.is_hide == true) sHTML+= '<i class="icon xi xi-eye-slash"></i>';
+								if (record.data.is_footer == true) sHTML+= '<i class="icon xi xi-pin"></i>';
 								sHTML+= value;
 								
 								return sHTML;
@@ -325,14 +327,14 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 						selModel:new Ext.selection.RowModel(),
 						bbar:[
 							new Ext.Button({
-								text:'<i class="fa fa-caret-up"></i>',
+								iconCls:"fa fa-caret-up",
 								handler:function() {
 									Admin.gridSort(Ext.getCmp("PageList"),"sort","up");
 									Admin.gridSave(Ext.getCmp("PageList"),ENV.getProcessUrl("admin","@saveSitemapSort"),500);
 								}
 							}),
 							new Ext.Button({
-								text:'<i class="fa fa-caret-down"></i>',
+								iconCls:"fa fa-caret-down",
 								handler:function() {
 									Admin.gridSort(Ext.getCmp("PageList"),"sort","down");
 									Admin.gridSave(Ext.getCmp("PageList"),ENV.getProcessUrl("admin","@saveSitemapSort"),500);

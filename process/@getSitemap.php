@@ -37,6 +37,7 @@ if (strpos($site->templet,'#') === 0 && $this->IM->getModule()->isSitemap(substr
 		
 		$lists[$i]->icon = $this->IM->parseIconString($lists[$i]->icon);
 		$lists[$i]->is_hide = $lists[$i]->is_hide == 'TRUE';
+		$lists[$i]->is_footer = $lists[$i]->is_footer == 'TRUE';
 		
 		$context = json_decode($lists[$i]->context);
 		if ($lists[$i]->type == 'EXTERNAL') {

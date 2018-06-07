@@ -67,7 +67,7 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 			renderer:function(value,p,record) {
 				var icon = record.data.icon.split("-");
 				
-				return '<i class="'+icon.shift()+" "+record.data.icon+'" style="width:16px; text-align:center; margin-right:5px;"></i>'+value;
+				return '<i class="icon '+icon.shift()+" "+record.data.icon+'"></i>'+value;
 			},
 			summaryRenderer:function(value) {
 				return value+" module"+(value > 1 ? "s" : "");
