@@ -57,7 +57,7 @@ div[data-module=attachment].wysiwyg > ul[data-role=files] > li > button:hover {c
 .x-form-tags .x-panel-default {overflow:visible;}
 .x-form-tags .x-panel-body {overflow:visible;}
 
-.x-grid-cell-inner i.icon {width:16px; text-align:center; vertical-align:middle; margin-right:5px;}
+.x-grid-cell-inner i.icon {margin-right:5px;}
 
 
 div[data-role=tags] > div[data-role=tag] {height:32px; z-index:10000;}
