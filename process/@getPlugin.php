@@ -1,6 +1,6 @@
 <?php
 /**
- * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.iplugin.kr)
+ * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodule.kr)
  * 
  * 플러그인정보를 가져온다.
  *
