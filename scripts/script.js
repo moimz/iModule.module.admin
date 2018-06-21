@@ -840,7 +840,7 @@ var Admin = {
 												})
 											]
 										}),
-										Admin.templetField(Admin.getText("configs/sites/form/templet"),"templet","site",false),
+										Admin.templetField(Admin.getText("configs/sites/form/templet"),"templet","core","site",false),
 										new Ext.form.FieldContainer({
 											fieldLabel:Admin.getText("configs/sites/form/title"),
 											layout:"hbox",
@@ -1501,7 +1501,7 @@ var Admin = {
 																			
 																			for (var i=0, loop=result.configs.length;i<loop;i++) {
 																				if (result.configs[i].type == "templet") {
-																					Ext.getCmp("SitemapConfigContextConfigs").add(Admin.templetField(result.configs[i].title,"@"+result.configs[i].name,result.configs[i].target,result.configs[i].use_default));
+																					Ext.getCmp("SitemapConfigContextConfigs").add(Admin.templetField(result.configs[i].title,"@"+result.configs[i].name,"module",result.configs[i].target,result.configs[i].use_default));
 																					form.getForm().findField("@"+result.configs[i].name).setValue(result.configs[i].value);
 																				}
 																				
