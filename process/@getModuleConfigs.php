@@ -8,13 +8,13 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2018. 3. 18.
+ * @modified 2018. 6. 21.
  */
 if (defined('__IM__') == false) exit;
 
 $module = Request('target');
-$package = $this->Module->getPackage($module);
-$configs = $this->Module->isInstalled($module) == true ? json_decode($this->Module->getInstalled($module)->configs) : new stdClass();
+$package = $this->getModule()->getPackage($module);
+$configs = $this->getModule()->isInstalled($module) == true ? json_decode($this->getModule()->getInstalled($module)->configs) : new stdClass();
 
 $data = isset($package->configs) == true ? $package->configs : new stdClass();
 foreach ($data as $key=>$type) {
