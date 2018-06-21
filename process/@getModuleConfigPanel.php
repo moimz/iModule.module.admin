@@ -8,30 +8,30 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2018. 3. 18.
+ * @modified 2018. 6. 21.
  */
 if (defined('__IM__') == false) exit;
 
 $module = Request('target');
-$panel = $this->Module->getConfigPanel($module);
+$panel = $this->getModule()->getConfigPanel($module);
 
 if ($panel == null) {
 	$results->success = true;
 	$results->panel = null;
 } else {
-	$package = $this->Module->getPackage($module);
+	$package = $this->getModule()->getPackage($module);
 	
 	$results->success = true;
 	$results->panel = $panel;
 	$results->language = __IM_DIR__.'/scripts/language.js.php?language='.$this->IM->language.'&languages=module@'.$module.'@'.$package->language;
 	
-	if (is_file($this->Module->getPath($module).'/admin/scripts/script.js') == true) {
-		$results->script = $this->Module->getDir($module).'/admin/scripts/script.js';
+	if (is_file($this->getModule()->getPath($module).'/admin/scripts/script.js') == true) {
+		$results->script = $this->getModule()->getDir($module).'/admin/scripts/script.js';
 	} else {
 		$results->script = null;
 	}
 }
 
-$results->isInstalled = $this->Module->isInstalled($module);
-$results->isLatest = $results->isInstalled == true && $this->Module->getInstalled($module)->hash == $this->Module->getHash($module);
+$results->isInstalled = $this->getModule()->isInstalled($module);
+$results->isLatest = $results->isInstalled == true && $this->getModule()->getInstalled($module)->hash == $this->getModule()->getHash($module);
 ?>
