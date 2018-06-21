@@ -13,9 +13,9 @@
 		"modules":{
 			"lists":"모듈관리"
 		},
-		"addon":[
-			{"page":"list","icon":"fa-cubes","title":"에드온관리"}
-		],
+		"plugins":{
+			"lists":"플러그인관리"
+		},
 		"configs":{
 			"sites":"사이트관리",
 			"sitemap":"사이트맵관리"
@@ -72,36 +72,55 @@
 			"setting":"모듈설정"
 		}
 	},
-	"addon":{
-		"list":{
+	"plugins":{
+		"lists":{
 			"columns":{
-				"title":"에드온명",
+				"title":"플러그인명",
 				"version":"버전",
-				"description":"에드온설명",
+				"description":"플러그인설명",
 				"author":"제작자",
 				"status":"상태",
 				"updated":"정상설치",
 				"need_update":"업데이트필요",
 				"need_install":"설치필요",
-				"active":"활성화여부",
+				"is_active":"활성화상태",
+				"activated":"활성화됨",
+				"deactivated":"비활성화됨",
 				"db_size":"DB용량",
-				"attachment_size":"첨부파일용량",
-				"installed":"현재 설치된 에드온",
-				"not_installed":"설치되지 않았으나, 에드온폴더에 존재하는 모듈"
+				"installed":"현재 설치된 플러그인",
+				"not_installed":"설치되지 않았으나, 플러그인폴더에 존재하는 모듈"
 			},
 			"window":{
-				"info":"에드온정보",
-				"install":"에드온설치",
-				"update":"에드온 업데이트",
-				"config":"에드온설정"
-			},
-			"active":{
-				"TRUE":"활성화중",
-				"FALSE":"비활성화"
+				"info":"플러그인정보",
+				"install":"플러그인설치",
+				"update":"플러그인 업데이트",
+				"config":"플러그인설정"
 			},
 			"update_size":"사용용량 업데이트",
-			"installing":"에드온을 설치(또는 업데이트)하고 있습니다.",
-			"installed":"에드온을 성공적으로 설치(또는 업데이트)하였습니다."
+			"installing":"플러그인을 설치(또는 업데이트)하고 있습니다.",
+			"installed":"플러그인을 성공적으로 설치(또는 업데이트)하였습니다."
+		},
+		"menus":{
+			"detail":"플러그인상세정보",
+			"install":"플러그인설치",
+			"update":"플러그인업데이트",
+			"config":"플러그인설정"
+		},
+		"show":{
+			"default":"플러그인기본정보",
+			"version":"현재버전",
+			"author":"제작자",
+			"homepage":"홈페이지",
+			"language":"기본언어",
+			"description":"상세설명",
+			"functions":"플러그인속성",
+			"admin":"관리자 지원",
+			"database":"데이터베이스 사용",
+			"dependencies":"플러그인설치조건",
+			"installed":"설치됨",
+			"update":"업데이트",
+			"install":"플러그인설치",
+			"setting":"플러그인설정"
 		}
 	},
 	"configs":{

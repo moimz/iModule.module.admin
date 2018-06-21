@@ -7,7 +7,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.0.0
- * @modified 2018. 3. 18.
+ * @modified 2018. 6. 21.
  */
 var Admin = {
 	/**
@@ -299,10 +299,6 @@ var Admin = {
 								}});
 							}
 						});
-						
-						/**
-						 * @todo 모듈의 package.json 에 설정되어 있는 configs 설정이 있다면, 해당 값으로 설정패널을 자동으로 구성한다.
-						 */
 					} else {
 						/**
 						 * 모듈 스크립트가 있다면 불러오기
@@ -398,6 +394,325 @@ var Admin = {
 								},
 								close:function() {
 									$("div[data-role=config][data-module="+module+"]").remove();
+								}
+							}
+						}).show();
+					}
+				}
+			});
+		}
+	},
+	/**
+	 * 플러그인
+	 */
+	plugins:{
+		/**
+		 * 플러그인 기본정보
+		 *
+		 * @param string plugin 플러그인명
+		 */
+		show:function(plugin) {
+			new Ext.Window({
+				id:"PluginWindow",
+				title:Admin.getText("action/wait"),
+				width:800,
+				height:600,
+				modal:true,
+				border:false,
+				resizeable:false,
+				autoScroll:true,
+				items:[
+					new Ext.form.Panel({
+						id:"PluginForm",
+						border:false,
+						bodyPadding:10,
+						fieldDefaults:{labelAlign:"right",labelWidth:80,anchor:"100%",allowBlank:true},
+						items:[
+							new Ext.form.FieldSet({
+								title:Admin.getText("plugins/show/default"),
+								items:[
+									new Ext.form.FieldContainer({
+										layout:"hbox",
+										items:[
+											new Ext.Panel({
+												width:120,
+												border:false,
+												items:[
+													new Ext.Panel({
+														id:"PluginIcon",
+														border:false,
+														bodyCls:"im-icon-default",
+														html:'<i class="mi mi-loading"></i>',
+													}),
+													new Ext.Button({
+														id:"PluginInstallButton1",
+														hidden:true,
+														style:{width:"100%",marginTop:"5px",borderRadius:"3px"},
+														handler:function() {
+															Ext.getCmp("PluginWindow").close();
+															Admin.plugins.install(plugin);
+														}
+													})
+												]
+											}),
+											new Ext.form.FieldContainer({
+												layout:"vbox",
+												flex:1,
+												fieldDefaults:{margin:0,padding:0},
+												items:[
+													new Ext.form.DisplayField({
+														fieldLabel:Admin.getText("plugins/show/version"),
+														name:"version"
+													}),
+													new Ext.form.DisplayField({
+														fieldLabel:Admin.getText("plugins/show/author"),
+														name:"author"
+													}),
+													new Ext.form.DisplayField({
+														fieldLabel:Admin.getText("plugins/show/homepage"),
+														name:"homepage"
+													}),
+													new Ext.form.DisplayField({
+														fieldLabel:Admin.getText("plugins/show/language"),
+														name:"language"
+													})
+												]
+											})
+										]
+									})
+								]
+							}),
+							new Ext.form.FieldSet({
+								title:Admin.getText("plugins/show/description"),
+								items:[
+									new Ext.form.DisplayField({
+										name:"description"
+									})
+								]
+							}),
+							new Ext.form.FieldSet({
+								title:Admin.getText("plugins/show/functions"),
+								items:[
+									new Ext.form.CheckboxGroup({
+										columns:2,
+										items:[
+											new Ext.form.Checkbox({
+												name:"database",
+												boxLabel:Admin.getText("plugins/show/database"),
+												flex:1,
+												readOnly:true
+											}),
+											new Ext.form.Checkbox({
+												name:"admin",
+												boxLabel:Admin.getText("plugins/show/admin"),
+												flex:1,
+												readOnly:false
+											})
+										]
+									})
+								]
+							}),
+							new Ext.form.FieldSet({
+								title:Admin.getText("plugins/show/dependencies"),
+								items:[
+									new Ext.form.CheckboxGroup({
+										id:"PluginDependencies",
+										columns:2,
+										items:[]
+									})
+								]
+							})
+						]
+					})
+				],
+				buttons:[
+					new Ext.Button({
+						id:"PluginInstallButton2",
+						hidden:true,
+						handler:function() {
+							Ext.getCmp("PluginWindow").close();
+							Admin.plugins.install(plugin);
+						}
+					}),
+					new Ext.Button({
+						text:Admin.getText("button/close"),
+						handler:function() {
+							Ext.getCmp("PluginWindow").close();
+						}
+					})
+				],
+				listeners:{
+					show:function() {
+						Ext.getCmp("PluginForm").getForm().load({
+							url:ENV.getProcessUrl("admin","@getPlugin"),
+							params:{target:plugin},
+							waitTitle:Admin.getText("action/wait"),
+							waitMsg:Admin.getText("action/loading"),
+							success:function(form,action) {
+								Ext.getCmp("PluginWindow").setTitle(action.result.data.title);
+								$("#PluginIcon i.mi").removeClass("mi mi-loading").addClass(action.result.data.icon.substr(0,2)).addClass(action.result.data.icon);
+								
+								for (var i=0, loop=action.result.data.dependencies.length;i<loop;i++) {
+									Ext.getCmp("PluginDependencies").add(
+										new Ext.form.Checkbox({
+											boxLabel:action.result.data.dependencies[i].name,
+											checked:action.result.data.dependencies[i].checked,
+											readOnly:true
+										})
+									);
+								}
+								
+								Ext.getCmp("PluginInstallButton1").show();
+								Ext.getCmp("PluginInstallButton2").show();
+								if (action.result.data.isLatest == true) {
+									Ext.getCmp("PluginInstallButton1").setText(Admin.getText("plugins/show/installed"));
+									Ext.getCmp("PluginInstallButton1").disable();
+									
+									if (action.result.data.isConfigPanel == true) {
+										Ext.getCmp("PluginInstallButton2").setText(Admin.getText("plugins/show/setting"));
+									} else {
+										Ext.getCmp("PluginInstallButton2").hide();
+									}
+								} else if (action.result.data.isInstalled == true) {
+									Ext.getCmp("PluginInstallButton1").setText(Admin.getText("plugins/show/update"));
+									Ext.getCmp("PluginInstallButton2").setText(Admin.getText("plugins/show/update"));
+								} else {
+									Ext.getCmp("PluginInstallButton1").setText(Admin.getText("plugins/show/install"));
+									Ext.getCmp("PluginInstallButton2").setText(Admin.getText("plugins/show/install"));
+								}
+							},
+							failure:function(form,action) {
+								if (action.result && action.result.message) {
+									Ext.Msg.show({title:Admin.getText("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+								} else {
+									Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+								}
+							}
+						});
+					}
+				}
+			}).show();
+		},
+		/**
+		 * 플러그인 설치/업데이트/설정
+		 *
+		 * @param string plugin 플러그인명
+		 */
+		install:function(plugin) {
+			Ext.Msg.wait(Admin.getText("action/working"),Admin.getText("action/wait"));
+			
+			Admin.plugins.installReady = {};
+			$(document).off("Admin.plugins.installReady");
+			
+			$.send(ENV.getProcessUrl("admin","@getPluginConfigPanel"),{target:plugin},function(result) {
+				if (result.success == true) {
+					if (result.isLatest === true) {
+						var type = "config";
+					} else if (result.isInstalled == true) {
+						var type = "update";
+					} else {
+						var type = "install";
+					}
+					
+					if (result.panel == null) {
+						$.send(ENV.getProcessUrl("admin","@installPlugin"),{target:plugin},function(result) {
+							if (result.success == true) {
+								Ext.Msg.show({title:Admin.getText("alert/info"),msg:Admin.getText("plugins/lists/installed"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO,fn:function(button) {
+									if (type == "install") {
+										location.replace(location.href);
+									} else {
+										Ext.getCmp("PluginList").getStore().reload();
+									}
+								}});
+							}
+						});
+					} else {
+						/**
+						 * 플러그인 언어팩 불러오기
+						 */
+						if ($("script[src='"+result.language+"']").length == 0) {
+							var $language = $("<script>").attr("src",result.language);
+							$("head").append($language);
+						}
+						
+						/**
+						 * 패널처리
+						 */
+						var $panel = $("<div>").attr("data-role","config").attr("data-plugin",plugin);
+						$panel.html(result.panel);
+						
+						$("body").append($panel);
+						
+						Ext.Msg.hide();
+						
+						new Ext.Window({
+							id:"PluginConfigsWindow",
+							title:Admin.getText("plugins/lists/window/"+type),
+							modal:true,
+							border:false,
+							resizeable:false,
+							autoScroll:true,
+							items:[
+								Ext.getCmp("PluginConfigForm")
+							],
+							buttons:[
+								new Ext.Button({
+									text:Admin.getText("button/confirm"),
+									handler:function() {
+										Ext.getCmp("PluginConfigForm").getForm().submit({
+											url:ENV.getProcessUrl("admin","@installPlugin"),
+											params:{target:plugin},
+											submitEmptyText:false,
+											waitTitle:Admin.getText("action/wait"),
+											waitMsg:Admin.getText("plugins/lists/installing"),
+											success:function(form,action) {
+												Ext.Msg.show({title:Admin.getText("alert/info"),msg:Admin.getText("plugins/lists/installed"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO,fn:function(button) {
+													if (type == "install") {
+														Ext.getCmp("PluginConfigsWindow").close();
+														location.replace(location.href);
+													} else {
+														Ext.getCmp("PluginConfigsWindow").close();
+														Ext.getCmp("PluginList").getStore().reload();
+													}
+												}});
+											},
+											failure:function(form,action) {
+												if (action.result && action.result.message) {
+													Ext.Msg.show({title:Admin.getText("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+												} else {
+													Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("INVALID_FORM_DATA"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+												}
+											}
+										});
+									}
+								}),
+								new Ext.Button({
+									text:Admin.getText("button/cancel"),
+									handler:function() {
+										Ext.getCmp("PluginConfigsWindow").close();
+									}
+								})
+							],
+							listeners:{
+								show:function() {
+									Ext.getCmp("PluginConfigForm").getForm().load({
+										url:ENV.getProcessUrl("admin","@getPluginConfigs"),
+										params:{target:plugin},
+										waitTitle:Admin.getText("action/wait"),
+										waitMsg:Admin.getText("action/loading"),
+										success:function(form,action) {
+										},
+										failure:function(form,action) {
+											if (action.result && action.result.message) {
+												Ext.Msg.show({title:Admin.getText("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+											} else {
+												Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+											}
+										}
+									});
+								},
+								close:function() {
+									$("div[data-role=config][data-plugin="+plugin+"]").remove();
 								}
 							}
 						}).show();
@@ -2051,10 +2366,11 @@ var Admin = {
 	 *
 	 * @param string label 라벨명
 	 * @param string name 필드명
-	 * @param string target 템플릿을 불러올 대상 (모듈명, 위젯명)
+	 * @param string type 템플릿을 불러올 대상의 종류 (core, module, plugin, widget)
+	 * @param string target 템플릿을 불러올 대상 (모듈명, plugin/플러그인명, widget/위젯명)
 	 * @return object Ext.form.Combobox
 	 */
-	templetField:function(label,name,target,use_default,url,params) {
+	templetField:function(label,name,type,target,use_default,url,params) {
 		var url = url ? url : ENV.getProcessUrl("admin","@getTempletConfigs");
 		var params = params ? params : {};
 		
@@ -2068,6 +2384,7 @@ var Admin = {
 					items:[
 						new Ext.form.ComboBox({
 							name:name,
+							type:type,
 							target:target,
 							url:url,
 							params:params,
@@ -2090,13 +2407,9 @@ var Admin = {
 							value:use_default !== false ? "#" : "default",
 							listeners:{
 								render:function(form) {
-									params.type = "module";
-									params.target = target;
+									params.type = form.type;
+									params.target = form.target;
 									params.use_default = use_default !== false ? true : false;
-									
-									if (form.getPanel().getId() == "SiteConfigForm") {
-										params.type = "core";
-									}
 									
 									form.getStore().getProxy().setExtraParams(params);
 									form.getStore().load();
@@ -2114,12 +2427,12 @@ var Admin = {
 										}
 									}
 									
+									params.type = form.type;
 									params.target = form.target;
 									params.name = form.getName();
 									params.templet = value;
 									
 									if (form.getPanel().getId() == "SiteConfigForm") {
-										params.type = "core";
 										params.domain = form.getForm().findField("domain").getValue();
 										params.language = form.getForm().findField("language").getValue();
 									}

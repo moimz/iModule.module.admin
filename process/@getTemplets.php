@@ -40,6 +40,18 @@ if ($type == 'module') {
 	}
 }
 
+if ($type == 'plugin') {
+	$templets = $this->IM->getPlugin($target,true)->getTemplets();
+	
+	for ($i=0, $loop=count($templets);$i<$loop;$i++) {
+		$lists[] = array('title'=>$templets[$i]->getTitle().' ('.$templets[$i]->getDir().')','templet'=>$templets[$i]->getName(),'sort'=>1);
+	}
+	
+	if ($use_default !== 'false') {
+		$lists[] = array('title'=>$use_default === 'true' ? '기본설정사용' : $use_default,'templet'=>'#','sort'=>0);
+	}
+}
+
 $results->success = true;
 $results->lists = $lists;
 $results->total = count($lists);

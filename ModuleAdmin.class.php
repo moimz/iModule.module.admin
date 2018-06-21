@@ -9,7 +9,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2018. 3. 18.
+ * @modified 2018. 6. 21.
  */
 class ModuleAdmin {
 	/**
@@ -110,6 +110,15 @@ class ModuleAdmin {
 	 */
 	function getModule() {
 		return $this->Module;
+	}
+	
+	/**
+	 * 플러그인 코어 클래스를 반환한다.
+	 *
+	 * @return Plugin $Plugin
+	 */
+	function getPlugin() {
+		return $this->IM->getPlugin();
 	}
 	
 	/**
@@ -517,6 +526,28 @@ class ModuleAdmin {
 			}
 		}
 		
+		/**
+		 * 1차 메뉴가 plugins 일 경우
+		 */
+		if ($this->menu == 'plugins') {
+			/**
+			 * 1차 메뉴가 lists 일 경우, 전체 플러그인관리 패널을, 그렇지 않은 경우 해당 플러그인에서 관리자패널을 가져온다.
+			 */
+			if ($this->page == 'lists') {
+				ob_start();
+			
+				$IM = $this->IM;
+				$Admin = $this;
+				
+				if (is_file($this->Module->getPath().'/panels/plugins.lists.php') == true) {
+					INCLUDE $this->Module->getPath().'/panels/plugins.lists.php';
+				}
+				$panel = ob_get_clean();
+			} else {
+//				$panel = $this->Module->getAdminPanel($this->page);
+			}
+		}
+		
 		return $panel;
 	}
 	
@@ -653,7 +684,7 @@ class ModuleAdmin {
 			}
 			
 			/**
-			 * 에드온관리
+			 * 플러그인관리
 			 */
 			if (in_array('plugins',$disabledMenus) == false) {
 				$menu = new stdClass();
@@ -756,15 +787,45 @@ class ModuleAdmin {
 			$page->title = $this->getText('pages/modules/lists');
 			$pages[] = $page;
 			
-			$modules = $this->IM->Module->getAdminModules();
+			$modules = $this->IM->getModule()->getAdminModules();
 			for ($i=0, $loop=count($modules);$i<$loop;$i++) {
 				if (in_array($modules[$i]->module,$disabledPages) == false || $permissions === true || in_array('modules/'.$modules[$i]->module,$permissions) == true) {
 					$page = new stdClass();
 					$page->menu = 'modules';
 					$page->page = $modules[$i]->module;
 					$page->tab = false;
-					$page->icon = isset($this->IM->Module->getPackage($modules[$i]->module)->icon) == true ? $this->IM->Module->getPackage($modules[$i]->module)->icon : 'fa-cube';
-					$page->title = $this->IM->Module->getTitle($modules[$i]->module);
+					$page->icon = isset($this->IM->getModule()->getPackage($modules[$i]->module)->icon) == true ? $this->IM->getModule()->getPackage($modules[$i]->module)->icon : 'fa-cube';
+					$page->title = $this->IM->getModule()->getTitle($modules[$i]->module);
+					$pages[] = $page;
+				}
+			}
+		}
+		
+		/**
+		 * 1차메뉴가 plugins 일 경우 설치되어 있는 모든 플러그인 목록을 가져온다.
+		 * 단, 플러그인중 관리자가 없는 모듈을 제외한다.
+		 */
+		if ($menu == 'plugins') {
+			/**
+			 * 사이트 관리자의 경우 전체 모듈을 관리할 수 있는 메뉴를 구성한다.
+			 */
+			$page = new stdClass();
+			$page->menu = 'plugins';
+			$page->page = 'lists';
+			$page->tab = false;
+			$page->icon = 'xi-plug';
+			$page->title = $this->getText('pages/plugins/lists');
+			$pages[] = $page;
+			
+			$plugins = $this->IM->getPlugin()->getAdminPlugins();
+			for ($i=0, $loop=count($plugins);$i<$loop;$i++) {
+				if (in_array($plugins[$i]->plugin,$disabledPages) == false || $permissions === true || in_array('plugins/'.$plugins[$i]->plugin,$permissions) == true) {
+					$page = new stdClass();
+					$page->menu = 'plugins';
+					$page->page = $plugins[$i]->plugin;
+					$page->tab = false;
+					$page->icon = isset($this->IM->getPlugin()->getPackage($plugins[$i]->plugin)->icon) == true ? $this->IM->getPlugin()->getPackage($plugins[$i]->plugin)->icon : 'fa-cube';
+					$page->title = $this->IM->getPlugin()->getTitle($plugins[$i]->plugin);
 					$pages[] = $page;
 				}
 			}

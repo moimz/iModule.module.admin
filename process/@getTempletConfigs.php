@@ -69,6 +69,16 @@ if ($type == 'module') {
 	$configs = $Templet->getConfigs();
 }
 
+if ($type == 'plugin') {
+	$Templet = $this->IM->getPlugin($target,true)->getTemplet($templet);
+	
+	if ($this->IM->getPlugin()->isInstalled($target) == true && $this->IM->getPlugin($target)->getConfig($name.'_configs') != null) {
+		$Templet->setConfigs($this->IM->getPlugin($target)->getConfig($name.'_configs'));
+	}
+	
+	$configs = $Templet->getConfigs();
+}
+
 $results->success = true;
 $results->configs = $configs;
 ?>
