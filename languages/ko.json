@@ -88,7 +88,7 @@
 				"deactivated":"비활성화됨",
 				"db_size":"DB용량",
 				"installed":"현재 설치된 플러그인",
-				"not_installed":"설치되지 않았으나, 플러그인폴더에 존재하는 모듈"
+				"not_installed":"설치되지 않았으나, 플러그인폴더에 존재하는 플러그인"
 			},
 			"window":{
 				"info":"플러그인정보",
