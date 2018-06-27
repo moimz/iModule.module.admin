@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2018. 6. 21.
+ * @modified 2018. 6. 27.
  */
 if (defined('__IM__') == false) exit;
 
@@ -31,10 +31,10 @@ if ($package == null) {
 	$data->language = $package->language;
 	$data->description = $this->getModule()->getDescription($module);
 	
-	$data->context = $package->context;
-	$data->global = $package->global;
-	$data->article = $package->article;
-	$data->admin = $package->admin;
+	$data->context = isset($package->context) == true ? $package->context : false;
+	$data->global = isset($package->global) == true ? $package->global : false;
+	$data->article = isset($package->article) == true ? $package->article : false;
+	$data->admin = isset($package->admin) == true ? $package->admin : false;
 	
 	$data->dependencies = array();
 	foreach ($package->dependencies as $dependency=>$version) {
