@@ -93,7 +93,7 @@ Ext.onReady(function () {
 							if (Admin.getMenu() == "modules") {
 								content.on("tabchange",function(tabs,tab) {
 									if (Admin.getTab() != tab.getId() && history.replaceState) {
-										history.replaceState({tab:tab.getId()},tab.getTitle()+" - "+Ext.getCmp("iModuleAdminPanel").getTitle(),"/admin/modules/"+Admin.getPage()+"/"+tab.getId());
+										history.pushState({tab:tab.getId()},tab.getTitle()+" - "+Ext.getCmp("iModuleAdminPanel").getTitle(),"/admin/modules/"+Admin.getPage()+"/"+tab.getId());
 										document.title = tab.getTitle()+" - <?php echo $pageTitle->title; ?>";
 									}
 								});
@@ -102,7 +102,7 @@ Ext.onReady(function () {
 									var tab = tabs.getActiveTab();
 									
 									if (Admin.getTab() != tab.getId() && history.replaceState) {
-										history.replaceState({tab:tab.getId()},tab.getTitle()+" - "+Ext.getCmp("iModuleAdminPanel").getTitle(),"/admin/modules/"+Admin.getPage()+"/"+tab.getId());
+										history.pushState({tab:tab.getId()},tab.getTitle()+" - "+Ext.getCmp("iModuleAdminPanel").getTitle(),"/admin/modules/"+Admin.getPage()+"/"+tab.getId());
 									}
 									
 									document.title = tab.getTitle()+" - <?php echo $pageTitle->title; ?>";
