@@ -272,7 +272,7 @@ var Admin = {
 		sort:function() {
 			new Ext.Window({
 				id:"ModuleSortWindow",
-				title:Admin.getText("action/wait"),
+				title:Admin.getText("modules/lists/sort_title"),
 				width:800,
 				height:600,
 				modal:true,
