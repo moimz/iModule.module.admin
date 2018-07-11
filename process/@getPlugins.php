@@ -38,11 +38,13 @@ while ($plugin = @readdir($pluginsPath)) {
 				$item['installed_hash'] = $installed->hash;
 				$item['db_size'] = $installed->db_size;
 				$item['is_active'] = $installed->is_active;
+				$item['sort'] = $installed->sort;
 			} else {
 				$item['installed'] = false;
 				$item['installed_hash'] = $item['hash'];
 				$item['db_size'] = 0;
 				$item['is_active'] = 'FALSE';
+				$item['sort'] = 0;
 			}
 			$item['isConfigPanel'] = $this->getPlugin()->isConfigPanel($plugin);
 			

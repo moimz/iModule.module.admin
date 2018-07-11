@@ -7,7 +7,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.0.0
- * @modified 2018. 6. 21.
+ * @modified 2018. 7. 11.
  */
 var Admin = {
 	/**
@@ -703,6 +703,118 @@ var Admin = {
 						});
 					}
 				}
+			}).show();
+		},
+		/**
+		 * 플러그인순서변경
+		 */
+		sort:function() {
+			new Ext.Window({
+				id:"PluginSortWindow",
+				title:Admin.getText("plugins/lists/sort_title"),
+				width:800,
+				height:600,
+				modal:true,
+				border:false,
+				resizeable:false,
+				layout:"fit",
+				items:[
+					new Ext.grid.Panel({
+						id:"PluginSortList",
+						border:true,
+						store:new Ext.data.JsonStore({
+							proxy:{
+								type:"ajax",
+								simpleSortMode:true,
+								url:ENV.getProcessUrl("admin","@getInstalledPlugins"),
+								reader:{type:"json"}
+							},
+							remoteSort:false,
+							sorters:[{property:"sort",direction:"ASC"}],
+							autoLoad:true,
+							pageSize:0,
+							groupDir:"DESC",
+							fields:["id","plugin","icon","title","version","description",{name:"sort",type:"int"}],
+							listeners:{
+								load:function(store,records,success,e) {
+									if (success == false) {
+										if (e.getError()) {
+											Ext.Msg.show({title:Admin.getText("alert/error"),msg:e.getError(),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
+										} else {
+											Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR})
+										}
+									}
+								}
+							}
+						}),
+						columns:[{
+							text:Admin.getText("plugins/lists/columns/title"),
+							width:180,
+							dataIndex:"title",
+							renderer:function(value,p,record) {
+								var icon = record.data.icon.split("-");
+								
+								return '<i class="icon '+icon.shift()+" "+record.data.icon+'"></i>'+value;
+							}
+						},{
+							text:Admin.getText("plugins/lists/columns/version"),
+							width:65,
+							align:"center",
+							dataIndex:"version"
+						},{
+							text:Admin.getText("plugins/lists/columns/description"),
+							minWidth:150,
+							flex:1,
+							dataIndex:"description",
+						}],
+						selModel:new Ext.selection.CheckboxModel(),
+						bbar:[
+							new Ext.Button({
+								iconCls:"fa fa-caret-up",
+								handler:function() {
+									Admin.gridSort(Ext.getCmp("PluginSortList"),"sort","up");
+								}
+							}),
+							new Ext.Button({
+								iconCls:"fa fa-caret-down",
+								handler:function() {
+									Admin.gridSort(Ext.getCmp("PluginSortList"),"sort","down");
+								}
+							})
+						]
+					})
+				],
+				buttons:[
+					new Ext.Button({
+						text:Admin.getText("button/confirm"),
+						handler:function() {
+							var updated = Ext.getCmp("PluginSortList").getStore().getUpdatedRecords();
+							for (var i=0, loop=updated.length;i<loop;i++) {
+								for (var key in updated[i].data) {
+									updated[i].data[key] = typeof updated[i].data[key] == "string" ? $.trim(updated[i].data[key]) : updated[i].data[key];
+								}
+								updated[i] = updated[i].data;
+							}
+							
+							Ext.Msg.wait(Admin.getText("action/working"),Admin.getText("action/wait"));
+							$.send(ENV.getProcessUrl("admin","@savePluginSort"),{updated:JSON.stringify(updated)},function(result) {
+								if (result.success == true) {
+									Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getText("action/saved"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO,fn:function() {
+										Ext.getCmp("PluginSortWindow").close();
+									}});
+								} else {
+									Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("DATA_SAVE_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+								}
+							});
+						}
+					}),
+					new Ext.Button({
+						text:Admin.getText("button/close"),
+						handler:function() {
+							Ext.getCmp("PluginSortWindow").close();
+						}
+					})
+				]
 			}).show();
 		},
 		/**

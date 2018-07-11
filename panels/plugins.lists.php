@@ -19,6 +19,14 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 		border:false,
 		tbar:[
 			new Ext.Button({
+				iconCls:"xi xi-list-ol",
+				text:Admin.getText("plugins/lists/sort"),
+				handler:function() {
+					Admin.plugins.sort();
+				}
+			}),
+			"-",
+			new Ext.Button({
 				iconCls:"fa fa-refresh",
 				text:Admin.getText("plugins/lists/update_size"),
 				handler:function(button) {
