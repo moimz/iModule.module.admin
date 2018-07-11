@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2018. 3. 18.
+ * @modified 2018. 7. 10.
  */
 if (defined('__IM__') == false) exit;
 
@@ -38,11 +38,13 @@ while ($module = @readdir($modulesPath)) {
 				$item['installed_hash'] = $installed->hash;
 				$item['db_size'] = $installed->db_size;
 				$item['attachment_size'] = $installed->attachment_size;
+				$item['sort'] = $installed->sort;
 			} else {
 				$item['installed'] = false;
 				$item['installed_hash'] = $item['hash'];
 				$item['db_size'] = 0;
 				$item['attachment_size'] = 0;
+				$item['sort'] = 0;
 			}
 			$item['isConfigPanel'] = $this->getModule()->isConfigPanel($module);
 			

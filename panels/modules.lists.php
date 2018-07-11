@@ -19,6 +19,14 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 		border:false,
 		tbar:[
 			new Ext.Button({
+				iconCls:"xi xi-list-ol",
+				text:Admin.getText("modules/lists/sort"),
+				handler:function() {
+					Admin.modules.sort();
+				}
+			}),
+			"-",
+			new Ext.Button({
 				iconCls:"fa fa-refresh",
 				text:Admin.getText("modules/lists/update_size"),
 				handler:function(button) {
@@ -40,12 +48,12 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 				reader:{type:"json"}
 			},
 			remoteSort:false,
-			sorters:[{property:"title",direction:"ASC"}],
+			sorters:[{property:"sort",direction:"ASC"},{property:"title",direction:"ASC"}],
 			autoLoad:true,
 			pageSize:0,
 			groupField:"installed",
 			groupDir:"DESC",
-			fields:["id","module","title","version","description","hash",{name:"db_size",type:"int"},{name:"attachment_size",type:"int"},{name:"installed",type:"boolean"},"installed_hash",{name:"isConfigPanel",type:"boolean"}],
+			fields:["id","module","title","version","description","hash",{name:"db_size",type:"int"},{name:"attachment_size",type:"int"},{name:"installed",type:"boolean"},"installed_hash",{name:"isConfigPanel",type:"boolean"},{name:"sort",type:"int"}],
 			listeners:{
 				load:function(store,records,success,e) {
 					if (success == false) {
