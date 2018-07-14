@@ -62,6 +62,7 @@ Ext.onReady(function () {
 				width:230,
 				collapsible:true,
 				autoScroll:true,
+				collapsedCls:"x-main-collapsed",
 				hidden:<?php echo isset($ADMIN->_ADMINS->hideModules) == true && $ADMIN->_ADMINS->hideModules == true && $ADMIN->menu == 'module' ? 'true' : 'false'; ?>,
 				contentEl:"iModuleAdminPages"
 			}),

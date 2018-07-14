@@ -27,10 +27,10 @@ header > aside > i.photo {display:inline-block; margin:10px 10px 10px 0px; width
 header > aside > button {float:right; background:#B71C1C; color:#fff; height:32px; line-height:32px; border:0; padding:0px 10px; margin:10px 0px 10px 15px; border-radius:3px; cursor:pointer; font-weight:bold; font-family:inherit;}
 
 aside > ul {list-style:none; display:block; vertical-align:middle; font-size:0px;}
-aside > ul > li {display:block; background:#f4f4f4;}
+aside > ul > li {display:block; background:#f4f4f4; border-left:3px solid transparent;}
 aside > ul > li > a {border-top:1px solid #fff; border-bottom:1px solid #e5e5e5; display:block; padding:0px 10px; height:45px; line-height:43px; font-size:13px; text-decoration:none; color:#666;}
 aside > ul > li > a > i {width:20px; color:#de425c; font-size:12px; text-align:center; margin-right:5px;}
-aside > ul > li.selected {background:#fff; border-left:2px solid #5db8f2;}
+aside > ul > li.selected {background:#fff; border-left:3px solid #5db8f2;}
 aside > ul > li.selected > a {color:#222;}
 
 footer {background:#343f4d; height:25px; line-height:25px; color:#aeb3b8; text-align:right; font-size:10px; font-family:OpenSans; padding-right:10px;}
@@ -48,6 +48,7 @@ div[data-module=attachment].wysiwyg > ul[data-role=files] > li > button:hover {c
 .im-icon-default div[data-ref=innerCt] {border:1px solid #ccc; background:#fff; width:100%; height:118px; line-height:118px; text-align:center; border-radius:5px;}
 .im-icon-default div[data-ref=innerCt] i {font-size:64px; vertical-align:middle;}
 .im-icon-default div[data-ref=innerCt] i.mi-loading {font-size:14px !important;}
+.x-main-collapsed {border-right:1px solid #4084be;}
 
 .helpBlock {border:1px solid #e0d0bc; background:#fffeeb; padding:8px; font-size:12px; line-height:1.6;}
 
@@ -58,6 +59,7 @@ div[data-module=attachment].wysiwyg > ul[data-role=files] > li > button:hover {c
 .x-form-tags .x-panel-body {overflow:visible;}
 
 .x-grid-cell-inner i.icon {margin-right:5px;}
+
 
 
 div[data-role=tags] > div[data-role=tag] {height:32px; z-index:10000;}
