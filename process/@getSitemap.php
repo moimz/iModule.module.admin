@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2018. 4. 28.
+ * @modified 2018. 7. 14.
  */
 if (defined('__IM__') == false) exit;
 
@@ -50,6 +50,17 @@ if (strpos($site->templet,'#') === 0 && $this->IM->getModule()->isSitemap(substr
 			$lists[$i]->context = $context->link;
 		} elseif ($lists[$i]->type == 'HTML') {
 			$lists[$i]->context = $context != null && isset($context->html) == true && isset($context->css) == true ? '본문 : '.GetFileSize(strlen($context->html)).' / 스타일시트 : '.GetFileSize(strlen($context->css)) : '내용없음';
+		}
+		
+		$header = json_decode($lists[$i]->header);
+		$footer = json_decode($lists[$i]->footer);
+		if ($header == null || $footer == null) {
+			$header = new stdClass();
+			$header->type = 'NONE';
+			$footer = new stdClass();
+			$footer->type = 'NONE';
+			
+			$this->db()->update($this->IM->getTable('sitemap'),array('header'=>json_encode($header),'footer'=>json_encode($footer)))->where('domain',$domain)->where('language',$language)->where('menu',$lists[$i]->menu)->where('page',$lists[$i]->page)->execute();
 		}
 		
 		if ($lists[$i]->sort != $i) {

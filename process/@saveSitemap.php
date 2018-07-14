@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2018. 3. 18.
+ * @modified 2018. 7. 14.
  */
 if (defined('__IM__') == false) exit;
 
@@ -25,6 +25,32 @@ $is_footer = Request('is_footer') ? 'TRUE' : 'FALSE';
 $is_hide = Request('is_hide') ? 'TRUE' : 'FALSE';
 $description = Request('description');
 $type = Request('type') ? Request('type') : $errors['type'] = $this->getErrorText('REQUIRED');
+
+$header = new stdClass();
+$footer = new stdClass();
+if ($type == 'PAGE' || $type == 'LINK') {
+	$header->type = 'NONE';
+	$footer->type = 'NONE';
+} else {
+	$header->type = Request('header_type');
+	if ($header->type == 'TEXT') {
+		$header = $this->IM->getModule('admin')->getWysiwygContent('header_text','core','context.header',$header);
+		$header->type = 'TEXT';
+	} elseif ($header->type == 'EXTERNAL') {
+		$header->external = Request('header_external') ? Request('header_external') : $errors['header_external'] = $this->getErrorText('REQUIRED');
+	}
+	
+	$footer = new stdClass();
+	$footer->type = Request('footer_type');
+	if ($footer->type == 'TEXT') {
+		$footer = $this->IM->getModule('admin')->getWysiwygContent('footer_text','core','context.footer',$footer);
+		$footer->type = 'TEXT';
+	} elseif ($footer->type == 'EXTERNAL') {
+		$footer->external = Request('footer_external') ? Request('footer_external') : $errors['footer_external'] = $this->getErrorText('REQUIRED');
+	}
+}
+$header = json_encode($header,JSON_UNESCAPED_UNICODE);
+$footer = json_encode($footer,JSON_UNESCAPED_UNICODE);
 
 if ($mode == 'menu') {
 	$oMenu = Request('oMenu');
@@ -101,6 +127,8 @@ if (count($errors) == 0) {
 	$insert['description'] = $description;
 	$insert['type'] = $type;
 	$insert['layout'] = $layout;
+	$insert['header'] = $header;
+	$insert['footer'] = $footer;
 	$insert['context'] = json_encode($context,JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
 	
 	if ($mode == 'menu') {

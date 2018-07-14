@@ -217,6 +217,17 @@
 				"description":"페이지설명",
 				"type":"컨텍스트 종류",
 				"type_help":"해당 메뉴 또는 페이지에 나타날 컨텍스트 종류를 선택하여 주십시오.",
+				"header":"헤더설정",
+				"header_type":"헤더종류",
+				"header_help":"페이지 상단에 나타날 내용을 선택하여 주십시오.",
+				"header_external":"외부파일선택",
+				"header_external_help":"페이지 상단에 나타날 외부파일을 선택하여 주십시오.",
+				"footer":"푸터설정",
+				"footer_type":"푸터종류",
+				"footer_help":"페이지 하단에 나타날 내용을 선택하여 주십시오.",
+				"footer_external":"외부파일선택",
+				"footer_external_help":"페이지 하단에 나타날 외부파일을 선택하여 주십시오.",
+				"content":"내용입력",
 				"module":"모듈선택",
 				"context":"컨텍스트선택",
 				"layout":"페이지레이아웃",
@@ -240,6 +251,16 @@
 				"load_page":"불러올 페이지",
 				"load_options":"불러오기 옵션",
 				"include_pages":"하위 2차 페이지도 함께 불러옵니다."
+			},
+			"header_type":{
+				"NONE":"헤더없음",
+				"EXTERNAL":"외부파일 선택",
+				"TEXT":"내용직접입력"
+			},
+			"footer_type":{
+				"NONE":"푸터없음",
+				"EXTERNAL":"외부파일 선택",
+				"TEXT":"내용직접입력"
 			},
 			"type":{
 				"MODULE":"모듈",

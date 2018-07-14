@@ -1440,7 +1440,7 @@ var Admin = {
 				new Ext.Window({
 					id:"SitemapConfigWindow",
 					title:(code ? Admin.getText("configs/sitemap/window/modify") : Admin.getText("configs/sitemap/window/add")),
-					width:700,
+					width:800,
 					modal:true,
 					border:false,
 					resizeable:false,
@@ -1595,13 +1595,13 @@ var Admin = {
 											emptyText:Admin.getText("configs/sitemap/form/type_help"),
 											listeners:{
 												change:function(form,value) {
-													Ext.getCmp("SitemapConfigMODULE").hide().disable();
-													Ext.getCmp("SitemapConfigEXTERNAL").hide().disable();
-													Ext.getCmp("SitemapConfigPAGE").hide().disable();
-													Ext.getCmp("SitemapConfigWIDGET").hide().disable();
-													Ext.getCmp("SitemapConfigLINK").hide().disable();
+													Ext.getCmp("SitemapConfigContext-MODULE").hide().disable();
+													Ext.getCmp("SitemapConfigContext-EXTERNAL").hide().disable();
+													Ext.getCmp("SitemapConfigContext-PAGE").hide().disable();
+													Ext.getCmp("SitemapConfigContext-WIDGET").hide().disable();
+													Ext.getCmp("SitemapConfigContext-LINK").hide().disable();
 													
-													if (value != "EMPTY" && value != "HTML") Ext.getCmp("SitemapConfig"+value).show().enable();
+													if (value != "EMPTY" && value != "HTML") Ext.getCmp("SitemapConfigContext-"+value).show().enable();
 													
 													if (value == "PAGE") {
 														Ext.getCmp("SitemapConfigForm").getForm().findField("subpage").getStore().load();
@@ -1609,8 +1609,12 @@ var Admin = {
 													
 													if (value == "LINK" || value == "PAGE") {
 														Ext.getCmp("SitemapConfigForm").getForm().findField("layout").setDisabled(true).setHidden(true);
+														Ext.getCmp("SitemapConfigHeader").setDisabled(true).setHidden(true);
+														Ext.getCmp("SitemapConfigFooter").setDisabled(true).setHidden(true);
 													} else {
 														Ext.getCmp("SitemapConfigForm").getForm().findField("layout").setDisabled(false).setHidden(false);
+														Ext.getCmp("SitemapConfigHeader").setDisabled(false).setHidden(false);
+														Ext.getCmp("SitemapConfigFooter").setDisabled(false).setHidden(false);
 													}
 												}
 											}
@@ -1635,7 +1639,123 @@ var Admin = {
 									]
 								}),
 								new Ext.form.FieldSet({
-									id:"SitemapConfigMODULE",
+									id:"SitemapConfigHeader",
+									title:Admin.getText("configs/sitemap/form/header"),
+									items:[
+										new Ext.form.ComboBox({
+											fieldLabel:Admin.getText("configs/sitemap/form/header_type"),
+											name:"header_type",
+											store:new Ext.data.ArrayStore({
+												fields:["display","value"],
+												data:(function() {
+													var datas = [];
+													for (var type in Admin.getText("configs/sitemap/header_type")) {
+														datas.push([Admin.getText("configs/sitemap/header_type/"+type),type]);
+													}
+													
+													return datas;
+												})()
+											}),
+											displayField:"display",
+											valueField:"value",
+											value:"NONE",
+											listeners:{
+												change:function(form,value) {
+													Ext.getCmp("SitemapConfigHeader-EXTERNAL").disable().hide();
+													Ext.getCmp("SitemapConfigHeader-TEXT").disable().hide();
+													
+													if (value != "NONE") {
+														Ext.getCmp("SitemapConfigHeader-"+value).enable().show();
+														Ext.getCmp("SitemapConfigHeader-"+value).reset();
+													}
+												}
+											},
+											afterBodyEl:'<div class="x-form-help">' + Admin.getText("configs/sitemap/form/header_help") + '</div>'
+										}),
+										new Ext.form.ComboBox({
+											id:"SitemapConfigHeader-EXTERNAL",
+											fieldLabel:Admin.getText("configs/sitemap/form/header_external"),
+											name:"header_external",
+											hidden:true,
+											disabled:true,
+											store:new Ext.data.JsonStore({
+												proxy:{
+													type:"ajax",
+													url:ENV.getProcessUrl("admin","@getExternals"),
+													reader:{type:"json"}
+												},
+												autoLoad:true,
+												remoteSort:false,
+												sorters:[{property:"path",direction:"ASC"}],
+												fields:["path"]
+											}),
+											displayField:"path",
+											valueField:"path",
+											afterBodyEl:'<div class="x-form-help">' + Admin.getText("configs/sitemap/form/header_external_help") + '</div>'
+										}),
+										Admin.wysiwygField(Admin.getText("configs/sitemap/form/content"),"header_text",{id:"SitemapConfigHeader-TEXT",hidden:true,disabled:true})
+									]
+								}),
+								new Ext.form.FieldSet({
+									id:"SitemapConfigFooter",
+									title:Admin.getText("configs/sitemap/form/footer"),
+									items:[
+										new Ext.form.ComboBox({
+											fieldLabel:Admin.getText("configs/sitemap/form/footer_type"),
+											name:"footer_type",
+											store:new Ext.data.ArrayStore({
+												fields:["display","value"],
+												data:(function() {
+													var datas = [];
+													for (var type in Admin.getText("configs/sitemap/footer_type")) {
+														datas.push([Admin.getText("configs/sitemap/footer_type/"+type),type]);
+													}
+													
+													return datas;
+												})()
+											}),
+											displayField:"display",
+											valueField:"value",
+											value:"NONE",
+											listeners:{
+												change:function(form,value) {
+													Ext.getCmp("SitemapConfigFooter-EXTERNAL").disable().hide();
+													Ext.getCmp("SitemapConfigFooter-TEXT").disable().hide();
+													
+													if (value != "NONE") {
+														Ext.getCmp("SitemapConfigFooter-"+value).enable().show();
+														Ext.getCmp("SitemapConfigFooter-"+value).reset();
+													}
+												}
+											},
+											afterBodyEl:'<div class="x-form-help">' + Admin.getText("configs/sitemap/form/footer_help") + '</div>'
+										}),
+										new Ext.form.ComboBox({
+											id:"SitemapConfigFooter-EXTERNAL",
+											fieldLabel:Admin.getText("configs/sitemap/form/footer_external"),
+											name:"footer_external",
+											hidden:true,
+											disabled:true,
+											store:new Ext.data.JsonStore({
+												proxy:{
+													type:"ajax",
+													url:ENV.getProcessUrl("admin","@getExternals"),
+													reader:{type:"json"}
+												},
+												autoLoad:true,
+												remoteSort:false,
+												sorters:[{property:"path",direction:"ASC"}],
+												fields:["path"]
+											}),
+											displayField:"path",
+											valueField:"path",
+											afterBodyEl:'<div class="x-form-help"> ' + Admin.getText("configs/sitemap/form/footer_external_help") + '</div>'
+										}),
+										Admin.wysiwygField(Admin.getText("configs/sitemap/form/content"),"footer_text",{id:"SitemapConfigFooter-TEXT",hidden:true,disabled:true})
+									]
+								}),
+								new Ext.form.FieldSet({
+									id:"SitemapConfigContext-MODULE",
 									title:Admin.getText("configs/sitemap/form/context"),
 									items:[
 										new Ext.form.FieldContainer({
@@ -1772,7 +1892,7 @@ var Admin = {
 									}
 								}),
 								new Ext.form.FieldSet({
-									id:"SitemapConfigEXTERNAL",
+									id:"SitemapConfigContext-EXTERNAL",
 									title:Admin.getText("configs/sitemap/form/context"),
 									items:[
 										new Ext.form.ComboBox({
@@ -1796,7 +1916,7 @@ var Admin = {
 									]
 								}),
 								new Ext.form.FieldSet({
-									id:"SitemapConfigPAGE",
+									id:"SitemapConfigContext-PAGE",
 									title:Admin.getText("configs/sitemap/form/context"),
 									items:[
 										new Ext.form.FieldContainer({
@@ -1867,7 +1987,7 @@ var Admin = {
 									}
 								}),
 								new Ext.form.FieldSet({
-									id:"SitemapConfigWIDGET",
+									id:"SitemapConfigContext-WIDGET",
 									title:Admin.getText("configs/sitemap/form/context"),
 									items:[
 										new Ext.form.TextArea({
@@ -1884,7 +2004,7 @@ var Admin = {
 									}
 								}),
 								new Ext.form.FieldSet({
-									id:"SitemapConfigLINK",
+									id:"SitemapConfigContext-LINK",
 									title:Admin.getText("configs/sitemap/form/context"),
 									items:[
 										new Ext.form.FieldContainer({
@@ -1994,11 +2114,11 @@ var Admin = {
 									}
 								});
 							} else {
-								Ext.getCmp("SitemapConfigMODULE").hide().disable();
-								Ext.getCmp("SitemapConfigEXTERNAL").hide().disable();
-								Ext.getCmp("SitemapConfigPAGE").hide().disable();
-								Ext.getCmp("SitemapConfigWIDGET").hide().disable();
-								Ext.getCmp("SitemapConfigLINK").hide().disable();
+								Ext.getCmp("SitemapConfigContext-MODULE").hide().disable();
+								Ext.getCmp("SitemapConfigContext-EXTERNAL").hide().disable();
+								Ext.getCmp("SitemapConfigContext-PAGE").hide().disable();
+								Ext.getCmp("SitemapConfigContext-WIDGET").hide().disable();
+								Ext.getCmp("SitemapConfigContext-LINK").hide().disable();
 							}
 						}
 					}
