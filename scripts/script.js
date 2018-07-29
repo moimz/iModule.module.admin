@@ -2641,7 +2641,6 @@ var Admin = {
 							return xhr;
 						},
 						success:function(result,b,xhr) {
-							console.log("success");
 							var hash = xhr.getResponseHeader("X-Excel-File");
 							if (hash && hash.length == 32) {
 								Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(1,"변환완료. 곧 다운로드가 시작됩니다.",true);
@@ -3454,7 +3453,6 @@ var Admin = {
 								$input.data("total",0);
 								$input.data("uploaded",0);
 								$input.data("queue",[]);
-								console.log(form.ownerCt,form.ownerCt.getId());
 								
 								$input.on("change",function(e) {
 									$input.data("button").setDisabled(true);
@@ -3506,7 +3504,6 @@ var Admin = {
 					})
 				],
 				print:function(file,oFile) {
-					console.log("print",file,this.ownerCt.getWidth());
 					var parent = this.ownerCt;
 					for (var i=0, loop=parent.items.items.length;i<loop;i++) {
 						if (parent.items.items[i].idx == file.idx) {
