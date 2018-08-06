@@ -3409,16 +3409,18 @@ var Admin = {
 	 * @param string label 라벨명
 	 * @param string name 필드명
 	 * @param object options 필드속성
+	 * @param object[] files 기존파일객체
 	 */
-	uploadField:function(label,name,options) {
+	uploadField:function(label,name,options,files) {
 		var options = typeof options == "object" ? options : {};
-		options.id = "hello";
+		options.id = options.id ? options.id : null;
 		options.name = name;
 		options.fieldLabel = (label ? label : "");
 		options.layout = {type:"vbox",align:"stretch"};
 		options.items = [
 			new Ext.form.FieldContainer({
 				layout:"hbox",
+				style:{marginBottom:0},
 				items:[
 					new Ext.Button({
 						iconCls:options.iconCls ? options.iconCls : "xi xi-upload",
@@ -3429,13 +3431,17 @@ var Admin = {
 						}
 					}),
 					new Ext.form.Hidden({
-						name:options.name+"_loader",
+						name:options.name,
+						disabled:true,
 						listeners:{
 							change:function(form,value) {
 								var files = JSON.parse(value);
 								for (var i=0, loop=files.length;i<loop;i++) {
 									form.ownerCt.print(files[i]);
 								}
+							},
+							afterRender:function(form) {
+								if (files !== undefined) form.setValue(JSON.stringify(files));
 							}
 						}
 					}),
@@ -3507,7 +3513,6 @@ var Admin = {
 					var parent = this.ownerCt;
 					for (var i=0, loop=parent.items.items.length;i<loop;i++) {
 						if (parent.items.items[i].idx == file.idx) {
-							
 							return;
 						}
 					}
@@ -3516,22 +3521,30 @@ var Admin = {
 						idx:file.idx,
 						file:file,
 						layout:"hbox",
-						style:{marginTop:"3px",marginBottom:"3px"},
+						style:{marginTop:"5px",marginBottom:0},
 						items:[
 							new Ext.form.DisplayField({
-								fieldStyle:{paddingTop:0,minHeight:"24px"},
-								value:'<div style="width:calc(100% - 10px); text-overflow:ellipsis; white-space:nowrap; overflow:hidden; height:24px; line-height:24px;"><span style="float:right; margin-left:5px; color:#666;">(' + iModule.getFileSize(file.size)+')</span>' + file.name +'</div>',
-								width:this.getWidth() - 130
+								layout:"hbox",
+								fieldStyle:{paddingTop:0,minHeight:"24px",marginRight:"5px"},
+								flex:1,
+								value:'<div style="width:100%; height:24px; position:relative;"><div style="display:block; width:100%; height:20px; line-height:20px; position:absolute; top:2px; left:0; text-overflow:ellipsis; white-space:nowrap; overflow:hidden; box-sizing:border-box; padding-left:24px; background:url('+file.icon+') no-repeat 0 50%; background-size:contain;"><span style="float:right; margin-left:5px; color:#666;">('+iModule.getFileSize(file.size)+')</span><a href="'+file.download+'" style="text-decoration:none; color:#2196F3;" download="'+file.name+'">'+file.name+'</a></div></div>'
 							}),
 							new Ext.ProgressBar({
-								flex:1,
+								width:100,
+								hidden:file.status != "WAIT",
 								value:file.status != "WAIT" ? 1 : null
 							}),
 							new Ext.Button({
 								width:24,
 								iconCls:"mi mi-trash",
 								cls:"x-btn-danger",
-								style:{width:"24px",height:"24px",paddingTop:"2px",paddingBottom:"2px"}
+								style:{width:"24px",height:"24px",paddingTop:"2px",paddingBottom:"2px"},
+								handler:function(button) {
+									var item = button.ownerCt;
+									Ext.Msg.show({title:Admin.getText("alert/info"),msg:"선택한 파일을 삭제하시겠습니까?",buttons:Ext.Msg.OKCANCEL,icon:Ext.Msg.INFO,fn:function(button) {
+										item.ownerCt.remove(item);
+									}});
+								}
 							}),
 							new Ext.form.Hidden({
 								name:options.name+"[]",
@@ -3544,7 +3557,11 @@ var Admin = {
 					var parent = this.ownerCt;
 					for (var i=0, loop=parent.items.items.length;i<loop;i++) {
 						if (parent.items.items[i].idx == idx) {
-							parent.items.items[i].items.items[1].updateProgress(status/parent.items.items[i].file.size,status == parent.items.items[i].file.size ? "100%" : Ext.util.Format.number(status/parent.items.items[i].file.size * 100,"0.00")+"%");
+							if (status == parent.items.items[i].file.size) {
+								parent.items.items[i].items.items[1].hide();
+							} else {
+								parent.items.items[i].items.items[1].updateProgress(status/parent.items.items[i].file.size,Ext.util.Format.number(status/parent.items.items[i].file.size * 100,"0.00")+"%");
+							}
 							return;
 						}
 					}
