@@ -913,7 +913,7 @@ class ModuleAdmin {
 		$permissions = array();
 		foreach ($modules as $module) {
 			$mModule = $this->IM->getModule($module->module);
-			if (method_exists($mModule,'isAdmin') == true && $mModule->isAdmin() == true) {
+			if (method_exists($mModule,'isAdmin') == true && $mModule->isAdmin() !== false) {
 				$permissions[] = $module->module;
 			}
 		}
@@ -1266,7 +1266,7 @@ class ModuleAdmin {
 				if ($file->status != 'DRAFT') {
 					if ($this->IM->getModule()->isInstalled($file->module) == false) return false;
 					$mModule = $this->IM->getModule($file->module);
-					if (method_exists($mModule,'isAdmin') == false || $this->IM->getModule($file->module)->isAdmin() == false) return false;
+					if (method_exists($mModule,'isAdmin') == false || $this->IM->getModule($file->module)->isAdmin() === false) return false;
 				}
 			}
 			return true;
