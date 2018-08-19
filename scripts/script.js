@@ -3295,7 +3295,7 @@ var Admin = {
 			});
 			
 			setTimeout(function(form) {
-				if (!form) return;
+				if (!form || !form.ownerCt) return;
 				
 				var index = form.ownerCt.items.indexOf(form);
 				form.ownerCt.insert(index+1,
