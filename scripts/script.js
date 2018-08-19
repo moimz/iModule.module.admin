@@ -2646,11 +2646,15 @@ var Admin = {
 								Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(1,"변환완료. 곧 다운로드가 시작됩니다.",true);
 								setTimeout(function() {
 									Ext.getCmp("ModuleAdminExcelProgressWindow").close();
-									location.href = ENV.getProcessUrl("admin","downloadExcel")+"?hash="+hash+"&title="+encodeURIComponent(title);
+									window.open(ENV.getProcessUrl("admin","downloadExcel")+"?hash="+hash+"&title="+encodeURIComponent(title));
 								},1000);
 							} else {
+								if (result.message) {
+									Ext.Msg.show({title:Admin.getText("alert/error"),msg:result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+								} else {
+									Ext.Msg.show({title:Admin.getText("alert/error"),msg:"엑셀변환 중 에러가 발생하였거나, 엑셀로 변환할 데이터가 없습니다.",buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+								}
 								Ext.getCmp("ModuleAdminExcelProgressWindow").close();
-								Ext.Msg.show({title:Admin.getText("alert/error"),msg:"엑셀변환 중 에러가 발생하였거나, 엑셀로 변환할 데이터가 없습니다.",buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 							}
 						},
 						error:function() {
