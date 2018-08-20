@@ -2646,7 +2646,7 @@ var Admin = {
 								Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(1,"변환완료. 곧 다운로드가 시작됩니다.",true);
 								setTimeout(function() {
 									Ext.getCmp("ModuleAdminExcelProgressWindow").close();
-									window.open(ENV.getProcessUrl("admin","downloadExcel")+"?hash="+hash+"&title="+encodeURIComponent(title));
+									downloadFrame.location.replace(ENV.getProcessUrl("admin","downloadExcel")+"?hash="+hash+"&title="+encodeURIComponent(title));
 								},1000);
 							} else {
 								if (result.message) {

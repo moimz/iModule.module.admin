@@ -137,3 +137,5 @@ $(window).on("popstate",function(e) {
 </script>
 
 <?php echo $panel; ?>
+
+<iframe name="downloadFrame" style="display:none;"></iframe>
