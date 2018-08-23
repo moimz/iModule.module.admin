@@ -136,6 +136,7 @@ if (count($errors) == 0) {
 		$insert['page'] = '';
 		
 		if ($oMenu) {
+			$oData = $this->IM->db()->select($this->IM->getTable('sitemap'))->where('domain',$domain)->where('language',$language)->where('menu',$oMenu)->where('page','')->getOne();
 			$this->IM->db()->update($this->IM->getTable('sitemap'),$insert)->where('domain',$domain)->where('language',$language)->where('menu',$oMenu)->where('page','')->execute();
 			$this->IM->db()->update($this->IM->getTable('sitemap'),array('menu'=>$menu))->where('domain',$domain)->where('language',$language)->where('menu',$oMenu)->execute();
 		} else {
@@ -162,6 +163,7 @@ if (count($errors) == 0) {
 		$insert['page'] = $page;
 		
 		if ($oPage) {
+			$oData = $this->IM->db()->select($this->IM->getTable('sitemap'))->where('domain',$domain)->where('language',$language)->where('menu',$oMenu)->where('page',$oPage)->getOne();
 			$this->IM->db()->update($this->IM->getTable('sitemap'),$insert)->where('domain',$domain)->where('language',$language)->where('menu',$oMenu)->where('page',$oPage)->execute();
 			/**
 			 * 페이지주소가 변경되었을 경우, 1차메뉴에서 이 메뉴를 사용하고 있는 1차메뉴를 찾아 수정한다.
@@ -184,6 +186,26 @@ if (count($errors) == 0) {
 			$sort = $this->IM->db()->select($this->IM->getTable('sitemap'))->where('domain',$domain)->where('language',$language)->where('menu',$oMenu)->where('page','','!=')->orderBy('sort','desc')->getOne();
 			$insert['sort'] = $sort == null ? 0 : $sort->sort + 1;
 			$this->IM->db()->insert($this->IM->getTable('sitemap'),$insert)->execute();
+		}
+	}
+	
+	/**
+	 * 페이지 대표이미지를 등록한다.
+	 */
+	$image_delete = Request('image_delete') != null || $type == 'LINK';
+	if ($image_delete == true && $oData != null && $oData->image > 0) {
+		$this->IM->getModule('attachment')->fileDelete($oData->image);
+		$this->db()->update($this->table->sitemap,array('image'=>0))->where('role',$insert['role'])->where('menu',$insert['menu'])->where('page',$insert['page'])->execute();
+	} else {
+		if (isset($_FILES['image']['tmp_name']) == true && $_FILES['image']['tmp_name']) {
+			if ($oData != null && $oData->image > 0) {
+				$this->IM->getModule('attachment')->fileReplace($oData->image,$_FILES['image']['name'],$_FILES['image']['tmp_name']);
+			} else {
+				$image = $this->IM->getModule('attachment')->fileSave($_FILES['image']['name'],$_FILES['image']['tmp_name'],'site','page','PUBLISHED');
+				if ($image !== false) {
+					$this->db()->update($this->table->sitemap,array('image'=>$image))->where('role',$insert['role'])->where('menu',$insert['menu'])->where('page',$insert['page'])->execute();
+				}
+			}
 		}
 	}
 	

@@ -8,20 +8,14 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2018. 3. 18.
+ * @modified 2018. 8. 23.
  */
 if (defined('__IM__') == false) exit;
 
-$domain = Request('domain');
-$language = Request('language');
-$menu = Request('menu');
+$domain = Param('domain');
+$language = Param('language');
+$menu = Param('menu');
 $page = Request('page');
-
-if (!$domain || !$language || !$menu) {
-	$results->success = false;
-	$results->message = $this->getErrorText('NOT_FOUND');
-	return;
-}
 
 $sitemap = $this->db()->select($this->IM->getTable('sitemap'))->where('domain',$domain)->where('language',$language)->where('menu',$menu);
 if ($page) $sitemap->where('page',$page);
@@ -45,6 +39,10 @@ if ($sitemap->page == '') {
 			$this->db()->update($this->IM->getTable('sitemap'),array('type'=>'EMPTY','context'=>'{}'))->where('domain',$sitemap->domain)->where('language',$sitemap->language)->where('menu',$sitemap->menu)->execute();
 		}
 	}
+}
+
+if ($sitemap->image > 0) {
+	$this->IM->getModule('attachment')->fileDelete($sitemap->image);
 }
 
 $results->success = true;

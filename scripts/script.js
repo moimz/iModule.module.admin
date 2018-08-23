@@ -1565,30 +1565,20 @@ var Admin = {
 												})
 											]
 										}),
-										new Ext.form.TextField({
-											fieldLabel:Admin.getText("configs/sitemap/form/description"),
-											name:"description",
-											allowBlank:true
-										}),
-										new Ext.form.Checkbox({
-											fieldLabel:Admin.getText("configs/sitemap/form/is_footer"),
-											name:"is_footer",
-											boxLabel:Admin.getText("configs/sitemap/form/is_footer_help")
-										}),
-										new Ext.form.Checkbox({
-											fieldLabel:Admin.getText("configs/sitemap/form/is_hide"),
-											name:"is_hide",
-											boxLabel:Admin.getText("configs/sitemap/form/is_hide_help")
-										}),
 										new Ext.form.ComboBox({
 											fieldLabel:Admin.getText("configs/sitemap/form/type"),
 											name:"type",
 											store:new Ext.data.ArrayStore({
 												fields:["display","value"],
-												data:(mode == "menu" ? 
-													[[Admin.getText("configs/sitemap/type/EXTERNAL"),"EXTERNAL"],[Admin.getText("configs/sitemap/type/PAGE"),"PAGE"],[Admin.getText("configs/sitemap/type/WIDGET"),"WIDGET"],[Admin.getText("configs/sitemap/type/LINK"),"LINK"],[Admin.getText("configs/sitemap/type/EMPTY"),"EMPTY"]] : 
-													[[Admin.getText("configs/sitemap/type/MODULE"),"MODULE"],[Admin.getText("configs/sitemap/type/EXTERNAL"),"EXTERNAL"],[Admin.getText("configs/sitemap/type/WIDGET"),"WIDGET"],[Admin.getText("configs/sitemap/type/HTML"),"HTML"],[Admin.getText("configs/sitemap/type/LINK"),"LINK"],[Admin.getText("configs/sitemap/type/EMPTY"),"EMPTY"]]
-												)
+												data:(function(mode) {
+													var datas = [];
+													for (var type in Admin.getText("configs/sitemap/type")) {
+														if (mode == "menu" && type == "MODULE") continue;
+														
+														datas.push([Admin.getText("configs/sitemap/type/"+type),type]);
+													}
+													return datas;
+												})(mode)
 											}),
 											displayField:"display",
 											valueField:"value",
@@ -1603,22 +1593,41 @@ var Admin = {
 													
 													if (value != "EMPTY" && value != "HTML") Ext.getCmp("SitemapConfigContext-"+value).show().enable();
 													
-													if (value == "PAGE") {
-														Ext.getCmp("SitemapConfigForm").getForm().findField("subpage").getStore().load();
-													}
-													
-													if (value == "LINK" || value == "PAGE") {
-														Ext.getCmp("SitemapConfigForm").getForm().findField("layout").setDisabled(true).setHidden(true);
+													if (value == "LINK") {
+														Ext.getCmp("SitemapConfigDesign").setDisabled(true).setHidden(true);
 														Ext.getCmp("SitemapConfigHeader").setDisabled(true).setHidden(true);
 														Ext.getCmp("SitemapConfigFooter").setDisabled(true).setHidden(true);
 													} else {
-														Ext.getCmp("SitemapConfigForm").getForm().findField("layout").setDisabled(false).setHidden(false);
+														Ext.getCmp("SitemapConfigDesign").setDisabled(false).setHidden(false);
 														Ext.getCmp("SitemapConfigHeader").setDisabled(false).setHidden(false);
 														Ext.getCmp("SitemapConfigFooter").setDisabled(false).setHidden(false);
+														
+														if (value == "PAGE") {
+															Ext.getCmp("SitemapConfigForm").getForm().findField("subpage").getStore().load();
+															Ext.getCmp("ModuleEmsSitemapConfigForm").getForm().findField("layout").setDisabled(true).setHidden(true);
+														} else {
+															Ext.getCmp("ModuleEmsSitemapConfigForm").getForm().findField("layout").setDisabled(false).setHidden(false);
+														}
 													}
 												}
 											}
 										}),
+										new Ext.form.Checkbox({
+											fieldLabel:Admin.getText("configs/sitemap/form/is_footer"),
+											name:"is_footer",
+											boxLabel:Admin.getText("configs/sitemap/form/is_footer_help")
+										}),
+										new Ext.form.Checkbox({
+											fieldLabel:Admin.getText("configs/sitemap/form/is_hide"),
+											name:"is_hide",
+											boxLabel:Admin.getText("configs/sitemap/form/is_hide_help")
+										})
+									]
+								}),
+								new Ext.form.FieldSet({
+									id:"SitemapConfigDesign",
+									title:Admin.getText("configs/sitemap/form/design"),
+									items:[
 										new Ext.form.ComboBox({
 											fieldLabel:Admin.getText("configs/sitemap/form/layout"),
 											name:"layout",
@@ -1635,6 +1644,37 @@ var Admin = {
 											}),
 											displayField:"description",
 											valueField:"layout"
+										}),
+										new Ext.form.TextField({
+											fieldLabel:Admin.getText("configs/sitemap/form/description"),
+											name:"description",
+											allowBlank:true
+										}),
+										new Ext.form.FieldContainer({
+											fieldLabel:Admin.getText("configs/sitemap/form/image"),
+											layout:"hbox",
+											items:[
+												new Ext.form.FileUploadField({
+													name:"image",
+													allowBlank:true,
+													accept:"image/*",
+													flex:1,
+													emptyText:Admin.getText("configs/sitemap/form/image_help"),
+													buttonText:Admin.getText("configs/sitemap/form/image_select")
+												}),
+												new Ext.form.Checkbox({
+													name:"image_delete",
+													boxLabel:Admin.getText("configs/sitemap/form/image_delete"),
+													style:{marginLeft:"5px"},
+													hidden:true,
+													disabled:true,
+													listeners:{
+														change:function(form,checked) {
+															form.getForm().findField("image").setDisabled(checked);
+														}
+													}
+												})
+											]
 										})
 									]
 								}),
@@ -2100,6 +2140,10 @@ var Admin = {
 											form.findField("context").getStore().load(function() {
 												form.findField("context").setValue(action.result.data._context);
 											});
+										}
+										
+										if (action.result.data.image > 0) {
+											form.findField("image_delete").setDisabled(false).setHidden(false);
 										}
 										
 										Ext.getCmp("SitemapConfigWindow").center();
