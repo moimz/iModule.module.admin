@@ -12,20 +12,29 @@
  */
 if (defined('__IM__') == false) exit;
 
-$lists = $this->IM->getSites();
-for ($i=0, $loop=count($lists);$i<$loop;$i++) {
-	$lists[$i]->grouping = $lists[$i]->sort.'@'.$lists[$i]->domain;
-	$lists[$i]->url = ($lists[$i]->is_ssl == 'TRUE' ? 'https://' : 'http://').$lists[$i]->domain.__IM_DIR__.'/'.$lists[$i]->language.'/';
-	$lists[$i]->favicon = $lists[$i]->favicon == -1 ? __IM_DIR__.'/images/logo/favicon.ico' : ($lists[$i]->favicon == 0 ? null : __IM_DIR__.'/attachment/view/'.$lists[$i]->favicon.'/favicon.ico');
-	$lists[$i]->emblem = $lists[$i]->emblem == -1 ? __IM_DIR__.'/images/logo/emblem.png' : ($lists[$i]->emblem == 0 ? $this->getModule()->getDir().'/images/empty_square.png' : __IM_DIR__.'/attachment/view/'.$lists[$i]->emblem.'/emblem.png');
-	$lists[$i]->favicon = $lists[$i]->favicon == null ? $lists[$i]->emblem : $lists[$i]->favicon;
-	$lists[$i]->sort = $lists[$i]->sort * 1000 + ($lists[$i]->is_default == 'TRUE' ? 0 : $i + 1);
+$is_sitemap = Request('is_sitemap') == 'true';
+$sites = $this->IM->getSites();
+$lists = array();
+foreach ($sites as $site) {
+	if ($is_sitemap == true) {
+		$temp = explode('.',substr($site->templet,1));
+		if ($this->IM->getModule()->isSitemap($temp[0]) == true) continue;
+	}
 	
-	$lists[$i]->display = $lists[$i]->title.'('.$lists[$i]->url.')';
-	$lists[$i]->value = $lists[$i]->domain.'@'.$lists[$i]->language;
+	$site->grouping = $site->sort.'@'.$site->domain;
+	$site->url = ($site->is_ssl == 'TRUE' ? 'https://' : 'http://').$site->domain.__IM_DIR__.'/'.$site->language.'/';
+	$site->favicon = $site->favicon == -1 ? __IM_DIR__.'/images/logo/favicon.ico' : ($site->favicon == 0 ? null : __IM_DIR__.'/attachment/view/'.$site->favicon.'/favicon.ico');
+	$site->emblem = $site->emblem == -1 ? __IM_DIR__.'/images/logo/emblem.png' : ($site->emblem == 0 ? $this->getModule()->getDir().'/images/empty_square.png' : __IM_DIR__.'/attachment/view/'.$site->emblem.'/emblem.png');
+	$site->favicon = $site->favicon == null ? $site->emblem : $site->favicon;
+	$site->sort = $site->sort * 1000 + ($site->is_default == 'TRUE' ? 0 : $i + 1);
 	
-	$Templet = $this->IM->getTemplet($this->IM,$lists[$i]->templet);
-	$lists[$i]->templet = $Templet->getTitle();
+	$site->display = $site->title.'('.$site->url.')';
+	$site->value = $site->domain.'@'.$site->language;
+	
+	$Templet = $this->IM->getTemplet($this->IM,$site->templet);
+	$site->templet = $Templet->getTitle();
+	
+	$lists[] = $site;
 }
 
 $results->success = true;

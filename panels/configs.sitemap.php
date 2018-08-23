@@ -25,6 +25,7 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 						type:"ajax",
 						simpleSortMode:true,
 						url:ENV.getProcessUrl("admin","@getSites"),
+						extraParams:{is_sitemap:"true"},
 						reader:{type:"json"}
 					},
 					remoteSort:false,
