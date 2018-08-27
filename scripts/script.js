@@ -1604,9 +1604,9 @@ var Admin = {
 														
 														if (value == "PAGE") {
 															Ext.getCmp("SitemapConfigForm").getForm().findField("subpage").getStore().load();
-															Ext.getCmp("ModuleEmsSitemapConfigForm").getForm().findField("layout").setDisabled(true).setHidden(true);
+															Ext.getCmp("SitemapConfigForm").getForm().findField("layout").setDisabled(true).setHidden(true);
 														} else {
-															Ext.getCmp("ModuleEmsSitemapConfigForm").getForm().findField("layout").setDisabled(false).setHidden(false);
+															Ext.getCmp("SitemapConfigForm").getForm().findField("layout").setDisabled(false).setHidden(false);
 														}
 													}
 												}
@@ -2761,9 +2761,9 @@ var Admin = {
 	 * @param string target 템플릿을 불러올 대상 (모듈명, plugin/플러그인명, widget/위젯명)
 	 * @return object Ext.form.Combobox
 	 */
-	templetField:function(label,name,type,target,use_default,url,params) {
+	templetField:function(label,name,type,target,use_default,url,fields) {
 		var url = url ? url : ENV.getProcessUrl("admin","@getTempletConfigs");
-		var params = params ? params : {};
+		var params = {};
 		
 		return new Ext.form.FieldContainer({
 			layout:{type:"vbox",align:"stretch"},
@@ -2778,7 +2778,7 @@ var Admin = {
 							type:type,
 							target:target,
 							url:url,
-							params:params,
+							params:fields,
 							store:new Ext.data.JsonStore({
 								proxy:{
 									type:"ajax",
@@ -2795,7 +2795,7 @@ var Admin = {
 							editable:false,
 							displayField:"title",
 							valueField:"templet",
-							value:use_default !== false ? "#" : "default",
+							value:use_default !== false ? "#" : null,
 							listeners:{
 								render:function(form) {
 									params.type = form.type;
