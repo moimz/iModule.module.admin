@@ -2761,9 +2761,10 @@ var Admin = {
 	 * @param string target 템플릿을 불러올 대상 (모듈명, plugin/플러그인명, widget/위젯명)
 	 * @return object Ext.form.Combobox
 	 */
-	templetField:function(label,name,type,target,use_default,url,fields) {
+	templetField:function(label,name,type,target,use_default,url,params,fields) {
 		var url = url ? url : ENV.getProcessUrl("admin","@getTempletConfigs");
-		var params = {};
+		var fields = fields ? fields : [];
+		var params = params ? params : {};
 		
 		return new Ext.form.FieldContainer({
 			layout:{type:"vbox",align:"stretch"},
