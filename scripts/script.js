@@ -361,7 +361,7 @@ var Admin = {
 							$.send(ENV.getProcessUrl("admin","@saveModuleSort"),{updated:JSON.stringify(updated)},function(result) {
 								if (result.success == true) {
 									Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getText("action/saved"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO,fn:function() {
-										Ext.getCmp("ModuleSortWindow").close();
+										location.replace(location.href);
 									}});
 								} else {
 									Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("DATA_SAVE_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
