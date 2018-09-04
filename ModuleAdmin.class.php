@@ -1191,6 +1191,7 @@ class ModuleAdmin {
 				} elseif ($file != null) {
 					if (isset($logo->$logoType) == true && $logo->$logoType > 0) {
 						$this->IM->getModule('attachment')->fileReplace($logo->$logoType,$logoType.'.'.$extension,$file,false);
+						$this->IM->getModule('attachment')->filePublish($logo->$logoType,'site','logo');
 					} else {
 						$logoIdx = $this->IM->getModule('attachment')->fileSave($logoType.'.'.$extension,$file,'site','logo','PUBLISHED',false);
 						$logo->$logoType = $logoIdx;
@@ -1217,6 +1218,7 @@ class ModuleAdmin {
 				} elseif ($file != null) {
 					if (isset($maskicon->icon) == true && $maskicon->icon > 0) {
 						$this->IM->getModule('attachment')->fileReplace($maskicon->icon,$type.'.'.$extension,$file,false);
+						$this->IM->getModule('attachment')->filePublish($maskicon->icon,'site','maskicon');
 					} else {
 						$fileIdx = $this->IM->getModule('attachment')->fileSave('maskicon.'.$extension,$file,'site','maskicon','PUBLISHED',false);
 						$maskicon->icon = $fileIdx;
@@ -1241,6 +1243,7 @@ class ModuleAdmin {
 				} elseif ($file != null) {
 					if ($oFile > 0) {
 						$this->IM->getModule('attachment')->fileReplace($oFile,$type.'.'.$extension,$file,false);
+						$this->IM->getModule('attachment')->filePublish($oFile,'site',$type);
 					} else {
 						$fileIdx = $this->IM->getModule('attachment')->fileSave($type.'.'.$extension,$file,'site',$type,'PUBLISHED',false);
 						
