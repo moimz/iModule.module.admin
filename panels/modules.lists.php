@@ -1,6 +1,6 @@
 <?php
 /**
- * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodule.kr)
+ * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodules.io)
  *
  * 모듈을 설치하거나 설치되어 있는 모듈을 관리하기 위한 패널을 제공한다.
  * 

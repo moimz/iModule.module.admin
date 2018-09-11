@@ -1,6 +1,6 @@
 <?php
 /**
- * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodule.kr)
+ * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodules.io)
  * 
  * 컨텍스트를 지원하는 모듈목록을 가져온다.
  *

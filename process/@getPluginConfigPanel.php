@@ -1,6 +1,6 @@
 <?php
 /**
- * 이 파일은 iModule 관리자플러그인의 일부입니다. (https://www.imodule.kr)
+ * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodules.io)
  * 
  * 플러그인의 설정패널을 불러온다. 플러그인의 설정패널은 각 플러그인폴더의 admin/configs.php 파일에 정의되어 있다.
  *

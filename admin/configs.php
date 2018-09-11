@@ -1,6 +1,6 @@
 <?php
 /**
- * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodule.kr)
+ * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodules.io)
  *
  * 모듈 환경설정 패널을 구성한다.
  * 

@@ -1,6 +1,6 @@
 <?php
 /**
- * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodule.kr)
+ * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodules.io)
  * 
  * 관리자모듈에 의해 생성된 엑셀파일로 변환한다.
  *

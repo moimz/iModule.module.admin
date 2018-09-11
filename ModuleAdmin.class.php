@@ -1,6 +1,6 @@
 <?php
 /**
- * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodule.kr)
+ * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodules.io)
  *
  * 사이트관리자를 위한 기능정의 및 통합관리패널을 제공한다.
  * 이 클래스는 모든 관리자페이지 관련 PHP에서 $Admin 변수로 접근할 수 있다.

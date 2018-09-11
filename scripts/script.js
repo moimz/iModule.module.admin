@@ -1,5 +1,5 @@
 /**
- * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodule.kr)
+ * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodules.io)
  *
  * 관리자모듈 UI를 구성한다.
  * 

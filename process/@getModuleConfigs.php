@@ -1,6 +1,6 @@
 <?php
 /**
- * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodule.kr)
+ * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodules.io)
  * 
  * 모듈의 설정값을 불러온다. 모듈의 설정필드는 각 모듈의 package.json 에 정의되어 있으며 설정값은 DB의 module_table 에 저장된다.
  *

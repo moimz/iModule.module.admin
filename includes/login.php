@@ -1,6 +1,6 @@
 <?php
 /**
- * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodule.kr)
+ * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodules.io)
  *
  * 사이트 관리자 페이지에 접근하기 위한 권한이 부족할 경우 사이트관리자로 로그인페이지를 구성한다.
  * 이 파일은 사이트관리자 클래스의 getLoginContext() 함수를 통해 호출된다.
