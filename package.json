@@ -38,25 +38,25 @@
 				"midx":{
 					"type":"int",
 					"length":11,
-					"comment":"관리자정보"
+					"comment":"관리자회원고유값"
 				},
-				"action":{
+				"code":{
 					"type":"varchar",
 					"length":20,
-					"comment":"로그활동"
+					"comment":"활동코드"
 				},
 				"reg_date":{
-					"type":"int",
+					"type":"bigint",
 					"length":11,
-					"comment":"등록일"
+					"comment":"활동시각"
 				}
 			},
 			"indexes":{
-				"midx,action,reg_date":"primary_key",
+				"midx,code,reg_date":"primary_key",
 				"midx":"index",
 				"reg_date":"index"
 			},
-			"comment":"관리자로그관리"
+			"comment":"관리자 접속로그 관리"
 		}
 	}
 }
