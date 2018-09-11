@@ -29,12 +29,17 @@ if ($package == null) {
 	$data->author = $package->author->name.' (<a href="mailto:'.$package->author->email.'">'.$package->author->email.'</a>)';
 	$data->homepage = '<a href="mailto:'.$package->homepage.'" target="_blank">'.$package->homepage.'</a>';
 	$data->language = $package->language;
+	$data->hash = md5_file($this->getModule()->getPath().'/package.json');
 	$data->description = $this->getModule()->getDescription($module);
 	
 	$data->context = isset($package->context) == true ? $package->context : false;
 	$data->global = isset($package->global) == true ? $package->global : false;
-	$data->article = isset($package->article) == true ? $package->article : false;
 	$data->admin = isset($package->admin) == true ? $package->admin : false;
+	$data->cron = isset($package->cron) == true ? $package->cron : false;
+	$data->widget = isset($package->widget) == true ? $package->widget : false;
+	$data->templet = isset($package->templet) == true ? $package->templet : false;
+	$data->sitemap = isset($package->sitemap) == true ? $package->sitemap : false;
+	$data->external = isset($package->external) == true ? $data->templet || $package->external : false;
 	
 	$data->dependencies = array();
 	foreach ($package->dependencies as $dependency=>$version) {

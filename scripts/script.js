@@ -94,6 +94,7 @@ var Admin = {
 								items:[
 									new Ext.form.FieldContainer({
 										layout:"hbox",
+										style:{marginBottom:0},
 										items:[
 											new Ext.Panel({
 												width:120,
@@ -136,6 +137,10 @@ var Admin = {
 													new Ext.form.DisplayField({
 														fieldLabel:Admin.getText("modules/show/language"),
 														name:"language"
+													}),
+													new Ext.form.DisplayField({
+														fieldLabel:Admin.getText("modules/show/hash"),
+														name:"hash"
 													})
 												]
 											})
@@ -147,7 +152,8 @@ var Admin = {
 								title:Admin.getText("modules/show/description"),
 								items:[
 									new Ext.form.DisplayField({
-										name:"description"
+										name:"description",
+										style:{marginBottom:0}
 									})
 								]
 							}),
@@ -156,10 +162,41 @@ var Admin = {
 								items:[
 									new Ext.form.CheckboxGroup({
 										columns:4,
+										style:{marginBottom:0},
 										items:[
 											new Ext.form.Checkbox({
 												name:"global",
 												boxLabel:Admin.getText("modules/show/global"),
+												flex:1,
+												readOnly:true
+											}),
+											new Ext.form.Checkbox({
+												name:"admin",
+												boxLabel:Admin.getText("modules/show/admin"),
+												flex:1,
+												readOnly:false
+											}),
+											new Ext.form.Checkbox({
+												name:"widget",
+												boxLabel:Admin.getText("modules/show/widget"),
+												flex:1,
+												readOnly:false
+											}),
+											new Ext.form.Checkbox({
+												name:"cron",
+												boxLabel:Admin.getText("modules/show/cron"),
+												flex:1,
+												readOnly:true
+											}),
+											new Ext.form.Checkbox({
+												name:"templet",
+												boxLabel:Admin.getText("modules/show/templet"),
+												flex:1,
+												readOnly:true
+											}),
+											new Ext.form.Checkbox({
+												name:"sitemap",
+												boxLabel:Admin.getText("modules/show/sitemap"),
 												flex:1,
 												readOnly:true
 											}),
@@ -170,16 +207,10 @@ var Admin = {
 												readOnly:true
 											}),
 											new Ext.form.Checkbox({
-												name:"article",
-												boxLabel:Admin.getText("modules/show/article"),
+												name:"external",
+												boxLabel:Admin.getText("modules/show/external"),
 												flex:1,
 												readOnly:true
-											}),
-											new Ext.form.Checkbox({
-												name:"admin",
-												boxLabel:Admin.getText("modules/show/admin"),
-												flex:1,
-												readOnly:false
 											})
 										]
 									})
@@ -190,7 +221,8 @@ var Admin = {
 								items:[
 									new Ext.form.CheckboxGroup({
 										id:"ModuleDependencies",
-										columns:2,
+										columns:4,
+										style:{marginBottom:0},
 										items:[]
 									})
 								]

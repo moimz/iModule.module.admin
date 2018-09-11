@@ -24,11 +24,6 @@
 		"keyword":"3.0.0"
 	},
 	"language":"ko",
-	"admin":false,
-	"context":false,
-	"global":false,
-	"article":false,
-	"widget":true,
 	"configs":{
 		"enable_security_mode":{
 			"type":"boolean",
