@@ -8,18 +8,16 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2018. 7. 14.
+ * @modified 2018. 9. 11.
  */
 if (defined('__IM__') == false) exit;
 
-$domain = Request('domain');
-$language = Request('language');
-$menu = Request('menu');
-$page = Request('page');
+$domain = Param('domain');
+$language = Param('language');
+$menu = Param('menu');
+$page = Param('page');
 
-$data = $this->IM->db()->select($this->IM->getTable('sitemap'))->where('domain',$domain)->where('language',$language)->where('menu',$menu);
-if ($page) $data->where('page',$page);
-$data = $data->getOne();
+$data = $this->IM->db()->select($this->IM->getTable('sitemap'))->where('domain',$domain)->where('language',$language)->where('menu',$menu)->where('page',$page)->getOne();
 if ($data == null) {
 	$results->success = false;
 	$results->message = $this->getErrorText('NOT_FOUND');

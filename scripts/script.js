@@ -7,7 +7,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.0.0
- * @modified 2018. 7. 11.
+ * @modified 2018. 9. 11.
  */
 var Admin = {
 	/**
@@ -1637,8 +1637,14 @@ var Admin = {
 														if (value == "PAGE") {
 															Ext.getCmp("SitemapConfigForm").getForm().findField("subpage").getStore().load();
 															Ext.getCmp("SitemapConfigForm").getForm().findField("layout").setDisabled(true).setHidden(true);
+															
+															Ext.getCmp("SitemapConfigHeader").setDisabled(true).setHidden(true);
+															Ext.getCmp("SitemapConfigFooter").setDisabled(true).setHidden(true);
 														} else {
 															Ext.getCmp("SitemapConfigForm").getForm().findField("layout").setDisabled(false).setHidden(false);
+															
+															Ext.getCmp("SitemapConfigHeader").setDisabled(false).setHidden(false);
+															Ext.getCmp("SitemapConfigFooter").setDisabled(false).setHidden(false);
 														}
 													}
 												}
