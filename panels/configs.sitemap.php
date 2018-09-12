@@ -73,7 +73,7 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 				}
 			}),
 			new Ext.Button({
-				iconCls:"fa fa-plus",
+				iconCls:"mi mi-plus",
 				text:Admin.getText("configs/sites/add_site"),
 				handler:function() {
 					Admin.configs.sites.add();
@@ -95,12 +95,14 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 						title:Admin.getText("configs/sitemap/menu_list"),
 						tbar:[
 							new Ext.Button({
+								iconCls:"mi mi-plus",
 								text:Admin.getText("configs/sitemap/add_menu"),
 								handler:function() {
 									Admin.configs.sitemap.menu();
 								}
 							}),
 							new Ext.Button({
+								iconCls:"xi xi-download-my",
 								text:Admin.getText("configs/sitemap/load_menu"),
 								handler:function() {
 									Admin.configs.sitemap.loadMenu();
@@ -140,7 +142,7 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 										
 										if (Ext.getCmp("MenuList").selected != null) {
 											var select = Ext.getCmp("MenuList").getStore().find("menu",Ext.getCmp("MenuList").selected,0,false,false,true);
-											if (select > -1 ) Ext.getCmp("MenuList").getSelectionModel().select(select);
+											if (select > -1) Ext.getCmp("MenuList").getSelectionModel().select(select);
 											Ext.getCmp("MenuList").selected = null;
 										} else {
 											Ext.getCmp("PageList").getStore().removeAll();
@@ -250,12 +252,14 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 						title:Admin.getText("configs/sitemap/page_list"),
 						tbar:[
 							new Ext.Button({
+								iconCls:"mi mi-plus",
 								text:Admin.getText("configs/sitemap/add_page"),
 								handler:function() {
 									Admin.configs.sitemap.page();
 								}
 							}),
 							new Ext.Button({
+								iconCls:"xi xi-download-my",
 								text:Admin.getText("configs/sitemap/load_page"),
 								handler:function() {
 									Admin.configs.sitemap.loadPage();
@@ -289,7 +293,7 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 									} else {
 										if (Ext.getCmp("PageList").selected != null) {
 											var select = Ext.getCmp("PageList").getStore().find("page",Ext.getCmp("PageList").selected,0,false,false,true);
-											if (select > -1 ) Ext.getCmp("PageList").getSelectionModel().select(select);
+											if (select > -1) Ext.getCmp("PageList").getSelectionModel().select(select);
 											Ext.getCmp("PageList").selected = null;
 										}
 									}

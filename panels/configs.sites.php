@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.0.0
- * @modified 2018. 3. 18.
+ * @modified 2018. 9. 12.
  */
 if (defined('__IM__') == false) exit;
 ?>
@@ -19,7 +19,7 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 		border:false,
 		tbar:[
 			new Ext.Button({
-				iconCls:"fa fa-plus",
+				iconCls:"mi mi-plus",
 				text:Admin.getText("configs/sites/add_site"),
 				handler:function() {
 					Admin.configs.sites.add();
