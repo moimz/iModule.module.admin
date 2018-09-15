@@ -8,12 +8,12 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2018. 3. 18.
+ * @modified 2018. 9. 16.
  */
 if (defined('__IM__') == false) exit;
 
 $module = Request('target');
-$contexts = $this->Module->getContexts($module);
+$contexts = $module ? $this->Module->getContexts($module) : array();
 
 $results->success = true;
 $results->lists = $contexts;

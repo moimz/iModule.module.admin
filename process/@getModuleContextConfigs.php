@@ -12,12 +12,12 @@
  */
 if (defined('__IM__') == false) exit;
 
-$domain = Request('domain');
-$language = Request('language');
-$menu = Request('menu');
-$page = Request('page');
-$module = Request('target');
-$context = Request('context');
+$domain = Param('domain');
+$language = Param('language');
+$menu = Param('menu');
+$page = Param('page');
+$module = Param('target');
+$context = Param('context');
 
 $this->IM->initSites(true);
 
