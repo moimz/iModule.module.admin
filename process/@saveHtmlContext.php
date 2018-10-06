@@ -26,7 +26,7 @@ if ($sitemap == null || $sitemap->type != 'HTML') {
 }
 
 $files = array();
-$attachments = Request('attachments');
+$attachments = is_array(Request('attachments')) == true ? Request('attachments') : array();
 for ($i=0, $loop=count($attachments);$i<$loop;$i++) {
 	$fileIdx = Decoder($attachments[$i]);
 	if ($fileIdx !== false) {
