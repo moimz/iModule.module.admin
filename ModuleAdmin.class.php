@@ -1066,6 +1066,8 @@ class ModuleAdmin {
 			}
 		}
 		
+		$this->IM->fireEvent('beforeDoLayout','admin','*');
+		
 		/**
 		 * 사이트관리자 권한이 없을 경우 로그인 컨텍스트를, 로그인이 되어있다면 사이트 관리자 컨텍스트를 가져온다.
 		 */
