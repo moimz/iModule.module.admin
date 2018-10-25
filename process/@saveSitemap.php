@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2018. 7. 14.
+ * @modified 2018. 10. 25.
  */
 if (defined('__IM__') == false) exit;
 
@@ -132,6 +132,7 @@ if (count($errors) == 0) {
 	$insert['context'] = json_encode($context,JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
 	
 	$oData = null;
+	
 	if ($mode == 'menu') {
 		$insert['menu'] = $menu;
 		$insert['page'] = '';
