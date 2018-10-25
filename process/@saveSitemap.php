@@ -131,6 +131,7 @@ if (count($errors) == 0) {
 	$insert['footer'] = $footer;
 	$insert['context'] = json_encode($context,JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
 	
+	$oData = null;
 	if ($mode == 'menu') {
 		$insert['menu'] = $menu;
 		$insert['page'] = '';
