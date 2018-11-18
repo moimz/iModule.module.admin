@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2018. 3. 18.
+ * @modified 2018. 11. 18.
  */
 if (defined('__IM__') == false) exit;
 
@@ -25,12 +25,6 @@ if ($data != null) {
 	
 	$data->emblem = $data->emblem == -1 ? __IM_DIR__.'/images/logo/emblem.png' : ($data->emblem == 0 ? $this->getModule()->getDir().'/images/empty_square.png' : __IM_DIR__.'/attachment/view/'.$data->emblem.'/emblem.png');
 	$data->favicon = $data->favicon == -1 ? __IM_DIR__.'/images/logo/favicon.ico' : ($data->favicon == 0 ? $this->getModule()->getDir().'/images/empty_square.png' : __IM_DIR__.'/attachment/view/'.$data->favicon.'/favicon.ico');
-	$data->maskicon = $data->maskicon && json_decode($data->maskicon) != null ? json_decode($data->maskicon) : null;
-	if ($data->maskicon == null || empty($data->maskicon->icon) == true) $data->maskicon->icon = -1;
-	if ($data->maskicon == null || empty($data->maskicon->color) == true) $data->maskicon->color = '#0578bf';
-	
-	$data->maskicon_color = $data->maskicon->color;
-	$data->maskicon = $data->maskicon->icon == -1 ? __IM_DIR__.'/images/logo/maskicon.svg' : ($data->maskicon->icon == 0 ? $this->getModule()->getDir().'/images/empty_square.png' : __IM_DIR__.'/attachment/view/'.$data->maskicon->icon.'/maskicon.svg');
 	$data->image = $data->image == -1 ? __IM_DIR__.'/images/logo/preview.jpg' : ($data->image == 0 ? $this->getModule()->getDir().'/images/empty_horizontal.png' : __IM_DIR__.'/attachment/view/'.$data->image.'/preview.jpg');
 	
 	$data->is_default = $data->is_default == 'TRUE';
