@@ -60,7 +60,6 @@ if ($oDomain == '' && $oLanguage == '') {
 		$insert['description'] = $description;
 		$insert['templet'] = $templet;
 		$insert['logo'] = '{"default":-1,"footer":-1}';
-		$insert['maskicon'] = '{"icon":-1,"color":"#0578bf"}';
 		$insert['templet_configs'] = $templetConfigs;
 		$insert['sort'] = $checkDomain != null ? $checkDomain->sort : ($this->IM->db()->select($this->IM->getTable('site'),'max(sort) as sort')->getOne()->sort + 1);
 		
@@ -157,7 +156,6 @@ if ($results->success == true) {
 	$this->setSiteImage($domain,Request('logo_footer_all') == 'on' ? '*' : $language,'logo_footer');
 	$this->setSiteImage($domain,Request('favicon_all') == 'on' ? '*' : $language,'favicon');
 	$this->setSiteImage($domain,Request('emblem_all') == 'on' ? '*' : $language,'emblem');
-	$this->setSiteImage($domain,Request('maskicon_all') == 'on' ? '*' : $language,'maskicon');
 	$this->setSiteImage($domain,Request('image_all') == 'on' ? '*' : $language,'image');
 }
 ?>

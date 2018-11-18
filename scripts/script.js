@@ -1132,7 +1132,6 @@ var Admin = {
 										Admin.configs.sites.getSiteImageField("logo_footer"),
 										Admin.configs.sites.getSiteImageField("emblem"),
 										Admin.configs.sites.getSiteImageField("favicon"),
-										Admin.configs.sites.getSiteImageField("maskicon"),
 										Admin.configs.sites.getSiteImageField("image")
 									]
 								})
@@ -1189,7 +1188,6 @@ var Admin = {
 										Ext.getCmp("SiteConfigForm").getForm().findField("logo_footer").defaultImage = Ext.getCmp("SiteConfigForm").getForm().findField("logo_footer").getValue();
 										Ext.getCmp("SiteConfigForm").getForm().findField("emblem").defaultImage = Ext.getCmp("SiteConfigForm").getForm().findField("emblem").getValue();
 										Ext.getCmp("SiteConfigForm").getForm().findField("favicon").defaultImage = Ext.getCmp("SiteConfigForm").getForm().findField("favicon").getValue();
-										Ext.getCmp("SiteConfigForm").getForm().findField("maskicon").defaultImage = Ext.getCmp("SiteConfigForm").getForm().findField("maskicon").getValue();
 										Ext.getCmp("SiteConfigForm").getForm().findField("image").defaultImage = Ext.getCmp("SiteConfigForm").getForm().findField("image").getValue();
 									},
 									failure:function(form,action) {
@@ -1244,8 +1242,6 @@ var Admin = {
 					defaultImage+= "default.png";
 				} else if (name == "logo_footer") {
 					defaultImage+= "footer.png";
-				} else if (name == "maskicon") {
-					defaultImage+= name+".svg";
 				} else if (name == "favicon") {
 					defaultImage+= name+".ico";
 				} else {
@@ -1255,9 +1251,6 @@ var Admin = {
 				var extension = "image/gif,image/jpg,image/jpeg,image/png";
 				if (name == "favicon") {
 					var extension = "image/x-icon";
-				}
-				if (name == "maskicon") {
-					var extension = "image/svg";
 				}
 				
 				return new Ext.form.FieldContainer({
@@ -1299,61 +1292,26 @@ var Admin = {
 							flex:1,
 							layout:{type:"vbox",align:"stretch"},
 							items:[
-								(name == "maskicon" ?
-									new Ext.form.FieldContainer({
-										layout:"hbox",
-										style:{marginBottom:0},
-										items:[
-											new Ext.form.FileUploadField({
-												name:name+"_file",
-												buttonText:Admin.getText("configs/sites/form/select_file"),
-												allowBlank:true,
-												clearOnSubmit:false,
-												accept:extension,
-												flex:1,
-												emptyText:Admin.getText("configs/sites/form/"+name+"_help"),
-												style:{marginBottom:0,marginRight:"5px"},
-												listeners:{
-													change:function(form,value) {
-														var name = form.name.split("_").shift();
-														if (value) {
-															Ext.getCmp("SiteConfigForm").getForm().findField(name+"_reset").setValue(false);
-															Ext.getCmp("SiteConfigForm").getForm().findField(name+"_default").setValue(false);
-														}
-													}
-												}
-											}),
-											new Ext.form.TextField({
-												name:name+"_color",
-												width:80,
-												style:{marginBottom:0},
-												emptyText:"아이콘색상",
-												allowBlank:true
-											})
-										]
-									})
-									:
-									new Ext.form.FileUploadField({
-										name:name+"_file",
-										buttonText:Admin.getText("configs/sites/form/select_file"),
-										allowBlank:true,
-										clearOnSubmit:false,
-										accept:extension,
-										emptyText:Admin.getText("configs/sites/form/"+name+"_help"),
-										style:{marginBottom:0},
-										listeners:{
-											change:function(form,value) {
-												var name = form.name.split("_");
-												name.pop();
-												name = name.join("_");
-												if (value) {
-													Ext.getCmp("SiteConfigForm").getForm().findField(name+"_reset").setValue(false);
-													Ext.getCmp("SiteConfigForm").getForm().findField(name+"_default").setValue(false);
-												}
+								new Ext.form.FileUploadField({
+									name:name+"_file",
+									buttonText:Admin.getText("configs/sites/form/select_file"),
+									allowBlank:true,
+									clearOnSubmit:false,
+									accept:extension,
+									emptyText:Admin.getText("configs/sites/form/"+name+"_help"),
+									style:{marginBottom:0},
+									listeners:{
+										change:function(form,value) {
+											var name = form.name.split("_");
+											name.pop();
+											name = name.join("_");
+											if (value) {
+												Ext.getCmp("SiteConfigForm").getForm().findField(name+"_reset").setValue(false);
+												Ext.getCmp("SiteConfigForm").getForm().findField(name+"_default").setValue(false);
 											}
 										}
-									})
-								),
+									}
+								}),
 								new Ext.form.FieldContainer({
 									layout:"hbox",
 									items:[

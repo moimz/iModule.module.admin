@@ -297,7 +297,6 @@ class ModuleAdmin {
 		$this->IM->addHeadResource('link',array('rel'=>'apple-touch-icon','sizes'=>'72x72','href'=>__IM_DIR__.'/images/logo/emblem.png'));
 		$this->IM->addHeadResource('link',array('rel'=>'apple-touch-icon','sizes'=>'144x144','href'=>__IM_DIR__.'/images/logo/emblem.png'));
 		$this->IM->addHeadResource('link',array('rel'=>'shortcut icon','type'=>'image/x-icon','href'=>__IM_DIR__.'/images/logo/favicon.ico'));
-		$this->IM->addHeadResource('link',array('rel'=>'mask-icon','href'=>__IM_DIR__.'/images/logo/maskicon.svg','color'=>'#0578bf'));
 		
 		/**
 		 * 사이트관리자를 위한 자바스크립트를 호출한다.
@@ -1150,16 +1149,14 @@ class ModuleAdmin {
 	 * @param string $is_reset 초기화할 이미지타입명
 	 * @param string $is_default 전체 사이트에 적용할지 여부
 	 * @param File $file 업로드되는 파일객체
-	 * @param string $maskicon_color Maks아이콘의 경우 색깔코드
 	 */
-	function setSiteImage($domain,$language,$type,$is_reset=null,$is_default=null,$file=null,$maskicon_color=null) {
+	function setSiteImage($domain,$language,$type,$is_reset=null,$is_default=null,$file=null) {
 		$is_reset = $is_reset == null ? Request($type.'_reset') == 'on' : $is_reset;
 		$is_default = $is_default == null ? Request($type.'_default') == 'on' : $is_default;
 		$file = $file == null && isset($_FILES[$type.'_file']['tmp_name']) == true && is_file($_FILES[$type.'_file']['tmp_name']) == true ? $_FILES[$type.'_file']['tmp_name'] : $file;
 		if ($file != null && is_file($file) == false) $file = null;
-		$maskicon_color = $maskicon_color == null ? Request('maskicon_color') : $maskicon_color;
 		
-		$extension = array('image/png'=>'png','image/svg+xml'=>'svg','image/x-icon'=>'ico','image/jpeg'=>'jpg','image/gif'=>'gif');
+		$extension = array('image/png'=>'png','image/x-icon'=>'ico','image/jpeg'=>'jpg','image/gif'=>'gif');
 		if ($file !== null) {
 			$mime = $this->IM->getModule('attachment')->getFileMime($file);
 			if (isset($extension[$mime]) == true) $extension = $extension[$mime];
@@ -1201,33 +1198,6 @@ class ModuleAdmin {
 						$this->IM->db()->update($this->IM->getTable('site'),array('logo'=>json_encode($logo,JSON_NUMERIC_CHECK)))->where('domain',$sites[$i]->domain)->where('language',$sites[$i]->language)->execute();
 					}
 				}
-			} elseif ($type == 'maskicon') {
-				$maskicon = $sites[$i]->maskicon && json_decode($sites[$i]->maskicon) != null ? json_decode($sites[$i]->maskicon) : new stdClass();
-				$maskicon->color = $maskicon_color;
-				
-				if ($is_reset == true) {
-					if (isset($maskicon->icon) == true && $maskicon->icon > 0) {
-						$this->IM->getModule('attachment')->fileDelete($maskicon->icon);
-					}
-					
-					$maskicon->icon = 0;
-				} elseif ($is_default == true) {
-					if (isset($maskicon->icon) == true && $maskicon->icon > 0) {
-						$this->IM->getModule('attachment')->fileDelete($maskicon->icon);
-					}
-					
-					$maskicon->icon = -1;
-				} elseif ($file != null) {
-					if (isset($maskicon->icon) == true && $maskicon->icon > 0) {
-						$this->IM->getModule('attachment')->fileReplace($maskicon->icon,$type.'.'.$extension,$file,false);
-						$this->IM->getModule('attachment')->filePublish($maskicon->icon,'site','maskicon');
-					} else {
-						$fileIdx = $this->IM->getModule('attachment')->fileSave('maskicon.'.$extension,$file,'site','maskicon','PUBLISHED',false);
-						$maskicon->icon = $fileIdx;
-					}
-				}
-				
-				$this->IM->db()->update($this->IM->getTable('site'),array('maskicon'=>json_encode($maskicon,JSON_NUMERIC_CHECK)))->where('domain',$sites[$i]->domain)->where('language',$sites[$i]->language)->execute();
 			} elseif (in_array($type,array('emblem','favicon','image')) == true) {
 				$oFile = $sites[$i]->$type;
 				if ($is_reset == true) {
