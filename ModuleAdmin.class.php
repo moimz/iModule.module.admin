@@ -288,15 +288,17 @@ class ModuleAdmin {
 	function getHeader() {
 		if (defined('__IM_HEADER_INCLUDED__') == true) return;
 		
+		$this->IM->getSite();
+		
 		/**
 		 * 사이트관리자를 위한 메타태그 구성 (검색엔진 봇 차단 및 아이콘 설정)
 		 */
 		$this->IM->addHeadResource('meta',array('name'=>'robots','content'=>'noindex,nofollow'));
-		$this->IM->addHeadResource('link',array('rel'=>'apple-touch-icon','sizes'=>'57x57','href'=>__IM_DIR__.'/images/logo/emblem.png'));
-		$this->IM->addHeadResource('link',array('rel'=>'apple-touch-icon','sizes'=>'114x114','href'=>__IM_DIR__.'/images/logo/emblem.png'));
-		$this->IM->addHeadResource('link',array('rel'=>'apple-touch-icon','sizes'=>'72x72','href'=>__IM_DIR__.'/images/logo/emblem.png'));
-		$this->IM->addHeadResource('link',array('rel'=>'apple-touch-icon','sizes'=>'144x144','href'=>__IM_DIR__.'/images/logo/emblem.png'));
-		$this->IM->addHeadResource('link',array('rel'=>'shortcut icon','type'=>'image/x-icon','href'=>__IM_DIR__.'/images/logo/favicon.ico'));
+		$this->IM->addHeadResource('link',array('rel'=>'apple-touch-icon','sizes'=>'57x57','href'=>$this->IM->getSiteEmblem()));
+		$this->IM->addHeadResource('link',array('rel'=>'apple-touch-icon','sizes'=>'114x114','href'=>$this->IM->getSiteEmblem()));
+		$this->IM->addHeadResource('link',array('rel'=>'apple-touch-icon','sizes'=>'72x72','href'=>$this->IM->getSiteEmblem()));
+		$this->IM->addHeadResource('link',array('rel'=>'apple-touch-icon','sizes'=>'144x144','href'=>$this->IM->getSiteEmblem()));
+		$this->IM->addHeadResource('link',array('rel'=>'shortcut icon','type'=>'image/x-icon','href'=>$this->IM->getSiteFavicon()));
 		
 		/**
 		 * 사이트관리자를 위한 자바스크립트를 호출한다.
