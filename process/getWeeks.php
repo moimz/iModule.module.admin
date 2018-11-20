@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2018. 3. 18.
+ * @modified 2018. 11. 19.
  */
 if (defined('__IM__') == false) exit;
 
@@ -22,7 +22,7 @@ $end_day = date('w',$end_date);
 $lists = array();
 $week = 1;
 for ($i=$start_date - $start_day * 60 * 60 * 24, $loop=$end_date + (7 - $end_day) * 60 * 60 * 24;$i<$loop;$i=$i+60*60*24*7) {
-	$lists[] = array('display'=>$week.'주차 ('.date('Y.m.d',$i).' ~ '.date('Y.m.d',$i+60*60*24*7 - 1).')','value'=>date('Y-m-d',$i));
+	$lists[] = array('short'=>$week.'주차','display'=>$week.'주차 ('.date('Y.m.d',$i).' ~ '.date('Y.m.d',$i+60*60*24*7 - 1).')','value'=>date('Y-m-d',$i));
 	$week++;
 }
 
