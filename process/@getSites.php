@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2018. 3. 18.
+ * @modified 2018. 11. 22.
  */
 if (defined('__IM__') == false) exit;
 
@@ -35,6 +35,10 @@ foreach ($sites as $site) {
 	$site->templet = $Templet->getTitle();
 	
 	$lists[] = $site;
+}
+
+if (Request('is_all') == 'true') {
+	$lists[] = array('display'=>'전체 사이트','value'=>'@','sort'=>-1); // @로 split 하면 domain 과 language 가 빈 문자열로 나타난다.
 }
 
 $results->success = true;
