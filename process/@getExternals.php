@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2018. 3. 18.
+ * @modified 2018. 12. 14.
  */
 if (defined('__IM__') == false) exit;
 
@@ -49,9 +49,9 @@ while ($templet = @readdir($templetsPath)) {
 @closedir($templetsPath);
 
 /**
- * 사이트 탬플릿을 사용하는 모듈에서 탐색한다.
+ * 사이트 탬플릿을 사용하거나 외부파일을 가지고 있는 모듈의 템플릿파일에서 탐색한다.
  */
-$modules = $this->IM->db()->select($this->IM->getModule()->getTable('module'))->where('is_templet','TRUE')->get();
+$modules = $this->IM->db()->select($this->IM->getModule()->getTable('module'))->where('is_templet','TRUE')->orWhere('is_external','TRUE')->get();
 for ($i=0, $loop=count($modules);$i<$loop;$i++) {
 	if (is_file($this->IM->getModule()->getPath($modules[$i]->module).'/templets/package.json') == true) {
 		$externalsPath = @opendir($this->IM->getModule()->getPath($modules[$i]->module).'/templets/externals');
