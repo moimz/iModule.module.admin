@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2018. 7. 10.
+ * @modified 2019. 1. 6.
  */
 if (defined('__IM__') == false) exit;
 
@@ -47,6 +47,7 @@ while ($module = @readdir($modulesPath)) {
 				$item['sort'] = 0;
 			}
 			$item['isConfigPanel'] = $this->getModule()->isConfigPanel($module);
+			$item['installed_date'] = filemtime(__IM_PATH__.'/modules/'.$module.'/package.json');
 			
 			$lists[] = $item;
 		}

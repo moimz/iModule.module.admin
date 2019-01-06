@@ -27,6 +27,7 @@
 				"title":"모듈명",
 				"version":"버전",
 				"description":"모듈설명",
+				"installed_date":"설치일시",
 				"author":"제작자",
 				"status":"상태",
 				"updated":"정상설치",

@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.0.0
- * @modified 2017. 12. 1.
+ * @modified 2019. 1. 6.
  */
 if (defined('__IM__') == false) exit;
 ?>
@@ -91,6 +91,15 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 			flex:1,
 			sortable:true,
 			dataIndex:"description",
+		},{
+			text:Admin.getText("modules/lists/columns/installed_date"),
+			width:110,
+			sortable:true,
+			dataIndex:"installed_date",
+			align:"center",
+			renderer:function(value) {
+				return moment(value * 1000).locale($("html").attr("lang")).format("YYYY.MM.DD(dd)")
+			}
 		},{
 			text:Admin.getText("modules/lists/columns/author"),
 			width:90,
