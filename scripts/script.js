@@ -7,7 +7,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.0.0
- * @modified 2018. 9. 11.
+ * @modified 2019. 1. 16.
  */
 var Admin = {
 	/**
@@ -2991,34 +2991,34 @@ var Admin = {
 			]
 		});
 	},
-	tagField:function(label,name,value,searchUrl) {
+	tagField:function(label,name,value,searchUrl,params) {
 		if (typeof label == "string") {
+			var params = typeof params != "object" ? {} : params;
 			var searchUrl = searchUrl ? searchUrl : "";
-			return new Ext.form.FieldContainer({
-				fieldLabel:label,
-				items:[
-					new Ext.form.Hidden({
-						name:name,
-						value:value ? value : "",
-						allowBlank:true,
-						listeners:{
-							change:function(form,value) {
-								var panel = form.ownerCt.items.items[1];
-								Admin.tagField(panel,$("div[data-role=tags]",$("#"+panel.getId())));
-							}
+			params.fieldLabel = label;
+			params.items = [
+				new Ext.form.Hidden({
+					name:name,
+					value:value ? value : "",
+					allowBlank:true,
+					listeners:{
+						change:function(form,value) {
+							var panel = form.ownerCt.items.items[1];
+							Admin.tagField(panel,$("div[data-role=tags]",$("#"+panel.getId())));
 						}
-					}),
-					new Ext.Panel({
-						html:'<div data-role="tags" data-search="'+searchUrl+'"></div>',
-						border:false,
-						listeners:{
-							render:function(panel) {
-								Admin.tagField(panel,$("div[data-role=tags]",$("#"+panel.getId())));
-							}
+					}
+				}),
+				new Ext.Panel({
+					html:'<div data-role="tags" data-search="'+searchUrl+'"></div>',
+					border:false,
+					listeners:{
+						render:function(panel) {
+							Admin.tagField(panel,$("div[data-role=tags]",$("#"+panel.getId())));
 						}
-					})
-				]
-			});
+					}
+				})
+			];
+			return new Ext.form.FieldContainer(params);
 		} else {
 			var panel = label;
 			var $container = name;
@@ -3200,9 +3200,8 @@ var Admin = {
 					});
 					
 					$input.on("blur",function(e) {
-						panel.ownerCt.items.items[0].getPanel().removeCls("x-form-tags");
-						
 						setTimeout(function($input) {
+							panel.ownerCt.items.items[0].getPanel().removeCls("x-form-tags");
 							var tag = $input.val().replace(/(#| )/,"");
 							
 							if (tag.length > 0) {
