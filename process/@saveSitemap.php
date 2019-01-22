@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2018. 10. 25.
+ * @modified 2019. 1. 22.
  */
 if (defined('__IM__') == false) exit;
 
@@ -142,15 +142,15 @@ if (count($errors) == 0) {
 			$this->IM->db()->update($this->IM->getTable('sitemap'),$insert)->where('domain',$domain)->where('language',$language)->where('menu',$oMenu)->where('page','')->execute();
 			$this->IM->db()->update($this->IM->getTable('sitemap'),array('menu'=>$menu))->where('domain',$domain)->where('language',$language)->where('menu',$oMenu)->execute();
 		} else {
-			$sort = $this->IM->db()->select($this->IM->getTable('sitemap'))->where('domain',$domain)->where('language',$language)->where('page','')->orderBy('sort','desc')->getOne();
-			$insert['sort'] = $sort == null ? 0 : $sort->sort + 1;
+			$sort = $this->IM->db()->select($this->IM->getTable('sitemap'))->where('domain',$domain)->where('language',$language)->where('page','')->count();
+			$insert['sort'] = $sort;
 			
 			$this->IM->db()->insert($this->IM->getTable('sitemap'),$insert)->execute();
 		}
 		
 		if ($type == 'PAGE' && $this->IM->db()->select($this->IM->getTable('sitemap'))->where('domain',$domain)->where('language',$language)->where('menu',$menu)->where('page',$context->page)->has() == false) {
-			$sort = $this->IM->db()->select($this->IM->getTable('sitemap'))->where('domain',$domain)->where('language',$language)->where('menu',$menu)->where('page','','!=')->orderBy('sort','desc')->getOne();
-			$insert['sort'] = $sort == null ? 0 : $sort->sort + 1;
+			$sort = $this->IM->db()->select($this->IM->getTable('sitemap'))->where('domain',$domain)->where('language',$language)->where('menu',$menu)->where('page','','!=')->count();
+			$insert['sort'] = $sort;
 			$insert['page'] = $context->page;
 			$insert['title'] = 'EMPTY PAGE';
 			$insert['layout'] = $layout;
@@ -185,8 +185,8 @@ if (count($errors) == 0) {
 				}
 			}
 		} else {
-			$sort = $this->IM->db()->select($this->IM->getTable('sitemap'))->where('domain',$domain)->where('language',$language)->where('menu',$oMenu)->where('page','','!=')->orderBy('sort','desc')->getOne();
-			$insert['sort'] = $sort == null ? 0 : $sort->sort + 1;
+			$sort = $this->IM->db()->select($this->IM->getTable('sitemap'))->where('domain',$domain)->where('language',$language)->where('menu',$oMenu)->where('page','','!=')->count();
+			$insert['sort'] = $sort;
 			$this->IM->db()->insert($this->IM->getTable('sitemap'),$insert)->execute();
 		}
 	}
