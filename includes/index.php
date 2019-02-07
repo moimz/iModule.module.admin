@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.0.0
- * @modified 2018. 3. 18.
+ * @modified 2019. 2. 7.
  */
 if (defined('__IM__') == false) exit;
 ?>
@@ -84,9 +84,7 @@ Ext.onReady(function () {
 					add:function(panel,content) {
 						if (content.is("tabpanel") == true) {
 							<?php if ($tab) { ?>
-							if (Ext.getCmp("<?php echo $tab; ?>")) {
-								setTimeout(function(tabs,tab) { if (tabs.getActiveTab().getId() == "<?php echo $tab; ?>") { tabs.fireEvent("tabchange",tabs,tab); } else { tabs.setActiveTab(tab); } },1000,Ext.getCmp(content.getId()),Ext.getCmp("<?php echo $tab; ?>"));
-							}
+							setTimeout(function(tabs,tab) { if (tabs.getActiveTab().getId() == tab) { tabs.fireEvent("tabchange",tabs,Ext.getCmp(tab)); } else if (Ext.getCmp("<?php echo $tab; ?>")) { tabs.setActiveTab(Ext.getCmp(tab)); } },1000,Ext.getCmp(content.getId()),"<?php echo $tab; ?>");
 							<?php } else { ?>
 							content.fireEvent("tabchange",content,content.getActiveTab());
 							<?php } ?>
