@@ -158,7 +158,7 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 							renderer:function(value,p,record) {
 								var sHTML = "";
 								if (record.data.is_hide == true) sHTML+= '<i class="icon xi xi-eye-slash"></i>';
-								if (record.data.is_footer == true) sHTML+= '<i class="icon xi xi-pin"></i>';
+								if (record.data.is_footer == true) sHTML+= '<i class="icon xi xi-down-square"></i>';
 								sHTML+= value;
 								
 								return sHTML;
@@ -307,7 +307,7 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 							renderer:function(value,p,record) {
 								var sHTML = "";
 								if (record.data.is_hide == true) sHTML+= '<i class="icon xi xi-eye-slash"></i>';
-								if (record.data.is_footer == true) sHTML+= '<i class="icon xi xi-pin"></i>';
+								if (record.data.is_footer == true) sHTML+= '<i class="icon xi xi-down-square"></i>';
 								sHTML+= value;
 								
 								return sHTML;
