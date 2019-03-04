@@ -9,7 +9,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2018. 3. 18.
+ * @modified 2019. 2. 26.
  */
 if (defined('__IM__') == false) exit;
 ?>
@@ -26,5 +26,5 @@ if (defined('__IM__') == false) exit;
 		<button type="submit"><i class="mi mi-go-bold"></i></button>
 	</div>
 	
-	<label class="autoLogin"><input type="checkbox" name="auto"> Keep me signed in</label>
+	<label class="remember"><input type="checkbox" name="remember"> Keep me signed in</label>
 </main>
