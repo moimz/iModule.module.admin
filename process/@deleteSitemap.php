@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2018. 8. 23.
+ * @modified 2019. 3. 14.
  */
 if (defined('__IM__') == false) exit;
 
@@ -32,11 +32,11 @@ $this->db()->delete($this->IM->getTable('sitemap'))->where('domain',$sitemap->do
 if ($sitemap->page == '') {
 	$this->db()->delete($this->IM->getTable('sitemap'))->where('domain',$sitemap->domain)->where('language',$sitemap->language)->where('menu',$sitemap->menu)->execute();
 } else {
-	$menu = $this->db()->select($this->IM->getTable('sitemap'))->where('domain',$sitemap->domain)->where('language',$sitemap->language)->where('menu',$sitemap->menu)->getOne();
+	$menu = $this->db()->select($this->IM->getTable('sitemap'))->where('domain',$sitemap->domain)->where('language',$sitemap->language)->where('menu',$sitemap->menu)->where('page','')->getOne();
 	if ($menu->type == 'PAGE') {
 		$context = json_decode($menu->context);
 		if ($context->page == $sitemap->page) {
-			$this->db()->update($this->IM->getTable('sitemap'),array('type'=>'EMPTY','context'=>'{}'))->where('domain',$sitemap->domain)->where('language',$sitemap->language)->where('menu',$sitemap->menu)->execute();
+			$this->db()->update($this->IM->getTable('sitemap'),array('type'=>'EMPTY','context'=>'{}'))->where('domain',$sitemap->domain)->where('language',$sitemap->language)->where('menu',$sitemap->menu)->where('page','')->execute();
 		}
 	}
 }
