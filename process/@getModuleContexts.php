@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2018. 9. 16.
+ * @modified 2019. 4. 9.
  */
 if (defined('__IM__') == false) exit;
 
@@ -17,5 +17,5 @@ $contexts = $module ? $this->Module->getContexts($module) : array();
 
 $results->success = true;
 $results->lists = $contexts;
-$results->count = count($contexts);
+$results->total = count($contexts);
 ?>
