@@ -8,24 +8,27 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.0.0
- * @modified 2019. 2. 7.
+ * @modified 2019. 4. 15.
  */
 if (defined('__IM__') == false) exit;
 ?>
 <header id="iModuleAdminHeader">
 	<h1><?php echo $this->getConfig('title'); ?></h1>
 	
-	<ul>
+	<ul data-role="menu">
 		<?php for ($i=0, $loop=count($menus);$i<$loop;$i++) { ?>
 		<li<?php echo $menus[$i]->menu == $this->menu && ($menus[$i]->page == false || $menus[$i]->page == $this->page) ? ' class="selected"' : ''; ?>><a href="<?php echo $this->getUrl($menus[$i]->menu,$menus[$i]->page,$menus[$i]->tab); ?>"><i class="<?php echo substr($menus[$i]->icon,0,2); ?> <?php echo $menus[$i]->icon; ?>"></i><?php echo $menus[$i]->title; ?></a></li>
 		<?php } ?>
 	</ul>
 	
-	<aside>
-		<button type="button" onclick="Admin.logout();"><?php echo $this->getText('button/logout'); ?></button>
-		<i class="photo" style="background-image:url(<?php echo $this->IM->getModule('member')->getMember()->photo; ?>);"></i>
-		<?php echo $this->IM->getModule('member')->getMember()->nickname; ?>
-	</aside>
+	<ul data-role="button">
+		<li data-role="name"><?php echo $this->IM->getModule('member')->getMember()->nickname; ?></li>
+		<li data-role="push">
+			<button type="button" data-action="push" style="background-image:url(<?php echo $this->IM->getModule('member')->getMember()->photo; ?>);"></button>
+			<label data-module="push" data-role="count">10</label>
+		</li>
+		<li data-role="logout"><button type="button" data-action="logout"><?php echo $this->getText('button/logout'); ?></button></li>
+	</ul>
 </header>
 
 <?php if (count($pages) > 0) { ?>
@@ -41,6 +44,21 @@ if (defined('__IM__') == false) exit;
 <footer id="iModuleAdminFooter">
 	Copyright (c) <?php echo date('Y'); ?> iModule v3.0, MIT License
 </footer>
+
+<div data-role="push">
+	<h6>
+		<div><?php echo $mPush->getText('text/push'); ?></div>
+		
+		<div class="button">
+			<button type="button" onclick="Push.readAll();"><?php echo $mPush->getText('button/read_all'); ?></button>
+			<button type="button" onclick="Push.settingPopup();"><?php echo $mPush->getText('button/setting'); ?></button>
+		</div>
+	</h6>
+	
+	<ul data-module="push"></ul>
+	
+	<button type="button" data-action="show_all" onclick="Push.listPopup();"><?php echo $mPush->getText('button/show_all'); ?></button>
+</div>
 
 <script>
 Ext.onReady(function () {

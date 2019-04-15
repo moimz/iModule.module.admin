@@ -9,7 +9,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2018. 6. 21.
+ * @modified 2019. 4. 15.
  */
 class ModuleAdmin {
 	/**
@@ -424,6 +424,7 @@ class ModuleAdmin {
 		$this->IM->loadWebFont('FontAwesome');
 		$this->IM->loadWebFont('XEIcon');
 		$this->IM->loadWebFont('XEIcon2');
+		$this->IM->loadWebFont('Roboto');
 		
 		/**
 		 * 관리자메뉴를 구성한다.
@@ -466,6 +467,7 @@ class ModuleAdmin {
 		 */
 		$IM = $this->IM;
 		$Admin = $this;
+		$mPush = $this->IM->getModule('push');
 		
 		ob_start();
 		

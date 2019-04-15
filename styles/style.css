@@ -7,24 +7,53 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.0.0
- * @modified 2018. 9. 11.
+ * @modified 2019. 4. 15.
  */
 html {width:100%; height:100%; -webkit-font-smoothing:antialiased;}
 header {background:#2d3845; height:52px; font-size:0px;}
 header > h1 {display:inline-block; width:230px; height:52px; line-height:52px; font-size:16px; font-weight:bold; padding-left:35px; font-family:OpenSans, NanumSquare; color:#fff; letter-spacing:-1px; vertical-align:middle;background:#333f4d url(//www.moimz.com/modules/moimz/images/iModule/emblem.png) no-repeat 10px 50%; background-size:20px;}
 header > h1 > i {color:#4cb9f3; margin-right:8px;}
 header > h1 > small {font-size:15px; font-weight:300; color:#aeb3b8; letter-spacing:0px;}
-header > ul {list-style:none; display:inline-block; width:calc(100% - 230px - 230px); vertical-align:middle; font-size:0px;}
-header > ul > li {display:inline-block; height:52px; border-bottom:2px solid transparent;}
-header > ul > li > a {display:block; height:50px; line-height:52px; font-size:15px; padding:0px 18px; color:#aeb3b8; text-decoration:none;}
-header > ul > li > a > i {margin-right:8px; font-size:14px; float:left; height:50px; line-height:52px;}
-header > ul > li:hover {background:#000;}
-header > ul > li.selected {border-color:#4cb9f3; background:#000;}
-header > ul > li.selected > a {color:#fff;}
-header > ul > li.selected > a > i {color:#4cb9f3;}
-header > aside {display:inline-block; width:230px; height:52px; vertical-align:middle; white-space:nowrap; text-overflow:ellipsis; overflow:hidden; font-size:14px; font-weight:bold; color:rgba(255,255,255,0.8); line-height:52px; text-align:right; box-sizing:border-box; padding:0px 10px;}
-header > aside > i.photo {display:inline-block; margin:10px 10px 10px 0px; width:30px; height:30px; border:1px solid #44535d; vertical-align:middle; background-size:cover; background-position:50% 50%; background-repeat:no-repeat; border-radius:50%;}
-header > aside > button {float:right; background:#B71C1C; color:#fff; height:32px; line-height:32px; border:0; padding:0px 10px; margin:10px 0px 10px 15px; border-radius:3px; cursor:pointer; font-weight:bold; font-family:inherit;}
+header > ul[data-role=menu] {list-style:none; display:inline-block; width:calc(100% - 230px - 230px); height:50px; vertical-align:middle; font-size:0px;}
+header > ul[data-role=menu] > li {display:inline-block; height:52px; border-bottom:2px solid transparent;}
+header > ul[data-role=menu] > li > a {display:block; height:50px; line-height:52px; font-size:15px; padding:0px 18px; color:#aeb3b8; text-decoration:none;}
+header > ul[data-role=menu] > li > a > i {margin-right:8px; font-size:14px; float:left; height:50px; line-height:52px;}
+header > ul[data-role=menu] > li:hover {background:#000;}
+header > ul[data-role=menu] > li.selected {border-color:#4cb9f3; background:#000;}
+header > ul[data-role=menu] > li.selected > a {color:#fff;}
+header > ul[data-role=menu] > li.selected > a > i {color:#4cb9f3;}
+header > ul[data-role=button] {display:inline-block; width:230px; height:50px; vertical-align:middle; white-space:nowrap; text-overflow:ellipsis; font-size:0; font-weight:bold; box-sizing:border-box; padding:5px 10px; text-align:right;}
+header > ul[data-role=button] > li {height:40px; display:inline-block; vertical-align:middle;}
+header > ul[data-role=button] > li[data-role=name] {font-size:14px; line-height:40px; color:rgba(255,255,255,0.8);}
+header > ul[data-role=button] > li[data-role=push] {width:50px; height:40px; position:relative;}
+header > ul[data-role=button] > li[data-role=push] > button {display:inline-block; margin:5px 10px; width:30px; height:30px; border:1px solid #44535d; background-size:cover; background-position:50% 50%; background-repeat:no-repeat; border-radius:50%; cursor:pointer;}
+header > ul[data-role=button] > li[data-role=push].opened:before {border-bottom:5px solid #fff; border-left:5px solid transparent; border-right:5px solid transparent; content:" "; position:absolute; bottom:0px; left:50%; margin-left:-5px;}
+header > ul[data-role=button] > li[data-role=push] > label {position:absolute; z-index:1; max-width:80%; top:0px; left:30px; height:18px; min-width:18px; border-radius:9px; box-sizing:border-box; padding:0px 5px; font-size:11px; font-family:Roboto; background:#F44336; color:#fff; line-height:18px; text-align:center; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;}
+header > ul[data-role=button] > li[data-role=push] > label:empty {display:none;}
+
+div[data-role=push] {position:absolute; top:46px; right:10px; width:300px; background:#fff; box-sizing:border-box; z-index:5; box-shadow:0px 1px 4px rgba(0,0,0,0.2); display:none;}
+div[data-role=push] > h6 {font-size:0; height:30px; padding:0px 8px; margin:0;}
+div[data-role=push] > h6 > div {display:inline-block; height:30px; line-height:30px; font-size:12px;}
+div[data-role=push] > h6 > div.button {float:right; font-size:0; line-height:1;}
+div[data-role=push] > h6 > div.button > button {border:0; background:transparent; height:20px; line-height:20px; margin:5px; color:#2196F3; font-size:12px; position:relative; cursor:pointer;}
+div[data-role=push] > h6 > div.button > button:after {width:2px; height:2px; background:#ccc; position:absolute; top:9px; right:-6px; content:" ";}
+div[data-role=push] > h6 > div.button > button:last-child {margin-right:0;}
+div[data-role=push] > h6 > div.button > button:last-child:after {display:none;}
+
+div[data-role=push] > ul {list-style:none; width:100%; display:block;}
+div[data-role=push] > ul > li {border-top:1px solid #dddfe2; font-size:0;}
+div[data-role=push] > ul > li.title {background:#f5f6f7; padding-left:8px; height:24px; line-height:24px; color:#666; font-size:12px;}
+div[data-role=push] > ul > li.loading {height:100px; line-height:100px; text-align:center; color:#999; font-size:16px;}
+div[data-role=push] > ul > li.message {height:100px; line-height:100px; text-align:center; color:#999; font-size:12px;}
+div[data-role=push] > ul > li > button {display:block; width:100%; border:0; padding:6px 8px; background:transparent; cursor:pointer; font-size:0; box-sizing:border-box; text-align:left;}
+div[data-role=push] > ul > li > button > i.icon {width:42px; height:42px; border-radius:50%; display:inline-block; border:1px solid #ccc; background-color:#fff; background-size:cover; background-repeat:no-repeat; background-position:50% 50%; box-sizing:border-box; margin-right:10px; vertical-align:top;}
+div[data-role=push] > ul > li > button > div.text {width:calc(100% - 52px); display:inline-block; line-height:20px; padding:1px 0px; font-size:12px; color:#222; vertical-align:top;}
+div[data-role=push] > ul > li > button > div.text > time {display:block; height:20px; line-height:20px; color:#666;}
+div[data-role=push] > ul > li > button.unread {background:#edf2fa;}
+div[data-role=push] > button[data-action] {width:100%; height:30px; line-height:30px; text-align:center; text-decoration:none; color:#2196F3; font-size:12px; display:block; cursor:pointer; border:0; background:transparent; border-top:1px solid #dddfe2;}
+
+
+header > ul[data-role=button] > li[data-role=logout] > button {background:#B71C1C; color:#fff; height:30px; line-height:30px; border:0; padding:0px 10px; margin:5px 0px 5px 5px; border-radius:3px; cursor:pointer; font-weight:bold; font-family:inherit; font-size:14px;}
 
 aside > ul {list-style:none; display:block; vertical-align:middle; font-size:0px;}
 aside > ul > li {display:block; background:#f4f4f4; border-left:3px solid transparent;}

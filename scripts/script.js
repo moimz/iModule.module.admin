@@ -7,7 +7,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.0.0
- * @modified 2019. 2. 6.
+ * @modified 2019. 4. 15.
  */
 var Admin = {
 	/**
@@ -50,16 +50,6 @@ var Admin = {
 				});
 			} else {
 				$("main").addClass("error").shake();
-			}
-		});
-	},
-	/**
-	 * 로그아웃
-	 */
-	logout:function() {
-		$.send(ENV.getProcessUrl("member","logout"),function(result) {
-			if (result.success == true) {
-				location.replace(ENV.DIR + "/admin/");
 			}
 		});
 	},
@@ -3943,3 +3933,119 @@ var Admin = {
 		Ext.getCmp(id).expand();
 	}
 };
+
+$(document).ready(function() {
+	$("button[data-action]",$("header")).on("click",function(e) {
+		var $button = $(this);
+		var action = $button.attr("data-action");
+		
+		if (action == "push") {
+			var $push = $("div[data-role=push]");
+			if ($push.is(":visible") == true) {
+				$button.parent().removeClass("opened");
+				$push.hide();
+				return;
+			}
+			
+			var $lists = $("ul",$push);
+			$lists.empty();
+			$lists.append($("<li>").addClass("loading").append($("<i>").addClass("mi mi-loading")));
+			
+			$button.parent().addClass("opened");
+			$push.show();
+			
+			Push.getRecently(20,function(result) {
+				$lists.empty();
+				
+				if (result.success == true) {
+					var news = [];
+					var previous = [];
+					for (var i=0, loop=result.lists.length;i<loop;i++) {
+						if (result.lists[i].is_checked == false) {
+							news.push(result.lists[i]);
+						} else {
+							previous.push(result.lists[i]);
+						}
+					}
+					
+					if (news.length > 0) {
+						$lists.append($("<li>").addClass("title").html(Push.getText("text/new")));
+						for (var i=0, loop=news.length;i<loop;i++) {
+							var item = news[i];
+							var $button = $("<button>").attr("type","button").data("item",item);
+							if (item.is_readed == false) $button.addClass("unread");
+							
+							var $icon = $("<i>").addClass("icon");
+							$icon.css("backgroundImage","url(" + item.icon + ")");
+							$button.append($icon);
+							
+							var $text = $("<div>").addClass("text");
+							$text.append(item.message);
+							$text.append($("<time>").html(moment(item.reg_date * 1000).locale($("html").attr("lang")).fromNow()));
+							$button.append($text);
+							
+							$button.on("click",function(e) {
+								var item = $button.data("item");
+								Push.view(item.module,item.type,item.idx);
+							});
+							
+							$lists.append($("<li>").append($button));
+						}
+					}
+					
+					if (previous.length > 0) {
+						$lists.append($("<li>").addClass("title").html(Push.getText("text/previous")));
+						for (var i=0, loop=previous.length;i<loop;i++) {
+							var item = previous[i];
+							var $button = $("<button>").attr("type","button").data("item",item);
+							if (item.is_readed == false) $button.addClass("unread");
+							
+							var $icon = $("<i>").addClass("icon");
+							$icon.css("backgroundImage","url(" + item.icon + ")");
+							$button.append($icon);
+							
+							var $text = $("<div>").addClass("text");
+							$text.append(item.message);
+							$text.append($("<time>").html(moment(item.reg_date * 1000).locale($("html").attr("lang")).fromNow()));
+							$button.append($text);
+							
+							$button.on("click",function(e) {
+								var item = $button.data("item");
+								Push.view(item.module,item.type,item.idx);
+							});
+							
+							$lists.append($("<li>").append($button));
+						}
+					}
+				} else {
+					$lists.append($("<li>").addClass("message").html(result.message));
+					return false;
+				}
+			});
+			
+			$push.on("click",function(e) {
+				e.stopImmediatePropagation();
+			});
+			
+			e.stopImmediatePropagation();
+		}
+		
+		if (action == "logout") {
+			$.send(ENV.getProcessUrl("member","logout"),function(result) {
+				if (result.success == true) {
+					location.replace(ENV.DIR + "/admin/");
+				}
+			});
+		}
+	});
+	
+	$(document).on("click",function() {
+		var $push = $("div[data-role=push]");
+		var $button = $("button[data-action=push]",$("header"));
+		
+		if ($push.is(":visible") == true) {
+			$button.parent().removeClass("opened");
+			$push.hide();
+		}
+	});
+});
