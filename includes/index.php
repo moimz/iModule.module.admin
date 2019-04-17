@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.0.0
- * @modified 2019. 4. 15.
+ * @modified 2019. 4. 17.
  */
 if (defined('__IM__') == false) exit;
 ?>
@@ -65,6 +65,8 @@ Ext.onReady(function () {
 	new Ext.Viewport({
 		id:"AdminViewport",
 		layout:{type:"border"},
+		tab:"<?php echo $tab ? $tab : 'null'; ?>",
+		view:"<?php echo $view ? $view : 'null'; ?>",
 		items:[
 			new Ext.Panel({
 				region:"north",
@@ -97,20 +99,29 @@ Ext.onReady(function () {
 				<?php } ?>
 				border:false,
 				layout:"fit",
+				tab:"<?php echo $tab ? $tab : 'null'; ?>",
 				items:[],
 				listeners:{
 					add:function(panel,content) {
 						if (content.is("tabpanel") == true) {
-							<?php if ($tab) { ?>
-							setTimeout(function(tabs,tab) { if (tabs.getActiveTab().getId() == tab) { tabs.fireEvent("tabchange",tabs,Ext.getCmp(tab)); } else if (Ext.getCmp("<?php echo $tab; ?>")) { tabs.setActiveTab(Ext.getCmp(tab)); } },1000,Ext.getCmp(content.getId()),"<?php echo $tab; ?>");
-							<?php } else { ?>
-							content.fireEvent("tabchange",content,content.getActiveTab());
-							<?php } ?>
+							if (Ext.getCmp("iModuleAdminPanel").tab != null) {
+								setTimeout(function(tabs,tab) {
+									if (tabs.getActiveTab().getId() == tab) {
+										tabs.fireEvent("tabchange",tabs,Ext.getCmp(tab));
+									} else if (Ext.getCmp(tab)) {
+										tabs.setActiveTab(Ext.getCmp(tab));
+									}
+									
+									Ext.getCmp("iModuleAdminPanel").tab = null;
+								},100,Ext.getCmp(content.getId()),panel.tab);
+							} else {
+								content.fireEvent("tabchange",content,content.getActiveTab());
+							}
 							
 							if (Admin.getMenu() == "modules") {
 								content.on("tabchange",function(tabs,tab) {
 									if (Admin.getTab() != tab.getId() && history.replaceState) {
-										history.replaceState({tab:tab.getId()},tab.getTitle()+" - "+Ext.getCmp("iModuleAdminPanel").getTitle(),"/admin/modules/"+Admin.getPage()+"/"+tab.getId());
+										if (Ext.getCmp("iModuleAdminPanel").tab == null) history.replaceState({tab:tab.getId()},tab.getTitle()+" - "+Ext.getCmp("iModuleAdminPanel").getTitle(),"/admin/modules/"+Admin.getPage()+"/"+tab.getId());
 										document.title = tab.getTitle()+" - <?php echo $pageTitle->title; ?>";
 									}
 								});
@@ -119,7 +130,7 @@ Ext.onReady(function () {
 									var tab = tabs.getActiveTab();
 									
 									if (Admin.getTab() != tab.getId() && history.replaceState) {
-										history.replaceState({tab:tab.getId()},tab.getTitle()+" - "+Ext.getCmp("iModuleAdminPanel").getTitle(),"/admin/modules/"+Admin.getPage()+"/"+tab.getId());
+										if (Ext.getCmp("iModuleAdminPanel").tab == null) history.replaceState({tab:tab.getId()},tab.getTitle()+" - "+Ext.getCmp("iModuleAdminPanel").getTitle(),"/admin/modules/"+Admin.getPage()+"/"+tab.getId());
 									}
 									
 									document.title = tab.getTitle()+" - <?php echo $pageTitle->title; ?>";

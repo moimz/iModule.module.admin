@@ -9,7 +9,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2019. 4. 15.
+ * @modified 2019. 4. 17.
  */
 class ModuleAdmin {
 	/**
@@ -27,11 +27,12 @@ class ModuleAdmin {
 	
 	/**
 	 * 사이트관리자 주소에 의해 정의되는 사이트설정변수
-	 * http://$domain/admin/$menu/$view/$tab
+	 * http://$domain/admin/$menu/$page/$tab/$view
 	 */
 	public $menu = null;
 	public $page = null;
 	public $tab = null;
+	public $view = null;
 	
 	/**
 	 * 언어셋을 정의한다.
@@ -461,6 +462,7 @@ class ModuleAdmin {
 		$panel = $this->getPanelContext();
 		
 		$tab = Request('tab');
+		$view = Request('view');
 		
 		/**
 		 * 컨텍스트 PHP 파일에서 iModule 코어클래스 및 관리자클래스에 접근하기 위한 변수 선언
