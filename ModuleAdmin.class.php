@@ -9,7 +9,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2019. 4. 17.
+ * @modified 2019. 4. 20.
  */
 class ModuleAdmin {
 	/**
@@ -970,6 +970,18 @@ class ModuleAdmin {
 		$content->text = $this->IM->getModule('wysiwyg')->encodeContent($text,$content->files);
 		
 		return $content;
+	}
+	
+	/**
+	 * 다른 모듈의 관리자 스크립트를 불러온다.
+	 *
+	 * @param string $module 모듈명
+	 */
+	function loadModule($module) {
+		if ($this->IM->getModule()->isInstalled($module) == true) {
+			$this->IM->addHeadResource('script',$this->IM->getModule($module)->getModule()->getDir().'/admin/scripts/script.js');
+			$this->IM->loadLanguage('module',$module,$this->IM->language);
+		}
 	}
 	
 	function doLayout() {
