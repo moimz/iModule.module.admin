@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2019. 3. 14.
+ * @modified 2019. 4. 20.
  */
 if (defined('__IM__') == false) exit;
 
@@ -27,7 +27,13 @@ if ($sitemap == null) {
 	return;
 }
 
-$this->db()->delete($this->IM->getTable('sitemap'))->where('domain',$sitemap->domain)->where('language',$sitemap->language)->where('menu',$sitemap->menu)->where('page',$sitemap->page)->execute();
+if ($sitemap->type == 'GROUPSTART' || $sitemap->type == 'GROUPEND') {
+	$group = substr($sitemap->page,1);
+	$this->db()->delete($this->IM->getTable('sitemap'))->where('domain',$sitemap->domain)->where('language',$sitemap->language)->where('menu',$sitemap->menu)->where('page','^'.$group)->execute();
+	$this->db()->delete($this->IM->getTable('sitemap'))->where('domain',$sitemap->domain)->where('language',$sitemap->language)->where('menu',$sitemap->menu)->where('page','$'.$group)->execute();
+} else {
+	$this->db()->delete($this->IM->getTable('sitemap'))->where('domain',$sitemap->domain)->where('language',$sitemap->language)->where('menu',$sitemap->menu)->where('page',$sitemap->page)->execute();
+}
 
 if ($sitemap->page == '') {
 	$this->db()->delete($this->IM->getTable('sitemap'))->where('domain',$sitemap->domain)->where('language',$sitemap->language)->where('menu',$sitemap->menu)->execute();

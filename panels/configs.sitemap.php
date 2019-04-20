@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.0.0
- * @modified 2019. 2. 6.
+ * @modified 2019. 4. 20.
  */
 if (defined('__IM__') == false) exit;
 ?>
@@ -101,6 +101,7 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 									Admin.configs.sitemap.menu();
 								}
 							}),
+							"->",
 							new Ext.Button({
 								iconCls:"xi xi-download-my",
 								text:Admin.getText("configs/sitemap/load_menu"),
@@ -259,6 +260,14 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 								}
 							}),
 							new Ext.Button({
+								iconCls:"xi xi-folder-plus",
+								text:Admin.getText("configs/sitemap/add_group"),
+								handler:function() {
+									Admin.configs.sitemap.group();
+								}
+							}),
+							"->",
+							new Ext.Button({
 								iconCls:"xi xi-download-my",
 								text:Admin.getText("configs/sitemap/load_page"),
 								handler:function() {
@@ -300,12 +309,24 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 								}
 							}
 						}),
+						is_grouping:false,
 						columns:[{
 							text:Admin.getText("configs/sitemap/columns/page"),
 							width:120,
 							dataIndex:"page",
 							renderer:function(value,p,record) {
+								if (record.data.type == "GROUPSTART") {
+									Ext.getCmp("PageList").is_grouping = true;
+									return '<i class="icon xi xi-folder-open"></i>' + Admin.getText("configs/sitemap/group_start");
+								}
+								
+								if (record.data.type == "GROUPEND") {
+									Ext.getCmp("PageList").is_grouping = false;
+									return '<i class="tree tree-end"></i>' + Admin.getText("configs/sitemap/group_end");
+								}
+								
 								var sHTML = "";
+								if (Ext.getCmp("PageList").is_grouping == true) sHTML+= '<i class="tree tree-branch"></i>';
 								if (record.data.is_hide == true) sHTML+= '<i class="icon xi xi-eye-slash"></i>';
 								if (record.data.is_footer == true) sHTML+= '<i class="icon xi xi-down-square"></i>';
 								sHTML+= value;
@@ -322,6 +343,7 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 							width:80,
 							dataIndex:"type",
 							renderer:function(value) {
+								if (value.indexOf("GROUP") === 0) return;
 								return Admin.getText("configs/sitemap/type/"+value);
 							}
 						},{
@@ -334,15 +356,45 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 							new Ext.Button({
 								iconCls:"fa fa-caret-up",
 								handler:function() {
+									var selected = Ext.getCmp("PageList").getSelectionModel().getSelection();
+									if (selected.length == 0) return;
+									
+									var type = selected[0].data.type;
+									if (type.indexOf("GROUP") === 0) {
+										var sort = selected[0].data.sort;
+										if (sort > 0 && Ext.getCmp("PageList").getStore().getAt(sort-1).get("type").indexOf("GROUP") === 0) return;
+									}
+									
 									Admin.gridSort(Ext.getCmp("PageList"),"sort","up");
-									Admin.gridSave(Ext.getCmp("PageList"),ENV.getProcessUrl("admin","@saveSitemapSort"),500);
+									Admin.gridSave(Ext.getCmp("PageList"),ENV.getProcessUrl("admin","@saveSitemapSort"),500,function() {
+										Ext.getCmp("PageList").getStore().sort("sort","ASC");
+									});
+									
+									if (type.indexOf("GROUP") === 0) {
+										Ext.getCmp("PageList").getStore().sort("sort","ASC");
+									}
 								}
 							}),
 							new Ext.Button({
 								iconCls:"fa fa-caret-down",
 								handler:function() {
+									var selected = Ext.getCmp("PageList").getSelectionModel().getSelection();
+									if (selected.length == 0) return;
+									
+									var type = selected[0].data.type;
+									if (type.indexOf("GROUP") === 0) {
+										var sort = selected[0].data.sort;
+										if (sort < Ext.getCmp("PageList").getStore().getCount() - 1 && Ext.getCmp("PageList").getStore().getAt(sort+1).get("type").indexOf("GROUP") === 0) return;
+									}
+									
 									Admin.gridSort(Ext.getCmp("PageList"),"sort","down");
-									Admin.gridSave(Ext.getCmp("PageList"),ENV.getProcessUrl("admin","@saveSitemapSort"),500);
+									Admin.gridSave(Ext.getCmp("PageList"),ENV.getProcessUrl("admin","@saveSitemapSort"),500,function() {
+										Ext.getCmp("PageList").getStore().sort("sort","ASC");
+									});
+									
+									if (type.indexOf("GROUP") === 0) {
+										Ext.getCmp("PageList").getStore().sort("sort","ASC");
+									}
 								}
 							}),
 							"-",
@@ -357,28 +409,50 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 						],
 						listeners:{
 							itemdblclick:function(grid,record) {
-								Admin.configs.sitemap.page(record.data.page);
+								if (record.data.type.indexOf("GROUP") === 0) {
+									Admin.configs.sitemap.group(record.data.page.substr(1));
+								} else {
+									Admin.configs.sitemap.page(record.data.page);
+								}
 							},
 							itemcontextmenu:function(grid,record,item,index,e) {
 								var menu = new Ext.menu.Menu();
 			
 								menu.add('<div class="x-menu-title">'+record.data.title+'</div>');
 								
-								menu.add({
-									iconCls:"xi xi-form",
-									text:"페이지수정",
-									handler:function() {
-										Admin.configs.sitemap.page(record.data.page);
-									}
-								});
-								
-								menu.add({
-									iconCls:"mi mi-trash",
-									text:"페이지삭제",
-									handler:function() {
-										Admin.configs.sitemap.delete(record.data.menu,record.data.page);
-									}
-								});
+								if (record.data.type.indexOf("GROUP") === 0) {
+									menu.add({
+										iconCls:"xi xi-folder-open",
+										text:"그룹수정",
+										handler:function() {
+											Admin.configs.sitemap.group(record.data.page.substr(1));
+										}
+									});
+									
+									menu.add({
+										iconCls:"mi mi-trash",
+										text:"그룹삭제",
+										handler:function() {
+											Admin.configs.sitemap.delete(record.data.menu,record.data.page);
+										}
+									});
+								} else {
+									menu.add({
+										iconCls:"xi xi-form",
+										text:"페이지수정",
+										handler:function() {
+											Admin.configs.sitemap.page(record.data.page);
+										}
+									});
+									
+									menu.add({
+										iconCls:"mi mi-trash",
+										text:"페이지삭제",
+										handler:function() {
+											Admin.configs.sitemap.delete(record.data.menu,record.data.page);
+										}
+									});
+								}
 								
 								e.stopEvent();
 								menu.showAt(e.getXY());

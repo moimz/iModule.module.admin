@@ -8,13 +8,14 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2019. 4. 9.
+ * @modified 2019. 4. 20.
  */
 if (defined('__IM__') == false) exit;
 
 $domain = Request('domain');
 $language = Request('language');
 $menu = Request('menu');
+$mode = Request('mode');
 
 /**
  * 사이트정보를 가져온다.
@@ -29,9 +30,12 @@ if (strpos($site->templet,'#') === 0 && $this->IM->getModule()->isSitemap(substr
 	$lists = $this->IM->db()->select($this->IM->getTable('sitemap'))->where('domain',$domain)->where('language',$language);
 	if ($menu == null) $lists->where('page','');
 	else $lists->where('menu',$menu)->where('page','','!=');
+	if ($mode == 'subpage') $lists->where('type','GROUPSTART','!=')->where('type','GROUPEND','!=');
 	$lists = $lists->orderBy('sort','asc')->get();
 	
+	$is_grouping = false;
 	for ($i=0, $loop=count($lists);$i<$loop;$i++) {
+		if ($lists[$i]->type == 'GROUPSTART') $is_grouping = true;
 		$lists[$i]->url = ($site->is_ssl == 'TRUE' ? 'https://' : 'http://').$site->domain.__IM_DIR__.'/'.$site->language.'/';
 		if ($lists[$i]->page) $lists[$i]->url.= $lists[$i]->menu.'/';
 		
@@ -50,6 +54,8 @@ if (strpos($site->templet,'#') === 0 && $this->IM->getModule()->isSitemap(substr
 			$lists[$i]->context = $context->link;
 		} elseif ($lists[$i]->type == 'HTML') {
 			$lists[$i]->context = $context != null && isset($context->html) == true && isset($context->css) == true ? '본문 : '.GetFileSize(strlen($context->html)).' / 스타일시트 : '.GetFileSize(strlen($context->css)) : '내용없음';
+		} else {
+			$lists[$i]->context = '';
 		}
 		
 		$header = json_decode($lists[$i]->header);
@@ -63,10 +69,13 @@ if (strpos($site->templet,'#') === 0 && $this->IM->getModule()->isSitemap(substr
 			$this->db()->update($this->IM->getTable('sitemap'),array('header'=>json_encode($header),'footer'=>json_encode($footer)))->where('domain',$domain)->where('language',$language)->where('menu',$lists[$i]->menu)->where('page',$lists[$i]->page)->execute();
 		}
 		
-		if ($lists[$i]->sort != $i) {
+		if ($mode != 'subpage' && $lists[$i]->sort != $i) {
 			$this->IM->db()->update($this->IM->getTable('sitemap'),array('sort'=>$i))->where('domain',$domain)->where('language',$language)->where('menu',$lists[$i]->menu)->where('page',$lists[$i]->page)->execute();
 			$lists[$i]->sort = $i;
 		}
+		
+		$lists[$i]->is_grouping = $is_grouping;
+		if ($lists[$i]->type == 'GROUPEND') $is_grouping = false;
 	}
 	
 	$results->success = true;

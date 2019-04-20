@@ -7,7 +7,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.0.0
- * @modified 2019. 4. 15.
+ * @modified 2019. 4. 20.
  */
 var Admin = {
 	/**
@@ -1379,6 +1379,177 @@ var Admin = {
 				Admin.configs.sitemap.add("page",page);
 			},
 			/**
+			 * 사이트 2차메뉴에 그룹을 추가/수정한다.
+			 *
+			 * @param string group(옵션) 그룹고유값
+			 */
+			group:function(group) {
+				/**
+				 * 선택된 사이트 정보를 가져온다.
+				 */
+				var site = Ext.getCmp("SiteList").getValue().split("@");
+				
+				var domain = site[0];
+				var language = site[1];
+				
+				var menu = Ext.getCmp("MenuList").getSelection().shift().data.menu;
+				var group = group ? group : "";
+				
+				new Ext.Window({
+					id:"SitemapConfigWindow",
+					title:(group ? Admin.getText("configs/sitemap/window/group_modify") : Admin.getText("configs/sitemap/window/group_add")),
+					width:500,
+					modal:true,
+					border:false,
+					resizeable:false,
+					autoScroll:true,
+					items:[
+						new Ext.form.Panel({
+							id:"SitemapConfigForm",
+							border:false,
+							bodyPadding:"10 10 5 10",
+							fieldDefaults:{labelAlign:"right",labelWidth:100,anchor:"100%",allowBlank:false},
+							items:[
+								new Ext.form.Hidden({
+									name:"domain",
+									value:domain
+								}),
+								new Ext.form.Hidden({
+									name:"language",
+									value:language
+								}),
+								new Ext.form.Hidden({
+									name:"menu",
+									value:menu,
+									allowBlank:true
+								}),
+								new Ext.form.Hidden({
+									name:"group",
+									value:group,
+									allowBlank:true
+								}),
+								new Ext.form.TextField({
+									name:"title",
+									emptyText:Admin.getText("configs/sitemap/form/group_title")
+								}),
+								new Ext.form.FieldContainer({
+									layout:"hbox",
+									items:[
+										new Ext.form.ComboBox({
+											name:"icon_type",
+											store:new Ext.data.ArrayStore({
+												fields:["display","value"],
+												data:[["FontAwesome","fa"],["XEIcon","xi"],["XEIcon2","xi2"],["Icon Image","image"]]
+											}),
+											allowBlank:true,
+											displayField:"display",
+											valueField:"value",
+											value:"",
+											width:140,
+											margin:"0 5 0 0",
+											emptyText:Admin.getText("configs/sitemap/form/icon_type"),
+											listeners:{
+												change:function(form,value) {
+													if (value) {
+														Ext.getCmp("SitemapConfigForm").getForm().findField("icon").enable();
+														Ext.getCmp("SitemapConfigForm").getForm().findField("icon").setEmptyText(Admin.getText("configs/sitemap/form/icon_"+value+"_help"));
+														if (value != "image") Ext.getCmp("SitemapIconSearchButton").show();
+														else Ext.getCmp("SitemapIconSearchButton").hide();
+													} else {
+														Ext.getCmp("SitemapConfigForm").getForm().findField("icon").disable();
+														Ext.getCmp("SitemapConfigForm").getForm().findField("icon").setEmptyText(Admin.getText("configs/sitemap/form/icon_help"));
+													}
+												}
+											}
+										}),
+										new Ext.form.TextField({
+											name:"icon",
+											flex:1,
+											allowBlank:true,
+											disabled:true,
+											emptyText:Admin.getText("configs/sitemap/form/icon_help")
+										}),
+										new Ext.Button({
+											id:"SitemapIconSearchButton",
+											style:{marginLeft:"5px"},
+											hidden:true,
+											text:Admin.getText("configs/sitemap/form/icon_search"),
+											handler:function() {
+												var iconType = Ext.getCmp("SitemapConfigForm").getForm().findField("icon_type").getValue();
+												if (iconType == "fa") window.open("https://fontawesome.com/v4.7.0/icons/");
+												if (iconType == "xi") window.open("https://xpressengine.github.io/XEIcon/library-1.0.4.html");
+												if (iconType == "xi2") window.open("https://xpressengine.github.io/XEIcon/library-2.3.3.html");
+											}
+										})
+									],
+									afterBodyEl:'<div class="x-form-help">' + Admin.getText("configs/sitemap/form/group_help") + '</div>'
+								})
+							],
+							buttons:[
+								new Ext.Button({
+									text:Admin.getText("button/confirm"),
+									handler:function() {
+										Ext.getCmp("SitemapConfigForm").getForm().submit({
+											url:ENV.getProcessUrl("admin","@saveGroup"),
+											submitEmptyText:false,
+											waitTitle:Admin.getText("action/wait"),
+											waitMsg:Admin.getText("action/saving"),
+											success:function(form,action) {
+												Ext.Msg.show({title:Admin.getText("alert/info"),msg:Admin.getText("action/saved"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO,fn:function(button) {
+													var group = action.result.group;
+													Ext.getCmp("PageList").selected = "^"+group;
+													Ext.getCmp("PageList").getStore().reload();
+													Ext.getCmp("SitemapConfigWindow").close();
+												}});
+											},
+											failure:function(form,action) {
+												if (action.result) {
+													if (action.result.message) {
+														Ext.Msg.show({title:Admin.getText("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+													} else {
+														Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("DATA_SAVE_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+													}
+												} else {
+													Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("INVALID_FORM_DATA"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+												}
+											}
+										});
+									}
+								}),
+								new Ext.Button({
+									text:Admin.getText("button/cancel"),
+									handler:function() {
+										Ext.getCmp("SitemapConfigWindow").close();
+									}
+								})
+							]
+						})
+					],
+					listeners:{
+						show:function() {
+							if (group) {
+								Ext.getCmp("SitemapConfigForm").getForm().load({
+									url:ENV.getProcessUrl("admin","@getMenu"),
+									params:{domain:domain,language:language,menu:menu,page:"^"+group},
+									waitTitle:Admin.getText("action/wait"),
+									waitMsg:Admin.getText("action/loading"),
+									success:function(form,action) {
+									},
+									failure:function(form,action) {
+										if (action.result && action.result.message) {
+											Ext.Msg.show({title:Admin.getText("alert/error"),msg:action.result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+										} else {
+											Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("DATA_LOAD_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+										}
+										Ext.getCmp("SitemapConfigWindow").close();
+									}
+								});
+							}
+						}
+					}
+				}).show();
+			},
+			/**
 			 * 사이트 1차 메뉴를 다른 사이트로 부터 불러온다.
 			 */
 			loadMenu:function() {
@@ -1955,7 +2126,7 @@ var Admin = {
 														proxy:{
 															type:"ajax",
 															url:ENV.getProcessUrl("admin","@getSitemap"),
-															extraParams:{domain:domain,language:language,menu:menu},
+															extraParams:{domain:domain,language:language,menu:menu,mode:"subpage"},
 															reader:{type:"json"}
 														},
 														remoteSort:false,
@@ -2169,7 +2340,13 @@ var Admin = {
 				var domain = site[0];
 				var language = site[1];
 				
-				Ext.Msg.show({title:Admin.getText("alert/info"),msg:"선택한 메뉴 또는 페이지를 삭제하시겠습니까?<br>메뉴를 삭제할 경우 하위에 포함된 페이지도 함께 삭제됩니다.",buttons:Ext.Msg.OKCANCEL,icon:Ext.Msg.QUESTION,fn:function(button) {
+				var message = "";
+				if (page) {
+					if (page.indexOf("$") === 0 || page.indexOf("^") === 0) message = "선택한 그룹을 삭제하시겠습니까?";
+					else message = "선택한 페이지를 삭제하시겠습니까?";
+				} else message = "선택한 메뉴를 삭제하시겠습니까?<br>메뉴를 삭제할 경우 하위에 포함된 페이지도 함께 삭제됩니다.";
+				
+				Ext.Msg.show({title:Admin.getText("alert/info"),msg:message,buttons:Ext.Msg.OKCANCEL,icon:Ext.Msg.QUESTION,fn:function(button) {
 					if (button == "ok") {
 						var params = {domain:domain,language:language,menu:menu}
 						if (page !== undefined && page) params.page = page;
@@ -2729,10 +2906,10 @@ var Admin = {
 		
 		$.send(url,{updated:JSON.stringify(updated)},function(result) {
 			if (result.success == true) {
+				store.commitChanges();
 				if (typeof callback == "function") {
 					callback(store);
 				}
-				store.commitChanges();
 			} else {
 				Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("DATA_SAVE_FAILED"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 			}
