@@ -4162,8 +4162,8 @@ $(document).ready(function() {
 							$button.append($text);
 							
 							$button.on("click",function(e) {
-								var item = $button.data("item");
-								Push.view(item.module,item.type,item.idx);
+								var item = $(this).data("item");
+								Push.view(item.module,item.type,item.idx,$(this));
 							});
 							
 							$lists.append($("<li>").append($button));
@@ -4187,8 +4187,8 @@ $(document).ready(function() {
 							$button.append($text);
 							
 							$button.on("click",function(e) {
-								var item = $button.data("item");
-								Push.view(item.module,item.type,item.idx);
+								var item = $(this).data("item");
+								Push.view(item.module,item.type,item.idx,$(this));
 							});
 							
 							$lists.append($("<li>").append($button));
