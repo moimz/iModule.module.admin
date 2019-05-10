@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.0.0
- * @modified 2019. 4. 17.
+ * @modified 2019. 5. 5.
  */
 if (defined('__IM__') == false) exit;
 ?>
@@ -25,7 +25,7 @@ if (defined('__IM__') == false) exit;
 		<li data-role="name"><?php echo $this->IM->getModule('member')->getMember()->nickname; ?></li>
 		<li data-role="push">
 			<button type="button" data-action="push" style="background-image:url(<?php echo $this->IM->getModule('member')->getMember()->photo; ?>);"></button>
-			<label data-module="push" data-role="count">10</label>
+			<label data-module="push" data-role="count"></label>
 		</li>
 		<li data-role="logout"><button type="button" data-action="logout"><?php echo $this->getText('button/logout'); ?></button></li>
 	</ul>
