@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.0.0
- * @modified 2019. 5. 5.
+ * @modified 2019. 5. 24.
  */
 if (defined('__IM__') == false) exit;
 ?>
@@ -42,7 +42,7 @@ if (defined('__IM__') == false) exit;
 <?php } ?>
 
 <footer id="iModuleAdminFooter">
-	Copyright (c) <?php echo date('Y'); ?> iModule v3.0, MIT License
+	Copyright (c) <?php echo date('Y'); ?> iModule v3.0, MIT License / <?php echo $_SERVER['SERVER_ADDR']; ?>
 </footer>
 
 <div data-role="push">
