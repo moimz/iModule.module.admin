@@ -9,7 +9,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2019. 4. 20.
+ * @modified 2019. 6. 17.
  */
 class ModuleAdmin {
 	/**
@@ -89,11 +89,6 @@ class ModuleAdmin {
 		 */
 		$this->configs = isset($_ADMINS) == true ? $_ADMINS : new stdClass();
 		$this->configs->title = isset($this->configs->title) == true ? $this->configs->title : 'iModule <small>Administrator</small>';
-		
-		/**
-		 * 브라우져 타이틀 설정
-		 */
-		$this->IM->setSiteTitle($this->configs->title);
 		
 		/**
 		 * 접속한 사이트주소 및 사이트변수 정의
@@ -994,6 +989,11 @@ class ModuleAdmin {
 			header('location:'.__IM_DIR__.'/install');
 			exit;
 		}
+		
+		/**
+		 * 브라우져 타이틀 설정
+		 */
+		$this->IM->setSiteTitle($this->configs->title);
 		
 		/**
 		 * IP접근제한이 활성화되어 있을 경우
