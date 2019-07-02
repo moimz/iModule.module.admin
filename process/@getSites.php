@@ -8,13 +8,14 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2018. 11. 22.
+ * @modified 2019. 6. 26.
  */
 if (defined('__IM__') == false) exit;
 
 $is_sitemap = Request('is_sitemap') == 'true';
 $sites = $this->IM->getSites();
 $lists = array();
+$sort = 0;
 foreach ($sites as $site) {
 	if ($is_sitemap == true) {
 		$temp = explode('.',substr($site->templet,1));
@@ -26,7 +27,7 @@ foreach ($sites as $site) {
 	$site->favicon = $site->favicon == -1 ? __IM_DIR__.'/images/logo/favicon.ico' : ($site->favicon == 0 ? null : __IM_DIR__.'/attachment/view/'.$site->favicon.'/favicon.ico');
 	$site->emblem = $site->emblem == -1 ? __IM_DIR__.'/images/logo/emblem.png' : ($site->emblem == 0 ? $this->getModule()->getDir().'/images/empty_square.png' : __IM_DIR__.'/attachment/view/'.$site->emblem.'/emblem.png');
 	$site->favicon = $site->favicon == null ? $site->emblem : $site->favicon;
-	$site->sort = $site->sort * 1000 + ($site->is_default == 'TRUE' ? 0 : $i + 1);
+	$site->sort = $site->sort * 1000 + ($site->is_default == 'TRUE' ? 0 : ++$sort);
 	
 	$site->display = $site->title.'('.$site->url.')';
 	$site->value = $site->domain.'@'.$site->language;
