@@ -3415,6 +3415,42 @@ var Admin = {
 		}
 	},
 	/**
+	 * 검색필드를 추가한다.
+	 *
+	 * @param int width 넓이
+	 * @param string placeHolder placeHolder
+	 * @param function 검색함수
+	 */
+	searchField:function(id,width,placeHolder,handler) {
+		return new Ext.form.FieldContainer({
+			width:width,
+			layout:"hbox",
+			items:[
+				new Ext.form.TextField({
+					id:id,
+					flex:1,
+					enableKeyEvents:true,
+					emptyText:placeHolder,
+					listeners:{
+						keypress:function(form,e) {
+							if (e.keyCode == 13) {
+								handler(form.getValue());
+								e.preventDefault();
+							}
+						}
+					}
+				}),
+				new Ext.Button({
+					iconCls:"mi mi-search",
+					handler:function(button) {
+						var keyword = button.ownerCt.items.items[0].getValue();
+						handler(keyword);
+					}
+				})
+			]
+		});
+	},
+	/**
 	 * 위지윅 필드를 추가한다.
 	 *
 	 * @param string label 라벨명
