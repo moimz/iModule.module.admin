@@ -1256,10 +1256,10 @@ class ModuleAdmin {
 			$lists = array();
 			for ($i=0, $loop=count($idx);$i<$loop;$i++) {
 				$file = $this->IM->getModule('attachment')->getFileInfo($idx[$i]);
-				if ($file->status != 'DRAFT') {
+				if ($file != null && $file->status != 'DRAFT') {
 					if ($this->IM->getModule()->isInstalled($file->module) == false) return false;
 					$mModule = $this->IM->getModule($file->module);
-					if (method_exists($mModule,'isAdmin') == false || $this->IM->getModule($file->module)->isAdmin() === false) return false;
+					if (method_exists($mModule,'isAdmin') == false || $this->IM->getModule($file->module)->isAdmin() === true) return false;
 				}
 			}
 			return true;

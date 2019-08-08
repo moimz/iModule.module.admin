@@ -15,7 +15,8 @@ if (defined('__IM__') == false) exit;
 $idx = Request('idx') ? explode(',',Request('idx')) : array();
 $lists = array();
 for ($i=0, $loop=count($idx);$i<$loop;$i++) {
-	$lists[$i] = $this->IM->getModule('attachment')->getFileInfo($idx[$i]);
+	$file = $this->IM->getModule('attachment')->getFileInfo($idx[$i]);
+	if ($file != null) $lists[] = $file;
 }
 
 $results->success = true;
