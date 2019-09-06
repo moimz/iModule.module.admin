@@ -3759,7 +3759,7 @@ var Admin = {
 				print:function(file,oFile) {
 					var parent = this.ownerCt;
 					for (var i=0, loop=parent.items.items.length;i<loop;i++) {
-						if (parent.items.items[i].idx == file.idx) {
+						if (file === null || parent.items.items[i].idx == file.idx) {
 							return;
 						}
 					}
