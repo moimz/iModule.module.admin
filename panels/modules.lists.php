@@ -171,7 +171,8 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 			itemcontextmenu:function(grid,record,item,index,e) {
 				var menu = new Ext.menu.Menu();
 				
-				menu.add('<div class="x-menu-title">'+record.data.title+'('+record.data.module+')</div>');
+				menu.addTitle(record.data.title+'('+record.data.module+')');
+				
 				menu.add({
 					iconCls:"fa fa-cube",
 					text:Admin.getText("modules/menus/detail"),

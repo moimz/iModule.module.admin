@@ -3682,7 +3682,7 @@ var Admin = {
 						disabled:true,
 						listeners:{
 							change:function(form,value) {
-								var files = JSON.parse(value);
+								var files = JSON.parse(value)
 								for (var i=0, loop=files.length;i<loop;i++) {
 									form.ownerCt.print(files[i]);
 								}
