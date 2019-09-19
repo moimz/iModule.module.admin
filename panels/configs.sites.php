@@ -104,7 +104,8 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 			itemcontextmenu:function(grid,record,item,index,e) {
 				var menu = new Ext.menu.Menu();
 				
-				menu.add('<div class="x-menu-title">'+record.data.title+'('+record.data.url+')</div>');
+				menu.addTitle(record.data.title+'('+record.data.url+')');
+				
 				menu.add({
 					iconCls:"mi mi-home",
 					text:Admin.getText("configs/sites/menus/detail"),
