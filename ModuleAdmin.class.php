@@ -433,6 +433,8 @@ class ModuleAdmin {
 		if ($this->menu == null) {
 			$this->menu = $menus[0]->menu;
 			if ($menus[0]->page !== false) $this->page = $menus[0]->page;
+			header("location:".__IM_DIR__.'/admin/'.$this->menu.($this->page ? '/'.$this->page : ''));
+			exit;
 		}
 		
 		$permissions = $this->checkPermission();
