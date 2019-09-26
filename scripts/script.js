@@ -7,7 +7,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.0.0
- * @modified 2019. 4. 20.
+ * @modified 2019. 9. 27.
  */
 var Admin = {
 	/**
@@ -3051,6 +3051,18 @@ var Admin = {
 												if (item.type == "textarea") {
 													container.add(
 														new Ext.form.TextArea(options)
+													);
+												}
+												
+												if (item.type == "select") {
+													options.store = new Ext.data.ArrayStore({
+														fields:["display","value"],
+														data:item.options
+													});
+													options.displayField = "display";
+													options.valueField = "value";
+													container.add(
+														new Ext.form.ComboBox(options)
 													);
 												}
 											}
