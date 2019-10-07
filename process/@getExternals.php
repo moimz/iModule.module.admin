@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2018. 12. 14.
+ * @modified 2019. 10. 7.
  */
 if (defined('__IM__') == false) exit;
 
@@ -19,11 +19,13 @@ $language = Request('language');
  * 공용 외부파일폴더를 탐색한다.
  */
 $lists = array();
+$lists[] = array('path'=>'','display'=>'선택안함');
 $externalsPath = @opendir(__IM_PATH__.'/externals');
 while ($external = @readdir($externalsPath)) {
 	if ($external != '.' && $external != '..' && is_file(__IM_PATH__.'/externals/'.$external) == true) {
 		$lists[] = array(
-			'path'=>__IM_DIR__.'/externals/'.$external
+			'path'=>__IM_DIR__.'/externals/'.$external,
+			'display'=>__IM_DIR__.'/externals/'.$external
 		);
 	}
 }
@@ -39,7 +41,8 @@ while ($templet = @readdir($templetsPath)) {
 		while ($external = @readdir($externalsPath)) {
 			if ($external != '.' && $external != '..' && is_file(__IM_PATH__.'/templets/'.$templet.'/externals/'.$external) == true) {
 				$lists[] = array(
-					'path'=>__IM_DIR__.'/templets/'.$templet.'/externals/'.$external
+					'path'=>__IM_DIR__.'/templets/'.$templet.'/externals/'.$external,
+					'display'=>__IM_DIR__.'/templets/'.$templet.'/externals/'.$external
 				);
 			}
 		}
@@ -58,7 +61,8 @@ for ($i=0, $loop=count($modules);$i<$loop;$i++) {
 		while ($external = @readdir($externalsPath)) {
 			if ($external != '.' && $external != '..' && is_file($this->IM->getModule()->getPath($modules[$i]->module).'/templets/externals/'.$external) == true) {
 				$lists[] = array(
-					'path'=>$this->IM->getModule()->getDir($modules[$i]->module).'/templets/externals/'.$external
+					'path'=>$this->IM->getModule()->getDir($modules[$i]->module).'/templets/externals/'.$external,
+					'display'=>$this->IM->getModule()->getDir($modules[$i]->module).'/templets/externals/'.$external
 				);
 			}
 		}
@@ -70,7 +74,8 @@ for ($i=0, $loop=count($modules);$i<$loop;$i++) {
 				while ($external = @readdir($externalsPath)) {
 					if ($external != '.' && $external != '..' && is_file($this->IM->getModule()->getPath($modules[$i]->module).'/templets/'.$templet.'/externals/'.$external) == true) {
 						$lists[] = array(
-							'path'=>$this->IM->getModule()->getDir($modules[$i]->module).'/templets/'.$templet.'/externals/'.$external
+							'path'=>$this->IM->getModule()->getDir($modules[$i]->module).'/templets/'.$templet.'/externals/'.$external,
+							'display'=>$this->IM->getModule()->getDir($modules[$i]->module).'/templets/'.$templet.'/externals/'.$external
 						);
 					}
 				}
