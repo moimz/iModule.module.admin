@@ -9,7 +9,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.0.0
- * @modified 2019. 6. 17.
+ * @modified 2019. 10. 12.
  */
 class ModuleAdmin {
 	/**
@@ -76,7 +76,8 @@ class ModuleAdmin {
 		 * @see 모듈폴더의 package.json 의 databases 참고
 		 */
 		$this->table = new stdClass();
-		$this->table->log = 'admin_log_table';
+		$this->table->page_log = 'admin_page_log_table';
+		$this->table->process_log = 'admin_process_log_table';
 		
 		/**
 		 * 사이트관리자 언어셋을 지정한다.
@@ -479,6 +480,8 @@ class ModuleAdmin {
 		 */
 		$values = (object)get_defined_vars();
 		$this->IM->fireEvent('afterGetContext',$this->getModule()->getName(),'index',$values,$html);
+		
+		$this->saveWebLog();
 		
 		return $html;
 	}
@@ -1268,6 +1271,39 @@ class ModuleAdmin {
 		}
 		
 		return $this->checkPermission();
+	}
+	
+	/**
+	 * 관리자 접근로그를 기록한다.
+	 */
+	function saveWebLog() {
+		if (version_compare($this->getModule()->getInstalled()->version,'3.1.0','>=') == true) {
+			$this->db()->replace($this->table->page_log,array('midx'=>$this->IM->getModule('member')->getLogged(),'reg_date'=>time(),'page'=>$_SERVER['REDIRECT_URL'],'ip'=>$_SERVER['REMOTE_ADDR'],'agent'=>$_SERVER['HTTP_USER_AGENT']))->execute();
+		}
+	}
+	
+	/**
+	 * 관리자 활동로그를 기록한다.
+	 *
+	 * @param string $module
+	 * @param string $action
+	 */
+	function saveProcessLog($module,$action) {
+		if (version_compare($this->getModule()->getInstalled()->version,'3.1.0','>=') == true) {
+			$params = $_REQUEST;
+			if (isset($params['_language']) == true) unset($params['_language']);
+			if (isset($params['_module']) == true) unset($params['_module']);
+			if (isset($params['_action']) == true) unset($params['_action']);
+			if (isset($params['_dc']) == true) unset($params['_dc']);
+			
+			if (count($params) > 0) {
+				$params = json_encode($params,JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+			} else {
+				$params = '';
+			}
+			
+			$this->db()->replace($this->table->process_log,array('midx'=>$this->IM->getModule('member')->getLogged(),'reg_date'=>time(),'module'=>$module,'action'=>$action,'params'=>$params,'ip'=>$_SERVER['REMOTE_ADDR'],'agent'=>$_SERVER['HTTP_USER_AGENT']))->execute();
+		}
 	}
 }
 ?>

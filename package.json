@@ -33,30 +33,93 @@
 		}
 	},
 	"databases":{
-		"admin_log_table":{
+		"admin_page_log_table":{
 			"columns":{
 				"midx":{
 					"type":"int",
 					"length":11,
 					"comment":"관리자회원고유값"
 				},
-				"code":{
-					"type":"varchar",
-					"length":20,
-					"comment":"활동코드"
-				},
 				"reg_date":{
-					"type":"bigint",
+					"type":"int",
 					"length":11,
 					"comment":"활동시각"
+				},
+				"page":{
+					"type":"varchar",
+					"length":100,
+					"comment":"접근위치"
+				},
+				"ip":{
+					"type":"varchar",
+					"length":15,
+					"is_null":true,
+					"comment":"활동아이피"
+				},
+				"agent":{
+					"type":"varchar",
+					"length":150,
+					"is_null":true,
+					"comment":"브라우저"
 				}
 			},
 			"indexes":{
-				"midx,code,reg_date":"primary_key",
+				"midx,reg_date,page":"primary_key",
 				"midx":"index",
+				"page":"index",
+				"ip":"index",
 				"reg_date":"index"
 			},
-			"comment":"관리자 접속로그 관리"
+			"comment":"관리자 접속로그 테이블"
+		},
+		"admin_process_log_table":{
+			"columns":{
+				"midx":{
+					"type":"int",
+					"length":11,
+					"comment":"관리자회원고유값"
+				},
+				"reg_date":{
+					"type":"int",
+					"length":11,
+					"comment":"활동시각"
+				},
+				"module":{
+					"type":"varchar",
+					"length":100,
+					"comment":"접근모듈"
+				},
+				"action":{
+					"type":"varchar",
+					"length":100,
+					"comment":"접근위치"
+				},
+				"params":{
+					"type":"text",
+					"is_null":true,
+					"comment":"요청변수"
+				},
+				"ip":{
+					"type":"varchar",
+					"length":15,
+					"is_null":true,
+					"comment":"활동아이피"
+				},
+				"agent":{
+					"type":"varchar",
+					"length":150,
+					"is_null":true,
+					"comment":"브라우저"
+				}
+			},
+			"indexes":{
+				"midx,reg_date,module,action":"primary_key",
+				"midx":"index",
+				"module":"index",
+				"ip":"index",
+				"reg_date":"index"
+			},
+			"comment":"관리자 활동로그 테이블"
 		}
 	}
 }
