@@ -6,7 +6,7 @@
  * @file /modules/admin/scripts/html.js
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
- * @version 3.0.0
+ * @version 3.1.0
  * @modified 2018. 3. 24.
  */
 var HtmlEditor = {

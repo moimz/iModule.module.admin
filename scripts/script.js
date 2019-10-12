@@ -6,7 +6,7 @@
  * @file /modules/admin/scripts/script.js
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
- * @version 3.0.0
+ * @version 3.1.0
  * @modified 2019. 10. 7.
  */
 var Admin = {
