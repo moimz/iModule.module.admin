@@ -79,6 +79,30 @@ Ext.onReady(function () {
 				title:"<?php echo $menuTitle->title; ?>",
 				iconCls:"<?php echo substr($menuTitle->icon,0,2); ?> <?php echo $menuTitle->icon; ?>",
 				region:"west",
+				tbar:[
+					new Ext.form.TextField({
+						emptyText:"메뉴검색",
+						flex:1,
+						enableKeyEvents:true,
+						listeners:{
+							keyup:function(form) {
+								var $page = $("#iModuleAdminPages");
+								var keyword = form.getValue();
+								if (keyword.length == 0) {
+									$("li",$page).show();
+								} else {
+									$("li",$page).each(function() {
+										if ($(this).attr("data-page").indexOf(keyword) > -1 || $(this).attr("data-title").indexOf(keyword) > -1) {
+											$(this).show();
+										} else {
+											$(this).hide();
+										}
+									});
+								}
+							}
+						}
+					})
+				],
 				width:230,
 				collapsible:true,
 				scrollable:"y",
