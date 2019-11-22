@@ -35,7 +35,7 @@ if (defined('__IM__') == false) exit;
 <aside id="iModuleAdminPages">
 	<ul>
 		<?php for ($i=0, $loop=count($pages);$i<$loop;$i++) { ?>
-		<li<?php echo $pages[$i]->page == $this->page ? ' class="selected"' : ''; ?>><a href="<?php echo $this->getUrl($pages[$i]->menu,$pages[$i]->page,$pages[$i]->tab); ?>"><i class="<?php echo substr($pages[$i]->icon,0,2); ?> <?php echo $pages[$i]->icon; ?>"></i><?php echo $pages[$i]->title; ?></a></li>
+		<li<?php echo $pages[$i]->page == $this->page ? ' class="selected"' : ''; ?> data-page="<?php echo $pages[$i]->page; ?>" data-title="<?php echo $pages[$i]->title; ?>"><a href="<?php echo $this->getUrl($pages[$i]->menu,$pages[$i]->page,$pages[$i]->tab); ?>"><i class="<?php echo substr($pages[$i]->icon,0,2); ?> <?php echo $pages[$i]->icon; ?>"></i><?php echo $pages[$i]->title; ?></a></li>
 		<?php } ?>
 	</ul>
 </aside>
@@ -99,6 +99,15 @@ Ext.onReady(function () {
 										}
 									});
 								}
+								
+								Admin.current.page.keyword = keyword;
+								Admin.current.save();
+							},
+							afterRender:function(form) {
+								if (Admin.current.page.keyword) {
+									form.setValue(Admin.current.page.keyword);
+									form.fireEvent("keyup",form);
+								}
 							}
 						}
 					})
@@ -111,11 +120,13 @@ Ext.onReady(function () {
 				contentEl:"iModuleAdminPages",
 				listeners:{
 					afterRender:function(panel) {
+						panel.body.on("scroll",function(e) {
+							Admin.current.page.scroll = e.target.scrollTop;
+							Admin.current.save();
+						});
+						
 						setTimeout(function(panel) {
-							var height = panel.getHeight() - panel.getHeader().getHeight();
-							if ($("li.selected",$("#iModuleAdminPages")).position().top > height) {
-								panel.scrollTo(0,panel.getScrollable().position.y + $("li.selected",$("#iModuleAdminPages")).position().top - height + $("li.selected",$("#iModuleAdminPages")).height() + 10,true);
-							}
+							panel.getScrollable().scrollTo(0,Admin.current.page.scroll);
 						},100,panel);
 					}
 				}
