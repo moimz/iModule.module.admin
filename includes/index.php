@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.1.0
- * @modified 2019. 10. 10.
+ * @modified 2019. 11. 23.
  */
 if (defined('__IM__') == false) exit;
 ?>
@@ -81,10 +81,20 @@ Ext.onReady(function () {
 				region:"west",
 				width:230,
 				collapsible:true,
-				autoScroll:true,
+				scrollable:"y",
 				collapsedCls:"x-main-collapsed",
 				hidden:<?php echo isset($ADMIN->_ADMINS->hideModules) == true && $ADMIN->_ADMINS->hideModules == true && $ADMIN->menu == 'module' ? 'true' : 'false'; ?>,
-				contentEl:"iModuleAdminPages"
+				contentEl:"iModuleAdminPages",
+				listeners:{
+					afterRender:function(panel) {
+						setTimeout(function(panel) {
+							var height = panel.getHeight() - panel.getHeader().getHeight();
+							if ($("li.selected",$("#iModuleAdminPages")).position().top > height) {
+								panel.scrollTo(0,panel.getScrollable().position.y + $("li.selected",$("#iModuleAdminPages")).position().top - height + $("li.selected",$("#iModuleAdminPages")).height() + 10,true);
+							}
+						},100,panel);
+					}
+				}
 			}),
 			<?php } ?>
 			new Ext.Panel({
