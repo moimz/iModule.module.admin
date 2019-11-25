@@ -54,6 +54,18 @@ var Admin = {
 		});
 	},
 	/**
+	 * 관리자패널의 현재 설정값을 저장하거나 가져온다.
+	 */
+	current:{
+		page:null,
+		init:function() {
+			Admin.current.page = iModule.session("admin.current.page") == null || iModule.session("admin.current.page").menu != Admin.getMenu() ? {menu:Admin.getMenu(),keyword:"",scroll:0} : iModule.session("admin.current.page");
+		},
+		save:function() {
+			iModule.session("admin.current.page",Admin.current.page);
+		}
+	},
+	/**
 	 * 모듈
 	 */
 	modules:{
@@ -3963,6 +3975,12 @@ var Admin = {
 							} else {
 								form.findField(name+"_selector").setValue(value);
 							}
+						},
+						enable:function(form) {
+							form.ownerCt.enable();
+						},
+						disable:function(form) {
+							form.ownerCt.disable();
 						}
 					}
 				}),
@@ -4160,6 +4178,8 @@ var Admin = {
 };
 
 $(document).ready(function() {
+	Admin.current.init();
+	
 	$("button[data-action]",$("header")).on("click",function(e) {
 		var $button = $(this);
 		var action = $button.attr("data-action");

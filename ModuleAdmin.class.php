@@ -9,7 +9,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.1.0
- * @modified 2019. 10. 12.
+ * @modified 2019. 11. 23.
  */
 class ModuleAdmin {
 	/**
@@ -553,6 +553,36 @@ class ModuleAdmin {
 			}
 		}
 		
+		/**
+		 * 1차 메뉴가 database 일 경우
+		 */
+		if ($this->menu == 'database') {
+			/**
+			 * 1차 메뉴(테이블명)이 없을 경우, 전체 테이블 목록패널을 가져온다.
+			 */
+			if ($this->page == null) {
+				ob_start();
+			
+				$IM = $this->IM;
+				$Admin = $this;
+				
+				if (is_file($this->Module->getPath().'/panels/database.php') == true) {
+					INCLUDE $this->Module->getPath().'/panels/database.php';
+				}
+				$panel = ob_get_clean();
+			} else {
+				ob_start();
+			
+				$IM = $this->IM;
+				$Admin = $this;
+				
+				if ($this->db()->exists($this->page,true) == true && is_file($this->Module->getPath().'/panels/database.table.php') == true) {
+					INCLUDE $this->Module->getPath().'/panels/database.table.php';
+				}
+				$panel = ob_get_clean();
+			}
+		}
+		
 		return $panel;
 	}
 	
@@ -728,6 +758,19 @@ class ModuleAdmin {
 			}
 			
 			/**
+			 * 데이터베이스
+			 */
+			if (in_array('database',$disabledMenus) == false) {
+				$menu = new stdClass();
+				$menu->menu = 'database';
+				$menu->page = false;
+				$menu->tab = false;
+				$menu->icon = 'xi-db-full';
+				$menu->title = $this->getText('menus/database');
+				$menus[] = $menu;
+			}
+			
+			/**
 			 * @todo 추가 메뉴 구성
 			 */
 		} else {
@@ -863,6 +906,30 @@ class ModuleAdmin {
 				$page->tab = false;
 				$page->icon = 'fa-sitemap';
 				$page->title = $this->getText('pages/configs/sitemap');
+				$pages[] = $page;
+			}
+		}
+		
+		/**
+		 * 1차메뉴가 database 일 경우
+		 */
+		if ($menu == 'database') {
+			$page = new stdClass();
+			$page->menu = 'database';
+			$page->page = false;
+			$page->tab = false;
+			$page->icon = 'xi-paper';
+			$page->title = $this->getText('pages/database/all');
+			$pages[] = $page;
+			
+			$tables = $this->db()->tables();
+			foreach ($tables as $table) {
+				$page = new stdClass();
+				$page->menu = 'database';
+				$page->page = $table;
+				$page->tab = false;
+				$page->icon = 'xi-archive';
+				$page->title = $table;
 				$pages[] = $page;
 			}
 		}

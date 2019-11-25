@@ -4,7 +4,8 @@
 		"modules":"모듈",
 		"plugins":"플러그인",
 		"widgets":"위젯",
-		"configs":"사이트설정"
+		"configs":"사이트설정",
+		"database":"데이터베이스"
 	},
 	"pages":{
 		"dashboard":[
@@ -19,6 +20,9 @@
 		"configs":{
 			"sites":"사이트관리",
 			"sitemap":"사이트맵관리"
+		},
+		"database":{
+			"all":"전체 테이블보기"
 		}
 	},
 	"modules":{
@@ -303,6 +307,30 @@
 			"load_page":"페이지불러오기",
 			"group_start":"그룹시작지점",
 			"group_end":"그룹종료지점"
+		}
+	},
+	"database":{
+		"tables":{
+			"columns":{
+				"name":"테이블명",
+				"engine":"엔진",
+				"rows":"행",
+				"data_length":"데이터크기",
+				"index_length":"인덱스크기",
+				"total_length":"테이블크기",
+				"collation":"데이터정렬방식",
+				"comment":"설명"
+			}
+		},
+		"view":{
+			"columns":{
+				"field":"필드명",
+				"type":"종류",
+				"collation":"데이터정렬방식",
+				"null":"NULL",
+				"extra":"추가",
+				"comment":"설명"
+			}
 		}
 	},
 	"permission":{

@@ -16,7 +16,7 @@ if (defined('__IM__') == false) exit;
 	<h1><?php echo $this->getConfig('title'); ?></h1>
 	
 	<ul data-role="menu">
-		<?php for ($i=0, $loop=count($menus);$i<$loop;$i++) { ?>
+		<?php for ($i=0, $loop=count($menus);$i<$loop;$i++) { if ($menus[$i]->menu == 'database') continue; ?>
 		<li<?php echo $menus[$i]->menu == $this->menu && ($menus[$i]->page == false || $menus[$i]->page == $this->page) ? ' class="selected"' : ''; ?>><a href="<?php echo $this->getUrl($menus[$i]->menu,$menus[$i]->page,$menus[$i]->tab); ?>"><i class="<?php echo substr($menus[$i]->icon,0,2); ?> <?php echo $menus[$i]->icon; ?>"></i><?php echo $menus[$i]->title; ?></a></li>
 		<?php } ?>
 	</ul>
