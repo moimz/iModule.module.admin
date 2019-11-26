@@ -94,6 +94,7 @@ class ModuleAdmin {
 		/**
 		 * 접속한 사이트주소 및 사이트변수 정의
 		 */
+		$this->domain = isset($_SERVER['HTTP_HOST']) == true ? strtolower($_SERVER['HTTP_HOST']) : '';
 		$this->menu = Request('menu') == null ? null : Request('menu');
 		$this->page = Request('page') == null ? null : Request('page');
 		$this->tab = Request('tab') == null ? null : Request('tab');
@@ -1097,10 +1098,8 @@ class ModuleAdmin {
 		/**
 		 * 현재 접속한 도메인에 해당하는 사이트가 없을 경우, 유사한 사이트를 찾아 페이지를 이동한다.
 		 */
-		$domain = $_SERVER['HTTP_HOST'];
-		if ($this->db()->select($this->IM->getTable('site'))->where('domain',$domain)->has() == false) {
+		if ($this->db()->select($this->IM->getTable('site'))->where('domain',$this->domain)->has() == false) {
 			$sites = $this->db()->select($this->IM->getTable('site'))->orderBy('sort','asc')->get();
-			$isSSL = false;
 			$isAlias = false;
 			for ($i=0, $loop=count($sites);$i<$loop;$i++) {
 				if ($sites[$i]->alias == '') continue;
@@ -1110,16 +1109,15 @@ class ModuleAdmin {
 				 */
 				$domains = explode(',',$sites[$i]->alias);
 				for ($j=0, $loopj=count($domains);$j<$loopj;$j++) {
-					if ($domains[$j] == $_SERVER['HTTP_HOST']) {
-						$domain = $sites[$i]->domain;
-						$isSSL = $sites[$i]->is_ssl == 'TRUE';
+					if ($domains[$j] == $this->domain) {
+						$this->domain = $sites[$i]->domain;
 						$isAlias = true;
 						break;
 					}
 					
 					if (preg_match('/\*\./',$domains[$j]) == true) {
 						$aliasToken = explode('.',$domains[$j]);
-						$domainToken = explode('.',$domain);
+						$domainToken = explode('.',$this->domain);
 						$isMatch = true;
 						while (count($aliasToken) > 0) {
 							$token = array_pop($aliasToken);
@@ -1129,8 +1127,7 @@ class ModuleAdmin {
 						}
 						
 						if ($isMatch == true) {
-							$domain = $sites[$i]->domain;
-							$isSSL = $sites[$i]->is_ssl == 'TRUE';
+							$this->domain = $sites[$i]->domain;
 							$isAlias = true;
 							break;
 						}
@@ -1142,17 +1139,23 @@ class ModuleAdmin {
 			 * 전체 사이트 정보를 참고해도 현재 접속한 도메인의 사이트를 찾을 수 없을 경우 에러메세지를 출력한다.
 			 */
 			if ($isAlias == false) {
-				$this->IM->printError('SITE_NOT_FOUND');
-			} else {
-				$redirectUrl = ($isSSL == true ? 'https://' : 'http://').$domain.__IM_DIR__.'/admin/';
-				if ($this->menu != 'dashboard') {
-					$redirectUrl.= $this->menu ? $this->menu : '';
-					$redirectUrl.= $this->page ? '/'.$this->page : '';
-				}
-				header("HTTP/1.1 301 Moved Permanently");
-				header("location:".$redirectUrl);
-				exit;
+				$this->printError('SITE_NOT_FOUND');
 			}
+		}
+		
+		$site = $this->db()->select($this->IM->getTable('site'))->where('domain',$this->domain)->where('is_default','TRUE')->getOne();
+		
+		/**
+		 * 사이트유효성 검사에 따라 확인된 URL로 이동한다.
+		 */
+		if (($site->is_ssl == 'TRUE' && empty($_SERVER['HTTPS']) == true) || $_SERVER['HTTP_HOST'] != $site->domain) {
+			$redirectUrl = ($site->is_ssl == 'TRUE' ? 'https://' : 'http://').$site->domain.__IM_DIR__;
+			if (isset($_SERVER['REDIRECT_URL']) == true) $redirectUrl.= $_SERVER['REDIRECT_URL'];
+			else $redirectUrl.= '/admin/';
+			
+			header("HTTP/1.1 301 Moved Permanently");
+			header("location:".$redirectUrl);
+			exit;
 		}
 		
 		$this->IM->fireEvent('beforeDoLayout','admin','*');
