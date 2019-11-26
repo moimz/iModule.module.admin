@@ -185,7 +185,8 @@ Ext.onReady(function () { Ext.tip.QuickTipManager.init(); Ext.getCmp("iModuleAdm
 					}),
 					"-",
 					Admin.searchField("TableDataKeyword",300,"WHERE",function(keyword) {
-						
+						Ext.getCmp("TableData").getStore().getProxy().setExtraParam("where",btoa(keyword));
+						Ext.getCmp("TableData").getStore().loadPage(1);
 					}),
 					"->",
 					new Ext.Button({
@@ -202,7 +203,8 @@ Ext.onReady(function () { Ext.tip.QuickTipManager.init(); Ext.getCmp("iModuleAdm
 						simpleSortMode:true,
 						url:ENV.getProcessUrl("admin","@getTableDatas"),
 						extraParams:{table:"<?php echo $this->page; ?>"},
-						reader:{type:"json"}
+						reader:{type:"json"},
+						actionMethods:{create:"POST",read:"POST",update:"POST",destory:"POST"}
 					},
 					remoteSort:true,
 					sorters:[],

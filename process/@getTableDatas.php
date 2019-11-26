@@ -17,8 +17,10 @@ $start = Request('start');
 $limit = Request('limit');
 $sort = Request('sort');
 $dir = Request('dir');
+$where = Request('where') ? preg_replace('/^where /','',trim(base64_decode(Request('where')))) : null;
 
 $lists = $this->db()->setPrefix('')->select($table);
+if ($where) $lists->where($where);
 $total = $lists->copy()->count();
 
 if ($sort) $lists->orderBy($sort,$dir);
