@@ -1028,7 +1028,7 @@ var Admin = {
 											layout:"hbox",
 											items:[
 												new Ext.form.ComboBox({
-													name:"is_ssl",
+													name:"is_https",
 													store:new Ext.data.ArrayStore({
 														fields:["display","value"],
 														data:[["http://","FALSE"],["https://","TRUE"]]

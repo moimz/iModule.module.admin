@@ -36,7 +36,7 @@ if (strpos($site->templet,'#') === 0 && $this->IM->getModule()->isSitemap(substr
 	$is_grouping = false;
 	for ($i=0, $loop=count($lists);$i<$loop;$i++) {
 		if ($lists[$i]->type == 'GROUPSTART') $is_grouping = true;
-		$lists[$i]->url = ($site->is_ssl == 'TRUE' ? 'https://' : 'http://').$site->domain.__IM_DIR__.'/'.$site->language.'/';
+		$lists[$i]->url = ($site->is_https == 'TRUE' ? 'https://' : 'http://').$site->domain.__IM_DIR__.'/'.$site->language.'/';
 		if ($lists[$i]->page) $lists[$i]->url.= $lists[$i]->menu.'/';
 		
 		$lists[$i]->icon = $this->IM->parseIconString($lists[$i]->icon);

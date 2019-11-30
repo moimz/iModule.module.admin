@@ -23,7 +23,7 @@ foreach ($sites as $site) {
 	}
 	
 	$site->grouping = $site->sort.'@'.$site->domain;
-	$site->url = ($site->is_ssl == 'TRUE' ? 'https://' : 'http://').$site->domain.__IM_DIR__.'/'.$site->language.'/';
+	$site->url = ($site->is_https == 'TRUE' ? 'https://' : 'http://').$site->domain.__IM_DIR__.'/'.$site->language.'/';
 	$site->favicon = $site->favicon == -1 ? __IM_DIR__.'/images/logo/favicon.ico' : ($site->favicon == 0 ? null : __IM_DIR__.'/attachment/view/'.$site->favicon.'/favicon.ico');
 	$site->emblem = $site->emblem == -1 ? __IM_DIR__.'/images/logo/emblem.png' : ($site->emblem == 0 ? $this->getModule()->getDir().'/images/empty_square.png' : __IM_DIR__.'/attachment/view/'.$site->emblem.'/emblem.png');
 	$site->favicon = $site->favicon == null ? $site->emblem : $site->favicon;

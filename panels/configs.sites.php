@@ -39,7 +39,7 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 			pageSize:0,
 			groupField:"grouping",
 			groupDir:"ASC",
-			fields:["grouping","url","domain","language","title","description","templet","favicon","is_ssl","is_default","sort"],
+			fields:["grouping","url","domain","language","title","description","templet","favicon","is_https","is_default","sort"],
 			listeners:{
 				load:function(store,records,success,e) {
 					if (success == false) {

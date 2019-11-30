@@ -23,7 +23,7 @@ $alias = Request('alias');
 $templet = Request('templet');
 $title = Request('title');
 $description = Request('description');
-$is_ssl = Request('is_ssl');
+$is_https = Request('is_https');
 $member = Request('member');
 $is_default = Request('is_default') ? 'TRUE' : 'FALSE';
 
@@ -98,7 +98,7 @@ if (count($errors) == 0) {
 		$insert = array();
 		$insert['domain'] = $domain;
 		$insert['alias'] = $alias;
-		$insert['is_ssl'] = $is_ssl;
+		$insert['is_https'] = $is_https;
 		
 		$this->IM->db()->update($this->IM->getTable('site'),$insert)->where('domain',$oDomain)->execute();
 		

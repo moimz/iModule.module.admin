@@ -1148,7 +1148,7 @@ class ModuleAdmin {
 		/**
 		 * 사이트유효성 검사에 따라 확인된 URL로 이동한다.
 		 */
-		if (($site->is_ssl == 'TRUE' && empty($_SERVER['HTTPS']) == true) || $_SERVER['HTTP_HOST'] != $site->domain) {
+		if (($site->is_https == 'TRUE' && empty($_SERVER['HTTPS']) == true) || $_SERVER['HTTP_HOST'] != $site->domain) {
 			$redirectUrl = ($site->is_ssl == 'TRUE' ? 'https://' : 'http://').$site->domain.__IM_DIR__;
 			if (isset($_SERVER['REDIRECT_URL']) == true) $redirectUrl.= $_SERVER['REDIRECT_URL'];
 			else $redirectUrl.= '/admin/';
