@@ -7,7 +7,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.1.0
- * @modified 2019. 10. 7.
+ * @modified 2019. 12. 13.
  */
 var Admin = {
 	/**
@@ -2575,6 +2575,42 @@ var Admin = {
 					]
 				}).show();
 			}
+		}
+	},
+	/**
+	 * 데이터베이스
+	 */
+	database:{
+		drop:function(table) {
+			var tables = [];
+			
+			if (table === undefined) {
+				var selected = Ext.getCmp("TableList").getSelectionModel().getSelection();
+				if (selected.length == 0) {
+					Ext.Msg.show({title:Admin.getText("alert/info"),msg:"삭제할 테이블을 먼저 선택하여 주십시오.",buttons:Ext.Msg.OK,icon:Ext.Msg.INFO});
+				}
+				
+				for (var i=0, loop=selected.length;i<loop;i++) {
+					tables[i] = selected[i].get("name");
+				}
+			} else {
+				tables[0] = table;
+			}
+			
+			if (tables.length == 0) return;
+			
+			Ext.Msg.show({title:Admin.getText("alert/info"),msg:(tables.length == 1 ? tables[0] + " 테이블을 삭제하시겠습니까?" : "아래의 테이블을 삭제하시겠습니까?<br><br>"+tables.join("<br>")),buttons:Ext.Msg.OKCANCEL,icon:Ext.Msg.QUESTION,fn:function(button) {
+				if (button == "ok") {
+					Ext.Msg.wait(Admin.getText("action/working"),Admin.getText("action/wait"));
+					$.send(ENV.getProcessUrl("admin","@dropTable"),{tables:tables.join(",")},function(result) {
+						if (result.success == true) {
+							Ext.Msg.show({title:Admin.getText("alert/info"),msg:Admin.getText("action/worked"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO,fn:function() {
+								if (Ext.getCmp("TableList")) Ext.getCmp("TableList").getStore().reload();
+							}});
+						}
+					});
+				}
+			}});
 		}
 	},
 	module:{

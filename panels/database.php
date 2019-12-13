@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.1.0
- * @modified 2019. 11. 23.
+ * @modified 2019. 12. 13.
  */
 if (defined('__IM__') == false) exit;
 ?>
@@ -17,6 +17,7 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 	new Ext.grid.Panel({
 		id:"TableList",
 		border:false,
+		prefix:"<?php echo __IM_DB_PREFIX__; ?>",
 		tbar:[
 			new Ext.Button({
 				text:"테이블추가",
@@ -38,10 +39,35 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 			}),
 			"->",
 			new Ext.Button({
+				text:"백업테이블선택",
+				iconCls:"xi xi-form-checkout",
+				handler:function() {
+					Ext.getCmp("TableList").getStore().clearFilter();
+					Ext.getCmp("TableList").getSelectionModel().deselectAll();
+					
+					var count = 0;
+					for (var i=0, loop=Ext.getCmp("TableList").getStore().getCount();i<loop;i++) {
+						var name = Ext.getCmp("TableList").getStore().getAt(i).get("name");
+						var regExp = new RegExp("^"+Ext.getCmp("TableList").prefix+"(.*?)_BK[0-9]{14}$");
+						if (name.search(regExp) > -1) {
+							Ext.getCmp("TableList").getSelectionModel().select(i,true);
+							count++;
+						}
+					}
+					
+					if (count == 0) {
+						Ext.Msg.show({title:Admin.getText("alert/info"),msg:"백업테이블이 존재하지 않습니다.",buttons:Ext.Msg.OK,icon:Ext.Msg.INFO});
+					} else {
+						Ext.Msg.show({title:Admin.getText("alert/info"),msg:"백업테이블 "+Ext.util.Format.number(count,"0,000")+"개를 선택하였습니다.",buttons:Ext.Msg.OK,icon:Ext.Msg.INFO});
+					}
+				}
+			}),
+			"-",
+			new Ext.Button({
 				text:"선택 테이블삭제",
 				iconCls:"mi mi-trash",
 				handler:function() {
-					
+					Admin.database.drop();
 				}
 			}),
 			new Ext.Button({
@@ -155,7 +181,7 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 			flex:1,
 			sortable:true
 		}],
-		selModel:new Ext.selection.RowModel(),
+		selModel:new Ext.selection.CheckboxModel(),
 		bbar:[
 			new Ext.Button({
 				iconCls:"x-tbar-loading",
@@ -174,12 +200,13 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 			itemcontextmenu:function(grid,record,item,index,e) {
 				var menu = new Ext.menu.Menu();
 				
-				menu.addTitle(record.data.title+'('+record.data.name+')');
+				menu.addTitle(record.data.name+(record.data.comment ? "("+record.data.comment+")" : ""));
 				
 				menu.add({
 					iconCls:"fa fa-trash",
 					text:"테이블 삭제",
 					handler:function() {
+						Admin.database.drop();
 					}
 				});
 				
