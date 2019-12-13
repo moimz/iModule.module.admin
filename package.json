@@ -30,6 +30,14 @@
 		"emergency_code":{
 			"type":"string",
 			"default":""
+		},
+		"enable_security_database_mode":{
+			"type":"boolean",
+			"default":false
+		},
+		"allow_database_ip":{
+			"type":"string",
+			"default":""
 		}
 	},
 	"databases":{
