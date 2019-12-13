@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.1.0
- * @modified 2019. 2. 6.
+ * @modified 2019. 12. 13.
  */
 if (defined('__IM__') == false) exit;
 ?>
@@ -18,6 +18,16 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 		id:"PluginList",
 		border:false,
 		tbar:[
+			Admin.searchField("PluginKeyword",200,"플러그인검색",function(keyword) {
+				Ext.getCmp("PluginList").getStore().clearFilter();
+				
+				if (keyword.length > 0) {
+					Ext.getCmp("PluginList").getStore().filter(function(record) {
+						return record.data.id.indexOf(keyword) > -1 || record.data.module.indexOf(keyword) > -1 || record.data.title.indexOf(keyword) > -1;
+					});
+				}
+			}),
+			"->",
 			new Ext.Button({
 				iconCls:"xi xi-list-ol",
 				text:Admin.getText("plugins/lists/sort"),
