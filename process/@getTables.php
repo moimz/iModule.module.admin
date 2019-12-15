@@ -33,10 +33,20 @@ if ($target != 'all') {
 	/**
 	 * 전체모듈의 데이터베이스명을 가져온다.
 	 */
-	$modules = $this->getModule()->getModules();
+	$modules = $this->IM->getModule()->getModules();
 	foreach ($modules as $module) {
-		if ($this->getModule()->isInstalled($module->module) === false) continue;
-		$package = $this->getModule()->getPackage($module->module);
+		$package = $this->IM->getModule()->getPackage($module->module);
+		if (isset($package->databases) == false) continue;
+		
+		$databases = array_merge($databases,array_keys((array)$package->databases));
+	}
+	
+	/**
+	 * 전체 플러그인의 데이터베이스명을 가져온다.
+	 */
+	$plugins = $this->IM->getPlugin()->getPlugins();
+	foreach ($plugins as $plugin) {
+		$package = $this->IM->getPlugin()->getPackage($plugin->plugin);
 		if (isset($package->databases) == false) continue;
 		
 		$databases = array_merge($databases,array_keys((array)$package->databases));
