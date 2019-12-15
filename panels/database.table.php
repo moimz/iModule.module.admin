@@ -8,9 +8,10 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.1.0
- * @modified 2019. 11. 23.
+ * @modified 2019. 12. 15.
  */
 if (defined('__IM__') == false) exit;
+if ($this->checkIp('database') === false) exit;
 ?>
 <script>
 Ext.onReady(function () { Ext.tip.QuickTipManager.init(); Ext.getCmp("iModuleAdminPanel").add(

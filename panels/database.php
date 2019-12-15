@@ -8,9 +8,10 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.1.0
- * @modified 2019. 12. 13.
+ * @modified 2019. 12. 15.
  */
 if (defined('__IM__') == false) exit;
+if ($this->checkIp('database') === false) exit;
 ?>
 <script>
 Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
@@ -83,6 +84,7 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 				type:"ajax",
 				simpleSortMode:true,
 				url:ENV.getProcessUrl("admin","@getTables"),
+				extraParams:{target:"all"},
 				reader:{type:"json"}
 			},
 			remoteSort:false,
@@ -187,6 +189,43 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 				iconCls:"x-tbar-loading",
 				handler:function() {
 					Ext.getCmp("TableList").getStore().reload();
+				}
+			}),
+			"-",
+			new Ext.button.Segmented({
+				id:"TableSegmented",
+				allowMultiple:false,
+				items:[
+					new Ext.Button({
+						text:"전체",
+						target:"all",
+						pressed:true,
+						iconCls:"fa fa-check-square-o"
+					}),
+					new Ext.Button({
+						text:"아이모듈",
+						target:"used",
+						pressed:false,
+						iconCls:"fa fa-square-o"
+					}),
+					new Ext.Button({
+						text:"아이모듈외",
+						target:"unused",
+						pressed:false,
+						iconCls:"fa fa-square-o"
+					})
+				],
+				listeners:{
+					toggle:function(segmented,button,pressed) {
+						for (var i=0, loop=segmented.items.items.length;i<loop;i++) {
+							segmented.items.items[i].setIconCls("fa fa-square-o");
+						}
+						
+						Ext.getCmp("TableList").getStore().getProxy().setExtraParam("target",button.target);
+						Ext.getCmp("TableList").getStore().reload();
+						
+						button.setIconCls("fa fa-check-square-o");
+					}
 				}
 			}),
 			"->",

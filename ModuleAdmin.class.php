@@ -9,7 +9,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.1.0
- * @modified 2019. 11. 23.
+ * @modified 2019. 12. 15.
  */
 class ModuleAdmin {
 	/**
@@ -1052,6 +1052,38 @@ class ModuleAdmin {
 		}
 	}
 	
+	/**
+	 * 아이피 제한을 확인한다.
+	 *
+	 * @param string $target 제한대상
+	 * @return boolean $allowed
+	 */
+	function checkIp($target) {
+		if ($target == 'admin') {
+			if ($this->getModule()->getConfig('enable_security_mode') !== true) return true;
+			if (Request('iModuleAdminAccess','session') === 'TRUE') return true;
+			$ips = array_filter(explode("\n",$this->getModule()->getConfig('allow_ip')));
+		}
+		
+		if ($target == 'database') {
+			if ($this->getModule()->getConfig('enable_security_database_mode') !== true) return true;
+			$ips = array_filter(explode("\n",$this->getModule()->getConfig('allow_database_ip')));
+		}
+		
+		foreach ($ips as $ip) {
+			$ip = trim($ip);
+			if (strlen($ip) == 0) continue;
+			
+			$reg_ip = '/^'.$ip.'$/';
+			$reg_ip = str_replace('.','\.',$reg_ip);
+			$reg_ip = str_replace('*','[0-9]{1,3}',$reg_ip);
+			
+			if (preg_match($reg_ip,$_SERVER['REMOTE_ADDR']) == true) return true;
+		}
+		
+		return false;
+	}
+	
 	function doLayout() {
 		global $_CONFIGS;
 		
@@ -1077,22 +1109,11 @@ class ModuleAdmin {
 				header('location:'.__IM_DIR__.'/admin');
 				exit;
 			}
-			
-			$ips = explode("\n",$this->getModule()->getConfig('allow_ip'));
-			$allowed = Request('iModuleAdminAccess','session') === 'TRUE';
-			foreach ($ips as $ip) {
-				$reg_ip = '/^'.$ip.'$/';
-				$reg_ip = str_replace('.','\.',$reg_ip);
-				$reg_ip = str_replace('*','[0-9]{1,3}',$reg_ip);
-				
-				$allowed = $allowed === true || preg_match($reg_ip,$_SERVER['REMOTE_ADDR']) == true;
-				if ($allowed === true) break;
-			}
-			
-			if ($allowed === false) {
-				$this->getError('ACCESS_DENIED');
-				exit;
-			}
+		}
+		
+		if ($this->checkIp('admin') !== true) {
+			$this->getError('ACCESS_DENIED');
+			exit;
 		}
 		
 		/**

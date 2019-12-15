@@ -12,6 +12,12 @@
  */
 if (defined('__IM__') == false) exit;
 
+if ($this->checkIp('database') === false) {
+	$results->success = false;
+	$results->message = $this->getErrorText('FORBIDDEN');
+	return;
+}
+
 $table = Param('table');
 $lists = $this->db()->desc($table,true);
 

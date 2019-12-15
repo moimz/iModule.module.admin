@@ -8,9 +8,15 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.1.0
- * @modified 2019. 12. 13.
+ * @modified 2019. 12. 15.
  */
 if (defined('__IM__') == false) exit;
+
+if ($this->checkIp('database') === false) {
+	$results->success = false;
+	$results->message = $this->getErrorText('FORBIDDEN');
+	return;
+}
 
 $tables = Param('tables') ? explode(',',Param('tables')) : array();
 foreach ($tables as $table) {
