@@ -7,7 +7,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.1.0
- * @modified 2019. 12. 13.
+ * @modified 2019. 12. 15.
  */
 var Admin = {
 	/**
@@ -2035,6 +2035,11 @@ var Admin = {
 													}),
 													displayField:"title",
 													valueField:"context",
+													queryMode:"local",
+													editable:true,
+													anyMatch:true,
+													forceSelection:true,
+													emptyText:"컨텍스트명 일부를 입력후 검색된 컨텍스트를 선택하거나 우측의 화살표를 눌러 전체 컨텍스트목록을 확인할 수 있습니다.",
 													flex:1,
 													listeners:{
 														change:function(form,value) {
