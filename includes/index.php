@@ -81,7 +81,7 @@ Ext.onReady(function () {
 				region:"west",
 				tbar:[
 					new Ext.form.TextField({
-						emptyText:"메뉴검색",
+						emptyText:Admin.getText("text/menu_keyword"),
 						flex:1,
 						enableKeyEvents:true,
 						listeners:{

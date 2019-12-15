@@ -21,14 +21,14 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 		prefix:"<?php echo __IM_DB_PREFIX__; ?>",
 		tbar:[
 			new Ext.Button({
-				text:"테이블추가",
+				text:Admin.getText("database/tables/add_table"),
 				iconCls:"mi mi-plus",
 				handler:function() {
 					
 				}
 			}),
 			"-",
-			Admin.searchField("TableListKeyword",250,"테이블명",function(keyword) {
+			Admin.searchField("TableListKeyword",250,Admin.getText("database/tables/keyword"),function(keyword) {
 				Ext.getCmp("TableList").getStore().clearFilter();
 				
 				if (keyword.length > 0) {
@@ -40,7 +40,7 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 			}),
 			"->",
 			new Ext.Button({
-				text:"백업테이블선택",
+				text:Admin.getText("database/tables/select_backup"),
 				iconCls:"xi xi-form-checkout",
 				handler:function() {
 					Ext.getCmp("TableList").getStore().clearFilter();
@@ -65,17 +65,17 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 			}),
 			"-",
 			new Ext.Button({
-				text:"선택 테이블삭제",
-				iconCls:"mi mi-trash",
+				text:Admin.getText("database/tables/selected_truncate"),
+				iconCls:"xi xi-marquee-remove",
 				handler:function() {
-					Admin.database.drop();
+					Admin.database.truncate();
 				}
 			}),
 			new Ext.Button({
-				text:"선택 테이블비우기",
-				iconCls:"xi xi-marquee-remove",
+				text:Admin.getText("database/tables/selected_drop"),
+				iconCls:"mi mi-trash",
 				handler:function() {
-					
+					Admin.database.drop();
 				}
 			})
 		],
@@ -197,19 +197,19 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 				allowMultiple:false,
 				items:[
 					new Ext.Button({
-						text:"전체",
+						text:Admin.getText("database/tables/targets/all"),
 						target:"all",
 						pressed:true,
 						iconCls:"fa fa-check-square-o"
 					}),
 					new Ext.Button({
-						text:"아이모듈",
+						text:Admin.getText("database/tables/targets/used"),
 						target:"used",
 						pressed:false,
 						iconCls:"fa fa-square-o"
 					}),
 					new Ext.Button({
-						text:"아이모듈외",
+						text:Admin.getText("database/tables/targets/unused"),
 						target:"unused",
 						pressed:false,
 						iconCls:"fa fa-square-o"
@@ -229,7 +229,7 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 				}
 			}),
 			"->",
-			{xtype:"tbtext",text:"항목 더블클릭 : 테이블로 이동 / 항목 우클릭 : 메뉴"}
+			{xtype:"tbtext",text:Admin.getText("database/tables/grid_help")}
 		],
 		features:[{ftype:"summary"}],
 		listeners:{
@@ -242,8 +242,16 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 				menu.addTitle(record.data.name+(record.data.comment ? "("+record.data.comment+")" : ""));
 				
 				menu.add({
+					iconCls:"xi xi-marquee-remove",
+					text:Admin.getText("database/tables/truncate"),
+					handler:function() {
+						Admin.database.truncate();
+					}
+				});
+				
+				menu.add({
 					iconCls:"fa fa-trash",
-					text:"테이블 삭제",
+					text:Admin.getText("database/tables/drop"),
 					handler:function() {
 						Admin.database.drop();
 					}

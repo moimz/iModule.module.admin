@@ -311,6 +311,13 @@
 	},
 	"database":{
 		"tables":{
+			"add_table":"테이블추가",
+			"keyword":"테이블명",
+			"select_backup":"백업테이블선택",
+			"drop":"테이블 삭제",
+			"truncate":"테이블 비우기",
+			"selected_drop":"선택테이블 삭제",
+			"selected_truncate":"선택테이블 비우기",
 			"columns":{
 				"name":"테이블명",
 				"engine":"엔진",
@@ -320,7 +327,13 @@
 				"total_length":"테이블크기",
 				"collation":"데이터정렬방식",
 				"comment":"설명"
-			}
+			},
+			"targets":{
+				"all":"전체",
+				"used":"사용테이블",
+				"unused":"미사용테이블"
+			},
+			"grid_help":"항목 더블클릭 : 테이블로 이동 / 항목 우클릭 : 메뉴"
 		},
 		"view":{
 			"columns":{
@@ -344,6 +357,7 @@
 		"etc":"사용자정의"
 	},
 	"text":{
+		"menu_keyword":"메뉴검색",
 		"language_setting":"언어별 설정",
 		"language_code":"언어코드",
 		"language_code_help":"영어소문자로 언어코드(예 : en, ko 등)을 입력하세요.",
