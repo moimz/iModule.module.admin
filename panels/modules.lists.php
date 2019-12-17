@@ -84,7 +84,6 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 			sortable:true,
 			renderer:function(value,p,record) {
 				var icon = record.data.icon.split("-");
-				
 				return '<i class="icon '+icon.shift()+" "+record.data.icon+'"></i>'+value;
 			},
 			summaryRenderer:function(value) {

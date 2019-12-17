@@ -555,6 +555,21 @@ class ModuleAdmin {
 		}
 		
 		/**
+		 * 1차 메뉴가 log 일 경우
+		 */
+		if ($this->menu == 'log') {
+			ob_start();
+		
+			$IM = $this->IM;
+			$Admin = $this;
+			
+			if (is_file($this->Module->getPath().'/panels/'.$this->menu.'.'.$this->page.'.php') == true) {
+				INCLUDE_ONCE $this->Module->getPath().'/panels/'.$this->menu.'.'.$this->page.'.php';
+			}
+			$panel = ob_get_clean();
+		}
+		
+		/**
 		 * 1차 메뉴가 database 일 경우
 		 */
 		if ($this->menu == 'database') {
@@ -759,6 +774,19 @@ class ModuleAdmin {
 			}
 			
 			/**
+			 * 로그
+			 */
+			if (in_array('log',$disabledMenus) == false) {
+				$menu = new stdClass();
+				$menu->menu = 'log';
+				$menu->page = false;
+				$menu->tab = false;
+				$menu->icon = 'xi-time-back';
+				$menu->title = $this->getText('menus/log');
+				$menus[] = $menu;
+			}
+			
+			/**
 			 * 데이터베이스
 			 */
 			if (in_array('database',$disabledMenus) == false) {
@@ -909,6 +937,35 @@ class ModuleAdmin {
 				$page->title = $this->getText('pages/configs/sitemap');
 				$pages[] = $page;
 			}
+		}
+		
+		/**
+		 * 1차메뉴가 log 일 경우
+		 */
+		if ($menu == 'log') {
+			$page = new stdClass();
+			$page->menu = 'log';
+			$page->page = 'admin';
+			$page->tab = false;
+			$page->icon = 'xi-crown';
+			$page->title = $this->getText('pages/log/admin');
+			$pages[] = $page;
+			
+			$page = new stdClass();
+			$page->menu = 'log';
+			$page->page = 'process';
+			$page->tab = false;
+			$page->icon = 'xi-cog';
+			$page->title = $this->getText('pages/log/process');
+			$pages[] = $page;
+			
+			$page = new stdClass();
+			$page->menu = 'log';
+			$page->page = 'member';
+			$page->tab = false;
+			$page->icon = 'xi-user';
+			$page->title = $this->getText('pages/log/member');
+			$pages[] = $page;
 		}
 		
 		/**

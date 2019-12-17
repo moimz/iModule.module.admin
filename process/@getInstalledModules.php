@@ -12,7 +12,15 @@
  */
 if (defined('__IM__') == false) exit;
 
-$lists = $this->db()->select($this->getModule()->getTable('module'),'module,version,sort')->orderBy('sort','asc')->get();
+$is_admin = Request('is_admin') == 'true';
+$updatable = true;
+
+$lists = $this->db()->select($this->getModule()->getTable('module'),'module,version,sort');
+if ($is_admin === true) {
+	$updatable = false;
+	$lists->where('(is_admin=? or module=?)',array('TRUE','admin'));
+}
+$lists = $lists->orderBy('sort','asc')->get();
 for ($i=0, $loop=count($lists);$i<$loop;$i++) {
 	$package = $this->getModule()->getPackage($lists[$i]->module);
 	
@@ -21,10 +29,14 @@ for ($i=0, $loop=count($lists);$i<$loop;$i++) {
 	$lists[$i]->icon = $package->icon;
 	$lists[$i]->description = $this->getModule()->getDescription($lists[$i]->module);
 	
-	if ($i != $lists[$i]->sort) {
+	if ($updatable == true && $i != $lists[$i]->sort) {
 		$this->db()->update($this->getModule()->getTable('module'),array('sort'=>$i))->where('module',$lists[$i]->module)->execute();
 		$lists[$i]->sort = $i;
 	}
+}
+
+if (Request('is_all') == 'true') {
+	$lists[] = array('module'=>'','title'=>'전체보기','sort'=>-1);
 }
 
 $results->success = true;

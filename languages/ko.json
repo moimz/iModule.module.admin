@@ -5,6 +5,7 @@
 		"plugins":"플러그인",
 		"widgets":"위젯",
 		"configs":"사이트설정",
+		"log":"로그",
 		"database":"데이터베이스"
 	},
 	"pages":{
@@ -20,6 +21,11 @@
 		"configs":{
 			"sites":"사이트관리",
 			"sitemap":"사이트맵관리"
+		},
+		"log":{
+			"admin":"사이트관리자 접근로그",
+			"process":"사이트관리자 활동로그",
+			"member":"회원 활동로그"
 		},
 		"database":{
 			"all":"전체 테이블보기"
