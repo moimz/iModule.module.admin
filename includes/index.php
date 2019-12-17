@@ -181,9 +181,9 @@ Ext.onReady(function () {
 									document.title = tab.getTitle()+" - <?php echo $pageTitle->title; ?>";
 								});
 							}
-							
-							$(document).triggerHandler("render");
 						}
+						
+						$(document).triggerHandler("iModuleAdminPanelRedy");
 					}
 				}
 			}),
@@ -193,7 +193,12 @@ Ext.onReady(function () {
 				border:false,
 				contentEl:"iModuleAdminFooter"
 			})
-		]
+		],
+		listeners:{
+			afterRender:function() {
+				$(document).triggerHandler("iModuleAdminReady");
+			}
+		}
 	}).updateLayout();
 	
 	try {
