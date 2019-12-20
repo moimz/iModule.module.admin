@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.1.0
- * @modified 2019. 1. 22.
+ * @modified 2019. 12. 19.
  */
 if (defined('__IM__') == false) exit;
 
@@ -23,6 +23,7 @@ $icon = Request('icon');
 if ($icon && $icon_type != 'image') $icon = $icon_type.' '.$icon;
 $is_footer = Request('is_footer') ? 'TRUE' : 'FALSE';
 $is_hide = Request('is_hide') ? 'TRUE' : 'FALSE';
+$permission = $this->IM->checkPermissionString(Request('permission')) === true ? Request('permission') : $errors['permission'] = $this->IM->checkPermissionString(Request('permission'));
 $description = Request('description');
 $type = Request('type') ? Request('type') : $errors['type'] = $this->getErrorText('REQUIRED');
 
@@ -124,6 +125,7 @@ if (count($errors) == 0) {
 	$insert['title'] = $title;
 	$insert['is_footer'] = $is_footer;
 	$insert['is_hide'] = $is_hide;
+	$insert['permission'] = $permission;
 	$insert['description'] = $description;
 	$insert['type'] = $type;
 	$insert['layout'] = $layout;

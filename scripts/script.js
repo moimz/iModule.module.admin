@@ -7,7 +7,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.1.0
- * @modified 2019. 12. 15.
+ * @modified 2019. 12. 19.
  */
 var Admin = {
 	/**
@@ -1790,7 +1790,8 @@ var Admin = {
 											fieldLabel:Admin.getText("configs/sitemap/form/is_hide"),
 											name:"is_hide",
 											boxLabel:Admin.getText("configs/sitemap/form/is_hide_help")
-										})
+										}),
+										Admin.permissionField(Admin.getText("configs/sitemap/form/permission"),"permission","true",true,Admin.getText("configs/sitemap/form/permission_help")),
 									]
 								}),
 								new Ext.form.FieldSet({
@@ -3963,7 +3964,7 @@ var Admin = {
 	 * @param boolean is_guest 손님권한 포함여부
 	 * return FieldContainer field 권한필드
 	 */
-	permissionField:function(label,name,value,is_guest) {
+	permissionField:function(label,name,value,is_guest,help) {
 		var selectorValue = "etc";
 		var presets = [];
 		var permissions = Admin.getText("permission/preset");
@@ -4031,7 +4032,8 @@ var Admin = {
 						
 					}
 				})
-			]
+			],
+			afterBodyEl:help ? '<div class="x-form-help">' + help + '</div>' : null
 		});
 	},
 	/**
