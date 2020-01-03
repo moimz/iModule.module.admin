@@ -1217,7 +1217,7 @@ class ModuleAdmin {
 			 * 전체 사이트 정보를 참고해도 현재 접속한 도메인의 사이트를 찾을 수 없을 경우 에러메세지를 출력한다.
 			 */
 			if ($isAlias == false) {
-				$this->printError('SITE_NOT_FOUND');
+				$this->IM->printError('SITE_NOT_FOUND');
 			}
 		}
 		
