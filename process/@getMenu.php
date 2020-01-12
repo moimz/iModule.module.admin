@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.1.0
- * @modified 2019. 4. 20.
+ * @modified 2020. 1. 12.
  */
 if (defined('__IM__') == false) exit;
 
@@ -68,7 +68,8 @@ if ($data->type == 'MODULE') {
 } elseif ($data->type == 'EXTERNAL') {
 	$data->external = $context->external;
 } elseif ($data->type == 'PAGE') {
-	$data->subpage = $context->page;
+	$data->subpage = $context->page == '@' ? '' : $context->page;
+	$data->subpage_auto_bind = $context->page == '@';
 } elseif ($data->type == 'WIDGET') {
 	$data->widget = json_encode($context->widget,JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK | JSON_UNESCAPED_SLASHES);
 } elseif ($data->type == 'LINK') {
