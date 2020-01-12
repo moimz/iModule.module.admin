@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.1.0
- * @modified 2019. 4. 20.
+ * @modified 2020. 1. 12.
  */
 if (defined('__IM__') == false) exit;
 
@@ -49,7 +49,8 @@ if (strpos($site->templet,'#') === 0 && $this->IM->getModule()->isSitemap(substr
 		} elseif ($lists[$i]->type == 'MODULE') {
 			$lists[$i]->context = $this->Module->getTitle($context->module).' - '.$this->Module->getContextTitle($context->context,$context->module);
 		} elseif ($lists[$i]->type == 'PAGE') {
-			$lists[$i]->context = $this->IM->getPages($lists[$i]->menu,$context->page,$lists[$i]->domain,$lists[$i]->language)->title.'('.$context->page.')';
+			if ($context->page == '@') $lists[$i]->context = $this->getText('configs/sitemap/form/subpage_auto_bind');
+			else $lists[$i]->context = $this->IM->getPages($lists[$i]->menu,$context->page,$lists[$i]->domain,$lists[$i]->language)->title.'('.$context->page.')';
 		} elseif ($lists[$i]->type == 'LINK') {
 			$lists[$i]->context = $context->link;
 		} elseif ($lists[$i]->type == 'HTML') {

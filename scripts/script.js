@@ -7,7 +7,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.1.0
- * @modified 2019. 12. 19.
+ * @modified 2020. 1. 12.
  */
 var Admin = {
 	/**
@@ -2153,7 +2153,7 @@ var Admin = {
 															load:function(store,records,success,e) {
 																if (success == true) {
 																	if (store.getCount() == 0) {
-																		Ext.getCmp("SitemapConfigForm").getForm().findField("subpage_create").setValue(true);
+																		Ext.getCmp("SitemapConfigForm").getForm().findField("subpage_auto_bind").setValue(true);
 																	}
 																} else {
 																	if (e.getError()) {
@@ -2170,29 +2170,22 @@ var Admin = {
 													style:{marginRight:"5px"}
 												}),
 												new Ext.form.Checkbox({
-													name:"subpage_create",
-													boxLabel:Admin.getText("configs/sitemap/form/subpage_create"),
+													name:"subpage_auto_bind",
+													boxLabel:Admin.getText("configs/sitemap/form/subpage_auto_bind"),
 													checked:code ? false : true,
 													listeners:{
 														change:function(form,value) {
 															if (!code || (value == false && Ext.getCmp("SitemapConfigForm").getForm().findField("subpage").getStore().getCount() == 0)) {
-																Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("NOT_FOUND_SUBPAGE"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+																Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getErrorText("NOT_ALLOWED_SELECT_SUBPAGE"),buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
 																form.setValue(true);
 																return;
 															}
 															Ext.getCmp("SitemapConfigForm").getForm().findField("subpage").setDisabled(value);
-															Ext.getCmp("SitemapConfigForm").getForm().findField("subpage_code").setDisabled(!value).setHidden(!value);
 														}
 													}
 												})
 											],
 											afterBodyEl:'<div class="x-form-help">'+Admin.getText("configs/sitemap/form/subpage_help")+'</div>'
-										}),
-										new Ext.form.TextField({
-											fieldLabel:Admin.getText("configs/sitemap/form/subpage_code"),
-											name:"subpage_code",
-											disabled:code ? true : false,
-											afterBodyEl:'<div class="x-form-help">'+Admin.getText("configs/sitemap/form/subpage_code_help")+'</div>'
 										})
 									],
 									listeners:{

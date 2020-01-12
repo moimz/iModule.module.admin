@@ -8,7 +8,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.1.0
- * @modified 2019. 12. 19.
+ * @modified 2020. 1. 12.
  */
 if (defined('__IM__') == false) exit;
 
@@ -98,10 +98,14 @@ if ($type == 'MODULE') {
 	if ($mode == 'page') {
 		$errors['type'] = $this->getErrorText('NOT_ALLOWED_SUBPAGE_IN_PAGE');
 	} else {
-		if (Request('subpage_create') == 'on') {
-			$context->page = Request('subpage_code') ? Request('subpage_code') : $errors['subpage_code'] = $this->getErrorText('REQUIRED');
+		if (Request('subpage_auto_bind')) {
+			$context->page = '@';
 		} else {
 			$context->page = Request('subpage') ? Request('subpage') : $errors['subpage'] = $this->getErrorText('REQUIRED');
+			
+			if ($this->IM->db()->select($this->IM->getTable('sitemap'))->where('domain',$domain)->where('language',$language)->where('menu',$menu)->where('page',$context->page)->has() == false) {
+				$errors['subpage'] = $this->getErrorText('NOT_FOUND');
+			}
 		}
 	}
 } elseif ($type == 'WIDGET') {
@@ -147,17 +151,6 @@ if (count($errors) == 0) {
 			$sort = $this->IM->db()->select($this->IM->getTable('sitemap'))->where('domain',$domain)->where('language',$language)->where('page','')->count();
 			$insert['sort'] = $sort;
 			
-			$this->IM->db()->insert($this->IM->getTable('sitemap'),$insert)->execute();
-		}
-		
-		if ($type == 'PAGE' && $this->IM->db()->select($this->IM->getTable('sitemap'))->where('domain',$domain)->where('language',$language)->where('menu',$menu)->where('page',$context->page)->has() == false) {
-			$sort = $this->IM->db()->select($this->IM->getTable('sitemap'))->where('domain',$domain)->where('language',$language)->where('menu',$menu)->where('page','','!=')->count();
-			$insert['sort'] = $sort;
-			$insert['page'] = $context->page;
-			$insert['title'] = 'EMPTY PAGE';
-			$insert['layout'] = $layout;
-			$insert['type'] = 'EMPTY';
-			$insert['context'] = '{}';
 			$this->IM->db()->insert($this->IM->getTable('sitemap'),$insert)->execute();
 		}
 	}

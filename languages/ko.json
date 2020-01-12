@@ -254,17 +254,14 @@
 				"footer_external_help":"페이지 하단에 나타날 외부파일을 선택하여 주십시오.",
 				"content":"내용입력",
 				"context_layout":"페이지 컨텍스트 및 레이아웃 설정",
-				
 				"layout":"페이지레이아웃",
 				"module":"모듈선택",
 				"context":"컨텍스트선택",
 				"external":"외부페이지",
 				"external_help":"외부페이지를 페이지에 삽입하려면 /externals 또는 /templets/사용템플릿/externals 폴더에 삽입할 PHP파일을 업로드하신 후 시용하세요.",
-				"subpage":"서브페이지코드",
-				"subpage_help":"해당 메뉴에 접근시 해당 메뉴의 하위 2차 페이지로 자동연결하고자 할 경우 설정하세요.",
-				"subpage_create":"서브페이지생성",
-				"subpage_code":"페이지코드",
-				"subpage_code_help":"해당 페이지코드를 가진 서브페이지를 생성합니다. 메뉴 생성 또는 수정후 생성된 페이지를 설정할 수 있습니다.",
+				"subpage":"연결페이지",
+				"subpage_help":"해당 메뉴에 접근시 연결될 해당 메뉴의 서브페이지를 선택하여 주십시오.<br>자동연결에 체크할 경우 해당 메뉴의 페이지 중 접근가능한 첫번째 페이지로 자동연결됩니다.",
+				"subpage_auto_bind":"자동연결",
 				"widget":"위젯코드",
 				"widget_help":"위젯코드는 위젯배치마법사를 통해 쉽게 설정할 수 있습니다.",
 				"link":"연결될 주소",
@@ -394,6 +391,7 @@
 		"SITEMAP_FROM_MODULE":"해당 사이트는 {MODULE} 모듈에서 사이트맵을 관리하므로 직접 사이트맵 설정을 할 수 없습니다.",
 		"NOT_ALLOWED_MODULE_IN_MENU":"1차 메뉴에 모듈을 넣을 수 없습니다. 해당 모듈을 사용중인 서브페이지를 연결하여 사용하시기 바랍니다.",
 		"NOT_ALLOWED_SUBPAGE_IN_PAGE":"2차 페이지에는 서브페이지를 연결할 수 없습니다.",
-		"NOT_FOUND_SUBPAGE":"해당 메뉴의 서브페이지가 없습니다. 서브페이지를 생성하여 주십시오."
+		"NOT_ALLOWED_SELECT_SUBPAGE":"해당 메뉴의 서브페이지가 없습니다. 서브페이지를 생성 후 자동연결이 아닌 특정 페이지를 선택할 수 있습니다.",
+		"NOT_FOUND_SUBPAGE":"서브페이지를 찾을 수 없습니다."
 	}
 }
