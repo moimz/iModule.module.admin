@@ -9,7 +9,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.1.0
- * @modified 2019. 12. 15.
+ * @modified 2020. 1. 16.
  */
 class ModuleAdmin {
 	/**
@@ -84,12 +84,6 @@ class ModuleAdmin {
 		 * @todo 사이트관리자를 변경할 수 있는 설정필요
 		 */
 		$this->IM->language = 'ko';
-		
-		/**
-		 * iModule.config.php 파일에 사이트관리자 설정이 있다면 해당설정을 저장한다.
-		 */
-		$this->configs = isset($_ADMINS) == true ? $_ADMINS : new stdClass();
-		$this->configs->title = isset($this->configs->title) == true ? $this->configs->title : 'iModule <small>Administrator</small>';
 		
 		/**
 		 * 접속한 사이트주소 및 사이트변수 정의
@@ -680,6 +674,21 @@ class ModuleAdmin {
 	 * @return object $value 환경설정값
 	 */
 	function getConfig($key) {
+		if ($this->configs == null) {
+			/**
+			 * iModule.config.php 파일에 사이트관리자 설정이 있다면 해당설정을 저장한다.
+			 */
+			$this->configs = isset($_ADMINS) == true ? $_ADMINS : new stdClass();
+			$this->configs->title = isset($this->configs->title) == true ? $this->configs->title : 'iModule <small>Administrator</small>';
+			$this->configs->disabledMenus = array();
+			$this->configs->additionalMenus = array();
+			
+			/**
+			 * 이벤트를 발생시켜 관리자 환경설정값을 변경할 수 있도록 한다.
+			 */
+			$this->IM->fireEvent('afterGetData',$this->getModule()->getName(),'configs',$this->configs);
+		}
+		
 		return isset($this->configs->{$key}) == true ? $this->configs->{$key} : null;
 	}
 	
@@ -692,8 +701,8 @@ class ModuleAdmin {
 		/**
 		 * 사이트관리자 환경설정에 비활성화 메뉴 및 추가된 메뉴를 가져온다.
 		 */
-		$disabledMenus = $this->getConfig('disabledMenus') != null ? $this->getConfig('disabledMenus') : array();
-		$additionalMenu = $this->getConfig('additionalMenu') != null ? $this->getConfig('additionalMenu') : array();
+		$disabledMenus = $this->getConfig('disabledMenus');
+		$additionalMenus = $this->getConfig('additionalMenus');
 		
 		/**
 		 * 현재 권한을 가지고 온다.
@@ -800,8 +809,11 @@ class ModuleAdmin {
 			}
 			
 			/**
-			 * @todo 추가 메뉴 구성
+			 * 추가메뉴를 추가한다.
 			 */
+			foreach ($additionalMenus as $menu) {
+				$menus[] = $menu;
+			}
 		} else {
 			/**
 			 * 관리권한이 있는 모듈로 관리자 메뉴를 구성한다.
@@ -1155,7 +1167,7 @@ class ModuleAdmin {
 		/**
 		 * 브라우져 타이틀 설정
 		 */
-		$this->IM->setSiteTitle($this->configs->title);
+		$this->IM->setSiteTitle(strip_tags($this->getConfig('title')));
 		
 		/**
 		 * IP접근제한이 활성화되어 있을 경우
