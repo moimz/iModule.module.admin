@@ -1124,20 +1124,12 @@ class ModuleAdmin {
 	/**
 	 * 아이피 제한을 확인한다.
 	 *
-	 * @param string $target 제한대상
 	 * @return boolean $allowed
 	 */
-	function checkIp($target) {
-		if ($target == 'admin') {
-			if ($this->getModule()->getConfig('enable_security_mode') !== true) return true;
-			if (Request('iModuleAdminAccess','session') === 'TRUE') return true;
-			$ips = array_filter(explode("\n",$this->getModule()->getConfig('allow_ip')));
-		}
-		
-		if ($target == 'database') {
-			if ($this->getModule()->getConfig('enable_security_database_mode') !== true) return true;
-			$ips = array_filter(explode("\n",$this->getModule()->getConfig('allow_database_ip')));
-		}
+	function checkIp() {
+		if ($this->getModule()->getConfig('enable_security_mode') !== true) return true;
+		if (Request('iModuleAdminAccess','session') === 'TRUE') return true;
+		$ips = array_filter(explode("\n",$this->getModule()->getConfig('allow_ip')));
 		
 		foreach ($ips as $ip) {
 			$ip = trim($ip);
@@ -1180,7 +1172,7 @@ class ModuleAdmin {
 			}
 		}
 		
-		if ($this->checkIp('admin') !== true) {
+		if ($this->checkIp() !== true) {
 			$this->getError('ACCESS_DENIED');
 			exit;
 		}
