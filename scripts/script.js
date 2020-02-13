@@ -1791,7 +1791,7 @@ var Admin = {
 											name:"is_hide",
 											boxLabel:Admin.getText("configs/sitemap/form/is_hide_help")
 										}),
-										Admin.permissionField(Admin.getText("configs/sitemap/form/permission"),"permission","true",true,Admin.getText("configs/sitemap/form/permission_help")),
+										Admin.permissionField(Admin.getText("configs/sitemap/form/permission"),"permission","true",true,Admin.getText("configs/sitemap/form/permission_help"))
 									]
 								}),
 								new Ext.form.FieldSet({
@@ -1991,7 +1991,7 @@ var Admin = {
 													listeners:{
 														change:function(form,value) {
 															Ext.getCmp("SitemapConfigForm").getForm().findField("context").getStore().getProxy().setExtraParam("target",value);
-															Ext.getCmp("SitemapConfigForm").getForm().findField("context").getStore().load();
+															Ext.getCmp("SitemapConfigForm").getForm().findField("context").getStore().reload();
 														}
 													}
 												})
