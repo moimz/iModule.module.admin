@@ -19,7 +19,7 @@ if (defined('__IM__') == false) exit;
 		<?php for ($i=0, $loop=count($menus);$i<$loop;$i++) { if (isset($menus[$i]->menu) == true) { ?>
 		<li<?php echo $menus[$i]->menu == $this->menu && ($menus[$i]->page == false || $menus[$i]->page == $this->page) ? ' class="selected"' : ''; ?>><a href="<?php echo $this->getUrl($menus[$i]->menu,$menus[$i]->page,$menus[$i]->tab); ?>"><i class="<?php echo substr($menus[$i]->icon,0,2); ?> <?php echo $menus[$i]->icon; ?>"></i><?php echo $menus[$i]->title; ?></a></li>
 		<?php } else { ?>
-		<li><a href="<?php echo $menus[$i]->link; ?>" target="_blank"><i class="<?php echo substr($menus[$i]->icon,0,2); ?> <?php echo $menus[$i]->icon; ?>"></i><?php echo $menus[$i]->title; ?></a></li>
+		<li><a href="<?php echo $menus[$i]->link; ?>" target="<?php echo $menus[$i]->target; ?>"><i class="<?php echo substr($menus[$i]->icon,0,2); ?> <?php echo $menus[$i]->icon; ?>"></i><?php echo $menus[$i]->title; ?></a></li>
 		<?php }} ?>
 	</ul>
 	
