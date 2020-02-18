@@ -434,7 +434,10 @@ class ModuleAdmin {
 		}
 		
 		$permissions = $this->checkPermission();
-		if ($permissions !== true && ($this->menu != 'modules' || in_array($this->page,$permissions) == false)) return $this->IM->printError('FORBIDDEN');
+		if ($permissions !== true) {
+			$permissions = $this->checkPermission($this->menu);
+			if ($permissions !== true && is_array($permissions) !== true && in_array($this->page,$permissions) == false) return $this->IM->printError('FORBIDDEN');
+		}
 		
 		/**
 		 * 현재 메뉴에 대한 2차 메뉴(페이지)를 구성한다.
@@ -592,6 +595,14 @@ class ModuleAdmin {
 				$panel = ob_get_clean();
 			}
 		}
+		
+		/**
+		 * 이벤트를 발생시킨다.
+		 */
+		$values = (object)get_defined_vars();
+		$values->menu = $this->menu;
+		$values->page = $this->page;
+		$this->IM->fireEvent('afterGetContext',$this->getModule()->getName(),'panel',$values,$panel);
 		
 		return $panel;
 	}
@@ -829,6 +840,13 @@ class ModuleAdmin {
 				$menu->title = $mModule->getModule()->getTitle();
 				$menus[] = $menu;
 			}
+			
+			/**
+			 * 추가메뉴를 추가한다.
+			 */
+			foreach ($additionalMenus as $menu) {
+				if (isset($menu->menu) == false || $this->checkPermission($menu->menu) == true) $menus[] = $menu;
+			}
 		}
 		
 		$this->menus = $menus;
@@ -1045,7 +1063,7 @@ class ModuleAdmin {
 	 * @return string[] $permissions 관리권한이 있는 패널
 	 * @todo 현재는 사이트관리자에게 모든 권한을 부여하고 개개인에게 맞춤 권한을 제공하지는 않는다.
 	 */
-	function checkPermission() {
+	function checkPermission($menu=null) {
 		if ($this->IM->getModule('member')->isAdmin() == true) return true;
 		
 		/**
@@ -1060,7 +1078,17 @@ class ModuleAdmin {
 			}
 		}
 		
-		return count($permissions) == 0 ? false : $permissions;
+		if ($menu == null) {
+			return count($permissions) == 0 ? false : $permissions;
+		} else {
+			if ($menu == 'modules') {
+				return count($permissions) == 0 ? false : $permissions;
+			}
+			
+			$permission = false;
+			$this->IM->fireEvent('checkPermission','admin','menu',$menu,$permission);
+			return $permission;
+		}
 	}
 	
 	/**
