@@ -7,7 +7,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.1.0
- * @modified 2020. 1. 12.
+ * @modified 2020. 3. 3.
  */
 var Admin = {
 	/**
@@ -2439,6 +2439,7 @@ var Admin = {
 													url:ENV.getProcessUrl("admin","@getSites"),
 													reader:{type:"json"}
 												},
+												autoLoad:true,
 												remoteSort:false,
 												sorters:[{property:"sort",direction:"ASC"}],
 												fields:["display","value","domain","language"]
@@ -2995,7 +2996,7 @@ var Admin = {
 									type:"ajax",
 									simpleSortMode:true,
 									url:ENV.getProcessUrl("admin","@getTemplets"),
-									reader:{type:"json",root:"lists",totalProperty:"totalCount"}
+									reader:{type:"json"}
 								},
 								remoteSort:false,
 								sorters:[{property:"sort",direction:"ASC"},{property:"name",direction:"ASC"}],
