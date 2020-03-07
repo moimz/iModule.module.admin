@@ -1170,7 +1170,13 @@ class ModuleAdmin {
 			if (preg_match($reg_ip,$_SERVER['REMOTE_ADDR']) == true) return true;
 		}
 		
-		return false;
+		/**
+		 * 이벤트를 발생시킨다.
+		 */
+		$values = false;
+		$this->IM->fireEvent('afterGetData',$this->getModule()->getName(),'ip',$values);
+		
+		return $values;
 	}
 	
 	function doLayout() {
