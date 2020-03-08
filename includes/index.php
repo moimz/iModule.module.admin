@@ -13,7 +13,7 @@
 if (defined('__IM__') == false) exit;
 ?>
 <header id="iModuleAdminHeader">
-	<h1><?php echo $this->getConfig('title'); ?></h1>
+	<h1><?php echo $this->getConfig('icon') == null ? '' : '<i style="background-image:url('.$this->getConfig('icon').');"></i>'; ?><?php echo $this->getConfig('title'); ?></h1>
 	
 	<ul data-role="menu">
 		<?php for ($i=0, $loop=count($menus);$i<$loop;$i++) { if (isset($menus[$i]->menu) == true) { ?>

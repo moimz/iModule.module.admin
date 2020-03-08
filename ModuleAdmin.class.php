@@ -686,10 +686,13 @@ class ModuleAdmin {
 	 */
 	function getConfig($key) {
 		if ($this->configs == null) {
+			$this->IM->getSite();
+			
 			/**
 			 * iModule.config.php 파일에 사이트관리자 설정이 있다면 해당설정을 저장한다.
 			 */
 			$this->configs = isset($_ADMINS) == true ? $_ADMINS : new stdClass();
+			$this->configs->icon = null;
 			$this->configs->title = isset($this->configs->title) == true ? $this->configs->title : 'iModule <small>Administrator</small>';
 			$this->configs->disabledMenus = array();
 			$this->configs->additionalMenus = array();
