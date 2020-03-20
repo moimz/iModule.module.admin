@@ -7,7 +7,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.1.0
- * @modified 2020. 3. 3.
+ * @modified 2020. 3. 20.
  */
 var Admin = {
 	/**
@@ -3483,7 +3483,8 @@ var Admin = {
 	 */
 	searchField:function(id,width,placeHolder,handler) {
 		return new Ext.form.FieldContainer({
-			width:width,
+			width:width == "flex" ? null : width,
+			flex:width == "flex" ? 1 : null,
 			layout:"hbox",
 			items:[
 				new Ext.form.TextField({
