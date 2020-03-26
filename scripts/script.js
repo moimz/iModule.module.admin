@@ -7,7 +7,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.1.0
- * @modified 2020. 3. 20.
+ * @modified 2020. 3. 26.
  */
 var Admin = {
 	/**
@@ -3582,7 +3582,7 @@ var Admin = {
 			});
 			
 			$textarea.froalaEditor({
-				key:"pFOFSAGLUd1AVKg1SN==",
+				key:"1G4C2A10A6E5B4gC3E3G3C2B7D5B3F4D2C1zHMDUGENKACTMXQL==",
 				toolbarButtons:["html","|","bold","italic","underline","strikeThrough","align","|","paragraphFormat","fontSize","color","|","insertImage","insertFile","insertVideo","insertLink","insertTable"],
 				fontSize:["8","9","10","11","12","14","18","24"],
 				heightMin:300,
