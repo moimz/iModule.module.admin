@@ -3582,7 +3582,7 @@ var Admin = {
 			});
 			
 			$textarea.froalaEditor({
-				key:"1G4C2A10A6E5B4gC3E3G3C2B7D5B3F4D2C1zHMDUGENKACTMXQL==",
+				key:"1ZSZGUSXYSMZb1JGZ==",
 				toolbarButtons:["html","|","bold","italic","underline","strikeThrough","align","|","paragraphFormat","fontSize","color","|","insertImage","insertFile","insertVideo","insertLink","insertTable"],
 				fontSize:["8","9","10","11","12","14","18","24"],
 				heightMin:300,
