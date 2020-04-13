@@ -7,14 +7,15 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.1.0
- * @modified 2018. 3. 24.
+ * @modified 2020. 4. 13.
  */
 var HtmlEditor = {
-	init:function() {
+	init:function(module) {
 		var htmlCodeMirror = null;
 		var cssCodeMirror = null;
 		
 		var $form = $("#ModuleAdminHtmlEditorForm");
+		$form.data("module",module);
 		
 		var $context = $("div[data-role=context][data-type=html]");
 		var $tab = $("div[data-role=tab][data-name=html]",$form);
@@ -82,7 +83,7 @@ var HtmlEditor = {
 		$("textarea[name=css]",$form).val($style.text());
 		$("textarea[name=html]",$form).val($wysiwyg.froalaEditor("html.get"));
 		
-		var submit = $form.attr("data-submit") ? $form.attr("data-submit") : ENV.getProcessUrl("admin","@saveHtmlContext");
+		var submit = $form.attr("data-submit") ? $form.attr("data-submit") : ENV.getProcessUrl($form.data("module"),"@saveHtmlContext");
 		
 		$form.send(submit,function(result) {
 			if (result.success == true) {

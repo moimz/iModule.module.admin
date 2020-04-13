@@ -9,7 +9,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.1.0
- * @modified 2020. 1. 16.
+ * @modified 2020. 4. 13.
  */
 class ModuleAdmin {
 	/**
@@ -629,8 +629,24 @@ class ModuleAdmin {
 		$this->IM->getModule('wysiwyg')->addCodeMirrorMode('css')->preload();
 		$this->IM->addHeadResource('script',$this->IM->getModule('wysiwyg')->getModule()->getDir().'/scripts/codemirror/addon/edit/closetag.js');
 		
-		$uploader = $this->IM->getModule('attachment')->setTemplet('default')->setModule('admin')->setWysiwyg('wysiwyg')->setLoader($this->IM->getProcessUrl('admin','@getHtmlEditorFiles',array('context'=>Encoder(json_encode(array('domain'=>$domain,'language'=>$language,'menu'=>$menu,'page'=>$page))))))->get();
-		$wysiwyg = $this->IM->getModule('wysiwyg')->setId('ModuleAdminHtmlEditor')->setModule('admin')->setName('wysiwyg')->setContent($html)->get(true);
+		$module = 'admin';
+		
+		/**
+		 * 사이트맵을 구성하는 모듈을 사용하는 사이트일 경우, 해당 모듈을 통해 사이트맵을 가져온다.
+		 */
+		$site = $this->IM->getSites($domain,$language);
+		if (strpos($site->templet,'#') === 0) {
+			$temp = explode('.',substr($site->templet,1));
+			if ($this->IM->getModule()->isSitemap($temp[0]) == true) {
+				$mModule = $this->IM->getModule($temp[0]);
+				if (method_exists($mModule,'getSitemap') == true) {
+					$module = $temp[0];
+				}
+			}
+		}
+		
+		$uploader = $this->IM->getModule('attachment')->setTemplet('default')->setModule('admin')->setWysiwyg('wysiwyg')->setLoader($this->IM->getProcessUrl($module,'@getHtmlEditorFiles',array('context'=>Encoder(json_encode(array('domain'=>$domain,'language'=>$language,'menu'=>$menu,'page'=>$page))))))->get();
+		$wysiwyg = $this->IM->getModule('wysiwyg')->setId('ModuleAdminHtmlEditor')->setModule($module)->setName('wysiwyg')->setContent($html)->get(true);
 		
 		ob_start();
 		
@@ -645,7 +661,7 @@ class ModuleAdmin {
 		$IM = $this->IM;
 		INCLUDE $this->getModule()->getPath().'/includes/html.php';
 		
-		echo PHP_EOL.'</form>'.PHP_EOL.'<script>$(document).ready(function() { HtmlEditor.init(); });</script>'.PHP_EOL;
+		echo PHP_EOL.'</form>'.PHP_EOL.'<script>$(document).ready(function() { HtmlEditor.init("'.$module.'"); });</script>'.PHP_EOL;
 		
 		$context = ob_get_clean();
 		
