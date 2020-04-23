@@ -28,7 +28,7 @@ header > ul[data-role=button] > li {height:40px; display:inline-block; vertical-
 header > ul[data-role=button] > li[data-role=name] {font-size:14px; line-height:40px; color:rgba(255,255,255,0.8);}
 header > ul[data-role=button] > li[data-role=push] {width:50px; height:40px; position:relative;}
 header > ul[data-role=button] > li[data-role=push] > button {display:inline-block; margin:5px 10px; width:30px; height:30px; border:1px solid #44535d; background-size:cover; background-position:50% 50%; background-repeat:no-repeat; border-radius:50%; cursor:pointer;}
-header > ul[data-role=button] > li[data-role=push].opened:before {border-bottom:5px solid #fff; border-left:5px solid transparent; border-right:5px solid transparent; content:" "; position:absolute; bottom:0px; left:50%; margin-left:-5px;}
+header > ul[data-role=button] > li[data-role=push].opened:before {border-bottom:5px solid #fff; border-left:5px solid transparent; border-right:5px solid transparent; content:" "; position:absolute; bottom:0px; left:50%; margin-left:-5px; z-index:101;}
 header > ul[data-role=button] > li[data-role=push] > label {position:absolute; z-index:1; max-width:80%; top:0px; left:30px; height:18px; min-width:18px; border-radius:9px; box-sizing:border-box; padding:0px 5px; font-size:11px; font-family:Roboto; background:#F44336; color:#fff; line-height:18px; text-align:center; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;}
 header > ul[data-role=button] > li[data-role=push] > label:empty {display:none;}
 
