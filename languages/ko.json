@@ -369,6 +369,16 @@
 		"apply_all_templet":"동일템플릿 전체적용",
 		"grid_help":"항목 더블클릭 : 상세정보 / 항목 우클릭 : 메뉴"
 	},
+	"excel":{
+		"log":{
+			"date":"일시",
+			"name":"접속자",
+			"email":"이메일",
+			"page":"접근페이지",
+			"ip":"접근아이피",
+			"agent":"접근브라우저"
+		}
+	},
 	"button":{
 		"language_search":"언어코드검색"
 	},

@@ -8,14 +8,15 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.1.0
- * @modified 2019. 12. 17.
+ * @modified 2020. 4. 29.
  */
 if (defined('__IM__') == false) exit;
 
 $log = Param('log');
 $module = Request('module');
-$user = Request('user');
 $keyword = Request('keyword');
+$start_date = Request('start_date') ? strtotime(date('Y-m-d',strtotime(Request('start_date')))) : 0;
+$end_date = Request('end_date') ? strtotime(date('Y-m-d 24:00:00',strtotime(Request('end_date')))) : 0;
 $start = Request('start');
 $limit = Request('limit');
 $sort = Request('sort');
@@ -29,8 +30,9 @@ if ($log == 'admin') {
 	
 	$mMember = $this->IM->getModule('member');
 	$lists = $this->db()->select($this->table->page_log.' l','l.*, m.name, m.email')->join($mMember->getTable('member').' m','m.idx=l.midx','LEFT');
-	if ($user) $lists->where('(m.name like ? or m.email like ? or l.ip like ?)',array('%'.$user.'%','%'.$user.'%','%'.$user.'%'));
-	if ($keyword) $lists->where('l.page','%'.$keyword.'%','LIKE');
+	if ($keyword) $lists->where('(m.name like ? or m.email like ? or l.ip like ? or l.page like ?)',array('%'.$keyword.'%','%'.$keyword.'%','%'.$keyword.'%','%'.$keyword.'%'));
+	if ($start_date) $lists->where('l.reg_date',$start_date,'>=');
+	if ($end_date) $lists->where('l.reg_date',$end_date,'<');
 	$total = $lists->copy()->count();
 	$lists = $lists->orderBy($sort,$dir)->limit($start,$limit)->get();
 	for ($i=0, $loop=count($lists);$i<$loop;$i++) {
