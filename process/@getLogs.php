@@ -1,7 +1,7 @@
 <?php
 /**
  * 이 파일은 iModule 관리자모듈의 일부입니다. (https://www.imodules.io)
- * 
+ *
  * 사이트로그를 불러온다.
  *
  * @file /plugins/admin/process/@getLogs.php
@@ -27,7 +27,7 @@ $total = 0;
 
 if ($log == 'admin') {
 	$sort = 'l.'.$sort;
-	
+
 	$mMember = $this->IM->getModule('member');
 	$lists = $this->db()->select($this->table->page_log.' l','l.*, m.name, m.email')->join($mMember->getTable('member').' m','m.idx=l.midx','LEFT');
 	if ($keyword) $lists->where('(m.name like ? or m.email like ? or l.ip like ? or l.page like ?)',array('%'.$keyword.'%','%'.$keyword.'%','%'.$keyword.'%','%'.$keyword.'%'));
@@ -42,10 +42,10 @@ if ($log == 'admin') {
 
 if ($log == 'process') {
 	$sort = 'l.'.$sort;
-	
+
 	$mMember = $this->IM->getModule('member');
 	$lists = $this->db()->select($this->table->process_log.' l','l.*, m.name, m.email')->join($mMember->getTable('member').' m','m.idx=l.midx','LEFT');
-	if ($user) $lists->where('(m.name like ? or m.email like ? or l.ip like ?)',array('%'.$user.'%','%'.$user.'%','%'.$user.'%'));
+	if (isset($user) && $user) $lists->where('(m.name like ? or m.email like ? or l.ip like ?)',array('%'.$user.'%','%'.$user.'%','%'.$user.'%'));
 	if ($module) $lists->where('l.module',$module);
 	if ($keyword) $lists->where('l.action',$keyword,'LIKE');
 	$total = $lists->copy()->count();
@@ -59,10 +59,10 @@ if ($log == 'process') {
 
 if ($log == 'member') {
 	$sort = 'a.'.$sort;
-	
+
 	$mMember = $this->IM->getModule('member');
 	$lists = $mMember->db()->select($mMember->getTable('activity').' a','a.*, m.name, m.email')->join($mMember->getTable('member').' m','m.idx=a.midx','LEFT');
-	if ($user) $lists->where('(m.name like ? or m.email like ? or a.ip like ?)',array('%'.$user.'%','%'.$user.'%','%'.$user.'%'));
+	if (isset($user) && $user) $lists->where('(m.name like ? or m.email like ? or a.ip like ?)',array('%'.$user.'%','%'.$user.'%','%'.$user.'%'));
 	if ($module) $lists->where('a.module',$module);
 	if ($keyword) $lists->where('a.code',$keyword,'LIKE');
 	$total = $lists->copy()->count();
