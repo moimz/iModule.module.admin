@@ -8,12 +8,13 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.1.0
- * @modified 2020. 4. 29.
+ * @modified 2020. 10. 20.
  */
 if (defined('__IM__') == false) exit;
 
 $log = Param('log');
 $module = Request('module');
+$user = Request('user');
 $keyword = Request('keyword');
 $start_date = Request('start_date') ? strtotime(date('Y-m-d',strtotime(Request('start_date')))) : 0;
 $end_date = Request('end_date') ? strtotime(date('Y-m-d 24:00:00',strtotime(Request('end_date')))) : 0;
@@ -45,7 +46,7 @@ if ($log == 'process') {
 
 	$mMember = $this->IM->getModule('member');
 	$lists = $this->db()->select($this->table->process_log.' l','l.*, m.name, m.email')->join($mMember->getTable('member').' m','m.idx=l.midx','LEFT');
-	if (isset($user) && $user) $lists->where('(m.name like ? or m.email like ? or l.ip like ?)',array('%'.$user.'%','%'.$user.'%','%'.$user.'%'));
+	if ($user) $lists->where('(m.name like ? or m.email like ? or l.ip like ?)',array('%'.$user.'%','%'.$user.'%','%'.$user.'%'));
 	if ($module) $lists->where('l.module',$module);
 	if ($keyword) $lists->where('l.action',$keyword,'LIKE');
 	$total = $lists->copy()->count();
@@ -62,7 +63,7 @@ if ($log == 'member') {
 
 	$mMember = $this->IM->getModule('member');
 	$lists = $mMember->db()->select($mMember->getTable('activity').' a','a.*, m.name, m.email')->join($mMember->getTable('member').' m','m.idx=a.midx','LEFT');
-	if (isset($user) && $user) $lists->where('(m.name like ? or m.email like ? or a.ip like ?)',array('%'.$user.'%','%'.$user.'%','%'.$user.'%'));
+	if ($user) $lists->where('(m.name like ? or m.email like ? or a.ip like ?)',array('%'.$user.'%','%'.$user.'%','%'.$user.'%'));
 	if ($module) $lists->where('a.module',$module);
 	if ($keyword) $lists->where('a.code',$keyword,'LIKE');
 	$total = $lists->copy()->count();
