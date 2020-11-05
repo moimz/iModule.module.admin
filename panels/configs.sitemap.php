@@ -316,17 +316,15 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 							dataIndex:"page",
 							renderer:function(value,p,record) {
 								if (record.data.type == "GROUPSTART") {
-									Ext.getCmp("PageList").is_grouping = true;
 									return '<i class="icon xi xi-folder-open"></i>' + Admin.getText("configs/sitemap/group_start");
 								}
 								
 								if (record.data.type == "GROUPEND") {
-									Ext.getCmp("PageList").is_grouping = false;
 									return '<i class="tree tree-end"></i>' + Admin.getText("configs/sitemap/group_end");
 								}
 								
 								var sHTML = "";
-								if (Ext.getCmp("PageList").is_grouping == true) sHTML+= '<i class="tree tree-branch"></i>';
+								if (record.data.is_grouping == true) sHTML+= '<i class="tree tree-branch"></i>';
 								if (record.data.is_hide == true) sHTML+= '<i class="icon xi xi-eye-slash"></i>';
 								if (record.data.is_footer == true) sHTML+= '<i class="icon xi xi-down-square"></i>';
 								sHTML+= value;
@@ -371,6 +369,12 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 									});
 									
 									if (type.indexOf("GROUP") === 0) {
+										var is_grouping = false;
+										for (var i=0, loop=Ext.getCmp("PageList").getStore().getCount();i<loop;i++) {
+											if (Ext.getCmp("PageList").getStore().getAt(i).get("type") == "GROUPSTART") is_grouping = true;
+											Ext.getCmp("PageList").getStore().getAt(i).set("is_grouping",is_grouping);
+											if (Ext.getCmp("PageList").getStore().getAt(i).get("type") == "GROUPEND") is_grouping = false;
+										}
 										Ext.getCmp("PageList").getStore().sort("sort","ASC");
 									}
 								}
@@ -393,6 +397,12 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 									});
 									
 									if (type.indexOf("GROUP") === 0) {
+										var is_grouping = false;
+										for (var i=0, loop=Ext.getCmp("PageList").getStore().getCount();i<loop;i++) {
+											if (Ext.getCmp("PageList").getStore().getAt(i).get("type") == "GROUPSTART") is_grouping = true;
+											Ext.getCmp("PageList").getStore().getAt(i).set("is_grouping",is_grouping);
+											if (Ext.getCmp("PageList").getStore().getAt(i).get("type") == "GROUPEND") is_grouping = false;
+										}
 										Ext.getCmp("PageList").getStore().sort("sort","ASC");
 									}
 								}
