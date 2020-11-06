@@ -1384,12 +1384,11 @@ class ModuleAdmin {
 		$file = $file == null && isset($_FILES[$type.'_file']['tmp_name']) == true && is_file($_FILES[$type.'_file']['tmp_name']) == true ? $_FILES[$type.'_file']['tmp_name'] : $file;
 		if ($file != null && is_file($file) == false) $file = null;
 		
-		$extension = array('image/png'=>'png','image/x-icon'=>'ico','image/jpeg'=>'jpg','image/gif'=>'gif');
+		$extension = array('image/png'=>'png','image/x-icon'=>'ico','image/vnd.microsoft.icon'=>'ico','image/jpeg'=>'jpg','image/gif'=>'gif');
 		if ($file !== null) {
 			$mime = $this->IM->getModule('attachment')->getFileMime($file);
 			if (isset($extension[$mime]) == true) $extension = $extension[$mime];
 			else $extension = null;
-			
 			if ($extension == null) $file = null;
 		}
 		
