@@ -130,6 +130,16 @@ if (count($errors) == 0) {
 			$this->IM->db()->update($this->IM->getTable('sitemap'),array('domain'=>$domain,'language'=>$language))->where('domain',$oDomain)->where('language',$oLanguage)->execute();
 		}
 		
+		/**
+		 * 사이트 캐시를 제거한다.
+		 */
+		$this->IM->cache()->reset('core','site','all');
+		
+		/**
+		 * 사이트맵 캐시를 제거한다.
+		 */
+		$this->IM->cache()->reset('core','sitemap','all');
+		
 		$results->success = true;
 	}
 } else {

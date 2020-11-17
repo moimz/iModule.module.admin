@@ -206,6 +206,11 @@ if (count($errors) == 0) {
 		}
 	}
 	
+	/**
+	 * 사이트맵 캐시를 제거한다.
+	 */
+	$this->IM->cache()->reset('core','sitemap','all');
+	
 	$results->success = true;
 } else {
 	$results->success = false;

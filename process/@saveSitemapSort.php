@@ -18,5 +18,10 @@ for ($i=0, $loop=count($updated);$i<$loop;$i++) {
 	$this->IM->db()->update($this->IM->getTable('sitemap'),array('sort'=>$updated[$i]->sort))->where('domain',$updated[$i]->domain)->where('language',$updated[$i]->language)->where('menu',$updated[$i]->menu)->where('page',$updated[$i]->page)->execute();
 }
 
+/**
+ * 사이트맵 캐시를 제거한다.
+ */
+$this->IM->cache()->reset('core','sitemap','all');
+
 $results->success = true;
 ?>
