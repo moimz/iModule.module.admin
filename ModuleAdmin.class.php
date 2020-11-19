@@ -702,7 +702,7 @@ class ModuleAdmin {
 	 */
 	function getConfig($key) {
 		if ($this->configs == null) {
-			$this->IM->getSite();
+			$this->IM->getSite(false);
 			
 			/**
 			 * iModule.config.php 파일에 사이트관리자 설정이 있다면 해당설정을 저장한다.
