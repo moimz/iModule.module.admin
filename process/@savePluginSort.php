@@ -24,5 +24,10 @@ for ($i=0, $loop=count($lists);$i<$loop;$i++) {
 	}
 }
 
+/**
+ * 플러그인 캐시를 제거한다.
+ */
+$this->IM->cache()->reset('core','plugin','all');
+
 $results->success = true;
 ?>

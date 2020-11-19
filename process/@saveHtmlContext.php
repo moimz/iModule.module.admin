@@ -45,5 +45,10 @@ $context->files = $files;
 
 $this->IM->db()->update($this->IM->getTable('sitemap'),array('context'=>json_encode($context,JSON_UNESCAPED_UNICODE)))->where('domain',$sitemap->domain)->where('language',$sitemap->language)->where('menu',$sitemap->menu)->where('page',$sitemap->page)->execute();
 
+/**
+ * 사이트맵 캐시를 제거한다.
+ */
+$this->IM->cache()->reset('core','sitemap','all');
+
 $results->success = true;
 ?>

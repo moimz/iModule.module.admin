@@ -51,5 +51,10 @@ if ($sitemap->image > 0) {
 	$this->IM->getModule('attachment')->fileDelete($sitemap->image);
 }
 
+/**
+ * 사이트맵 캐시를 제거한다.
+ */
+$this->IM->cache()->reset('core','sitemap','all');
+
 $results->success = true;
 ?>
