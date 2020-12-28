@@ -16,6 +16,10 @@ if (defined('__IM__') == false) exit;
 	<h1><?php echo $this->getConfig('icon') == null ? '' : '<i style="background-image:url('.$this->getConfig('icon').');"></i>'; ?><?php echo $this->getConfig('title'); ?></h1>
 	
 	<ul data-role="menu">
+		<li data-role="more">
+			<button type="button"><i class="mi mi-angle-down"></i></button>
+			<ul></ul>
+		</li>
 		<?php for ($i=0, $loop=count($menus);$i<$loop;$i++) { if (isset($menus[$i]->menu) == true) { ?>
 		<li<?php echo $menus[$i]->menu == $this->menu && ($menus[$i]->page == false || $menus[$i]->page == $this->page) ? ' class="selected"' : ''; ?>><a href="<?php echo $this->getUrl($menus[$i]->menu,$menus[$i]->page,$menus[$i]->tab); ?>"><i class="<?php echo substr($menus[$i]->icon,0,2); ?> <?php echo $menus[$i]->icon; ?>"></i><?php echo $menus[$i]->title; ?></a></li>
 		<?php } else { ?>
@@ -74,7 +78,8 @@ Ext.onReady(function () {
 				region:"north",
 				height:52,
 				border:false,
-				contentEl:"iModuleAdminHeader"
+				contentEl:"iModuleAdminHeader",
+				cls:"x-visible-panel"
 			}),
 			<?php if (count($pages) > 0 && $permissions === true) { ?>
 			new Ext.Panel({
@@ -199,19 +204,59 @@ Ext.onReady(function () {
 		listeners:{
 			afterRender:function() {
 				$(document).triggerHandler("iModuleAdminReady");
+			},
+			resize:function() {
+				var $header = $("#iModuleAdminHeader");
+				var $menus = $("ul[data-role=menu]",$header);
+				var $items = $("> li",$menus);
+				var $lists = $("> li[data-role=more] > ul",$menus);
+				$lists.empty();
+				$items.show();
+				
+				var count = 0;
+				var limitWidth = $menus.innerWidth();
+				var currentWidth = 0;
+				var is_more = false;
+				$items.each(function() {
+					var width = $(this).outerWidth();
+					if (currentWidth + width + 40 > limitWidth) {
+						is_more = true;
+						return false;
+					}
+					
+					currentWidth+= width;
+					count++;
+				});
+				
+				if (is_more == true) {
+					for (var i=loop=$items.length - 1;i>=Math.max(1,count);i--) {
+						var $menu = $items.eq(i).clone(true);
+						
+						$lists.prepend($menu);
+						$items.eq(i).hide();
+					}
+				} else {
+					$items.eq(0).hide();
+				}
 			}
 		}
 	}).updateLayout();
 	
 	try {
 		document.fonts.ready.then(function() {
-			setTimeout(function() { Ext.getCmp("AdminViewport").updateLayout(); },1000);
+			setTimeout(function() { Ext.getCmp("AdminViewport").updateLayout(); Ext.getCmp("AdminViewport").fireEvent("resize"); },1000);
 		});
 	} catch (e) {}
 });
 
 $(window).on("popstate",function(e) {
 	location.href = location.href;
+});
+
+$(document).ready(function() {
+	$("#iModuleAdminHeader ul[data-role=menu] > li[data-role=more] > button").on("click",function() {
+		$(this).parent().toggleClass("on");
+	});
 });
 </script>
 
