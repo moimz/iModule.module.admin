@@ -986,6 +986,19 @@ class ModuleAdmin {
 				$page->title = $this->getText('pages/configs/sitemap');
 				$pages[] = $page;
 			}
+			
+			/**
+			 * 캐시관리
+			 */
+			if (in_array('configs/cache',$disabledPages) == false || $permissions === true || in_array('configs/cache',$permissions) == true) {
+				$page = new stdClass();
+				$page->menu = 'configs';
+				$page->page = 'cache';
+				$page->tab = false;
+				$page->icon = 'xi-lightning';
+				$page->title = $this->getText('pages/configs/cache');
+				$pages[] = $page;
+			}
 		}
 		
 		/**

@@ -20,7 +20,8 @@
 		},
 		"configs":{
 			"sites":"사이트관리",
-			"sitemap":"사이트맵관리"
+			"sitemap":"사이트맵관리",
+			"cache":"캐시관리"
 		},
 		"log":{
 			"admin":"사이트관리자 접근로그",
@@ -314,6 +315,16 @@
 			"load_page":"페이지불러오기",
 			"group_start":"그룹시작지점",
 			"group_end":"그룹종료지점"
+		},
+		"cache":{
+			"columns":{
+				"name":"파일명",
+				"type":"종류",
+				"module":"캐시생성모듈",
+				"path":"경로",
+				"size":"용량",
+				"reg_date":"업데이트시각"
+			}
 		}
 	},
 	"database":{
