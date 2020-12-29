@@ -1198,6 +1198,9 @@ class ModuleAdmin {
 		return $values;
 	}
 	
+	/**
+	 * 관리자페이지 레이아웃을 출력한다.
+	 */
 	function doLayout() {
 		global $_CONFIGS;
 		
@@ -1508,6 +1511,129 @@ class ModuleAdmin {
 			
 			$this->db()->replace($this->table->process_log,array('midx'=>$this->IM->getModule('member')->getLogged(),'reg_date'=>time(),'module'=>$module,'action'=>$action,'params'=>$params,'ip'=>$_SERVER['REMOTE_ADDR'],'agent'=>$_SERVER['HTTP_USER_AGENT']))->execute();
 		}
+	}
+	
+	/**
+	 * 관리자에서 엑셀을 다운로드하는데 필요한 변수
+	 */
+	private $createExcelClass = null;
+	private $createExcelFileHash = null;
+	private $createExcelProgress = null;
+	private $createExcelRate = 1;
+	private $createExcelProgressPercent = 0;
+	private $createExcelProgressCount = 0;
+	private $createExcelAttachments = array();
+	
+	/**
+	 * 관리자에서 엑셀파일을 생성하기 위한 함수를 호출한다.
+	 *
+	 * @param string $filename 다운로드 받을 파일명
+	 * @param string $templet 엑셀파일 템플릿
+	 * @param int $progress 프로그래스바를 출력하기 위한 길이 (false 인 경우 헤더를 선언하지 않는다.)
+	 * @param int $rate 프로그래스바 카운트를 위한 배율
+	 * @return PHPExcel $PHPExcel
+	 */
+	function createExcel($filename,$templet=null,$progress=false,$rate=1) {
+		if ($progress === 0) {
+			header("X-Excel-File:");
+			exit;
+		}
+		
+		/**
+		 * 엑셀파일을 저장할 임시파일을 생성한다.
+		 */
+		$mAttachment = $this->IM->getModule('attachment');
+		while (true) {
+			$hash = md5(time().rand(10000000,99999999));
+			if (is_file($mAttachment->getTempPath(true).'/'.$hash) == false) break;
+		}
+		
+		$success = file_put_contents($mAttachment->getTempPath(true).'/'.$hash,'');
+		if ($success === false) return false;
+		
+		$this->createExcelFileHash = $hash;
+		
+		header("X-Excel-File:".$hash);
+		header("X-Excel-Title:".urlencode($filename));
+		if ($progress !== false) {
+			header("Content-Length:".($progress + 1));
+		}
+		
+		$mPHPExcel = new PHPExcel();
+		if ($templet != null) {
+			$mPHPExcelReader = new PHPExcelReader($templet);
+			$mPHPExcel = $mPHPExcelReader->GetExcel();
+		}
+		
+		$this->createExcelClass = $mPHPExcel;
+		$this->createExcelProgress = $progress;
+		$this->createExcelRate = $rate;
+		$this->createExcelProgressPercent = 0;
+		$this->createExcelProgressCount = 0;
+		$this->createExcelAttachments = array();
+		$this->createExcelLatestFlush = time();
+		
+		return $mPHPExcel;
+	}
+	
+	/**
+	 * 엑셀파일 생성 프로그래스바를 출력하기 위하여 진행율을 계산한다.
+	 */
+	function createExcelProgress() {
+		if ($this->createExcelProgress === false) {
+			echo '.';
+			return;
+		}
+		
+		$percent = round(($this->createExcelProgressCount / ($this->createExcelProgress * $this->createExcelRate)) * 100);
+		if ($this->createExcelProgressCount % $this->createExcelRate == 0) {
+			echo '.';
+			
+			// 마지막 버퍼를 비운시각으로부터 1초이상 경과하였거나, 전체진행율의 퍼센트가 변경되었다면, 버퍼를 비운다.
+			if ($this->createExcelLatestFlush < time() - 1 || $percent != $this->createExcelProgressPercent) {
+				$this->createExcelLatestFlush = time();
+				ForceFlush();
+			}
+		}
+		
+		$this->createExcelProgressCount++;
+		$this->createExcelProgressPercent = $percent;
+	}
+	
+	/**
+	 * 엑셀파일 생성을 완료한다.
+	 */
+	function createExcelComplete() {
+		if ($this->createExcelFileHash == null || $this->createExcelClass == null) return false;
+		
+		ForceFlush();
+		
+		$mPHPExcelWriter = new PHPExcelWriter($this->createExcelClass);
+		$path = $mPHPExcelWriter->WriteExcel($this->createExcelFileHash);
+		
+		// 관련변수를 초기화한다.
+		$this->createExcelClass = null;
+		$this->createExcelFileHash = null;
+		$this->createExcelProgress = null;
+		$this->createExcelRate = 1;
+		$this->createExcelProgressPercent = 0;
+		$this->createExcelProgressCount = 0;
+		$this->createExcelAttachments = array();
+		
+		sleep(1);
+		
+		// 엑셀파일생성에 실패하였을 경우
+		if (is_file($path) == false || filesize($path) == 0) {
+			echo '0';
+		} else {
+			// 첨부파일이 없는 경우
+			if (count($this->createExcelAttachments) == 0) {
+				echo '1';
+			}
+		}
+		
+		ForceFlush();
+		exit;
 	}
 }
 ?>

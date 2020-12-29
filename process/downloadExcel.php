@@ -13,7 +13,9 @@
 if (defined('__IM__') == false) exit;
 
 $hash = Request('hash');
-$title = urldecode(Request('title'));
-$this->IM->getModule('attachment')->tempFileDownload($hash,true,$title.'.xlsx');
+$title = str_replace(array('&lt;','&gt;'),array('<','>'),urldecode(Request('title')));
+$mime = Request('mime') ? intval(Request('mime')) : 1;
+$extension = $mime === 1 ? 'xlsx' : 'zip';
+$this->IM->getModule('attachment')->tempFileDownload($hash,true,$title.'.'.$extension);
 exit;
 ?>

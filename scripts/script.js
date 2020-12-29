@@ -2667,6 +2667,89 @@ var Admin = {
 		}
 	},
 	/**
+	 * 엑셀다운로드 프로세스를 처리한다.
+	 *
+	 * @param string url 엑셀파일을 생성하는 프로세스경로
+	 * @param object params 전달할 변수
+	 */
+	excel:function(url,params) {
+		var params = params ? params : {};
+		
+		new Ext.Window({
+			id:"ModuleAdminExcelProgressWindow",
+			title:"엑셀 변환중 ...",
+			width:500,
+			modal:true,
+			bodyPadding:5,
+			closable:false,
+			items:[
+				new Ext.ProgressBar({
+					id:"ModuleAdminExcelProgressBar"
+				})
+			],
+			listeners:{
+				show:function() {
+					Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(0,"데이터 준비중입니다. 잠시만 기다려주십시오.");
+					
+					$.ajax({
+						url:url,
+						method:"POST",
+						timeout:0,
+						data:params,
+						xhr:function() {
+							var xhr = $.ajaxSettings.xhr();
+							
+							xhr.addEventListener("progress",function(e) {
+								if (e.lengthComputable) {
+									var total = e.total - 1; // 마지막 문자열은 파일생성여부 확인용 byte 므로 제외한다.
+									var loaded = Math.min(e.loaded,total);
+									
+									if (e.loaded >= e.total - 1) {
+										Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(1,"엑셀파일을 생성하고 있습니다. 잠시만 기다려주십시오.",true);
+									} else {
+										Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(loaded/total,Ext.util.Format.number(loaded,"0,000")+" / "+Ext.util.Format.number(total,"0,000")+" ("+(loaded / total * 100).toFixed(2)+"%)",true);
+									}
+								}
+							});
+			
+							return xhr;
+						},
+						success:function(result,b,xhr) {
+							var hash = xhr.getResponseHeader("X-Excel-File");
+							if (hash && hash.length == 32) {
+								var mime = result.substr(-1);
+								
+								if (mime != "0" && mime != "1" && mime != "2") {
+									Ext.getCmp("ModuleAdminExcelProgressWindow").close();
+									Ext.Msg.show({title:Admin.getText("alert/error"),msg:"엑셀변환 중 에러가 발생하였습니다.<br>잠시후 다시 시도하여 주십시오.",buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+									return;
+								}
+								
+								var title = xhr.getResponseHeader("X-Excel-Title");
+								
+								Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(1,"엑셀파일을 생성하였습니다. 곧 다운로드가 시작됩니다.",true);
+								setTimeout(function() {
+									Ext.getCmp("ModuleAdminExcelProgressWindow").close();
+									downloadFrame.location.replace(ENV.getProcessUrl("admin","downloadExcel")+"?hash="+hash+"&title="+title+"&mime="+mime);
+								},2000);
+							} else {
+								if (result.message) {
+									Ext.Msg.show({title:Admin.getText("alert/error"),msg:result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+								} else {
+									Ext.Msg.show({title:Admin.getText("alert/error"),msg:"엑셀변환 중 에러가 발생하였거나, 엑셀로 변환할 데이터가 없습니다.",buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+								}
+							}
+						},
+						error:function() {
+							Ext.Msg.show({title:Admin.getText("alert/error"),msg:"엑셀변환 중 에러가 발생하였습니다. 잠시후 다시 시도하여 주십시오.",buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
+							Ext.getCmp("ModuleAdminExcelProgressWindow").close();
+						}
+					});
+				}
+			}
+		}).show();
+	},
+	/**
 	 * ExtJS 그리드에서 선택한 ROW의 정렬순서를 변경한다.
 	 *
 	 * @param Grid grid ExtJS 그리드 객체
