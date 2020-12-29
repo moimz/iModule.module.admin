@@ -41,68 +41,10 @@ Ext.onReady(function () { Ext.getCmp("iModuleAdminPanel").add(
 				iconCls:"fa fa-file-excel-o",
 				text:"엑셀변환",
 				handler:function() {
-					new Ext.Window({
-						id:"LogExcelProgressWindow",
-						title:"엑셀 변환중 ...",
-						width:500,
-						modal:true,
-						bodyPadding:5,
-						closable:false,
-						items:[
-							new Ext.ProgressBar({
-								id:"LogExcelProgressBar"
-							})
-						],
-						listeners:{
-							show:function() {
-								Ext.getCmp("LogExcelProgressBar").updateProgress(0,"데이터 준비중입니다. 잠시만 기다려주십시오.");
-								
-								var params = Ext.getCmp("LogList").getStore().getProxy().extraParams;
-								params.document = "log";
-
-								$.ajax({
-									url:ENV.getProcessUrl("admin","@getExcel"),
-									method:"POST",
-									timeout:0,
-									data:params,
-									xhr:function() {
-										var xhr = $.ajaxSettings.xhr();
-
-										xhr.addEventListener("progress",function(e) {
-											if (e.lengthComputable) {
-												Ext.getCmp("LogExcelProgressBar").updateProgress(e.loaded/e.total,Ext.util.Format.number(e.loaded - 1,"0,000")+" / "+Ext.util.Format.number(e.total,"0,000")+" ("+(e.loaded / e.total * 100).toFixed(2)+"%)",true);
-											}
-										});
-
-										return xhr;
-									},
-									success:function(result,b,xhr) {
-										var hash = xhr.getResponseHeader("X-Excel-File");
-										if (hash && hash.length == 32) {
-											Ext.getCmp("LogExcelProgressBar").updateProgress(1,"변환완료. 곧 다운로드가 시작됩니다.",true);
-											setTimeout(function() {
-												Ext.getCmp("LogExcelProgressWindow").close();
-
-												var query = "hash="+hash+"&document=log&log="+params.log;
-												downloadFrame.location.replace(ENV.getProcessUrl("admin","@downloadExcel")+"?"+query);
-											},1000);
-										} else {
-											if (result.message) {
-												Ext.Msg.show({title:Admin.getText("alert/error"),msg:result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
-											} else {
-												Ext.Msg.show({title:Admin.getText("alert/error"),msg:"엑셀변환 중 에러가 발생하였거나, 엑셀로 변환할 데이터가 없습니다.",buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
-											}
-											Ext.getCmp("LogExcelProgressWindow").close();
-										}
-									},
-									error:function() {
-										Ext.Msg.show({title:Admin.getText("alert/error"),msg:"엑셀변환 중 에러가 발생하였습니다. 잠시후 다시 시도하여 주십시오.",buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
-										Ext.getCmp("LogExcelProgressWindow").close();
-									}
-								});
-							}
-						}
-					}).show();
+					var params = Ext.getCmp("LogList").getStore().getProxy().extraParams;
+					params.document = "log";
+					
+					Admin.excel(ENV.getProcessUrl("admin","@getExcel"),params);
 				}
 			})
 		],

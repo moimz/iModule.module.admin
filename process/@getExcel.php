@@ -32,19 +32,7 @@ if ($document == 'log') {
 		$columns = array('date','name','email','page','ip','agent');
 	}
 	
-	if (count($lists) == 0) {
-		header("X-Excel-File:");
-		exit;
-	}
-	
-	$fileName = md5(time());
-	header("Content-Length:".count($lists));
-	header("X-Excel-File:".$fileName);
-	
-	$mPHPExcel = new PHPExcel();
-	$mPHPExcelReader = new PHPExcelReader($this->getModule()->getPath().'/documents/style.xlsx');
-	$mPHPExcel = $mPHPExcelReader->GetExcel();
-	
+	$mPHPExcel = $this->IM->getModule('admin')->createExcel('사이트관리자 접근로그',$this->getModule()->getPath().'/documents/style.xlsx',count($lists),1);
 	$mPHPExcel->setActiveSheetIndex(0);
 	
 	$columnLengths = array();
@@ -62,8 +50,7 @@ if ($document == 'log') {
 	
 	$loopnum = 1;
 	foreach ($lists as $list) {
-		echo '.';
-		ForceFlush();
+		$this->IM->getModule('admin')->createExcelProgress();
 		
 		for ($i=0, $loop=count($columns);$i<$loop;$i++) {
 			$column = $mPHPExcel->getActiveSheet()->getCell()->stringFromColumnIndex($i);
@@ -98,11 +85,5 @@ if ($document == 'log') {
 	$mPHPExcel->getActiveSheet()->setAutoFilter('A1:'.$column.'1');
 }
 
-$mPHPExcelWriter = new PHPExcelWriter($mPHPExcel);
-$excel = $mPHPExcelWriter->WriteExcel($fileName);
-
-sleep(1);
-
-ForceFlush();
-exit;
+$this->IM->getModule('admin')->createExcelComplete();
 ?>
