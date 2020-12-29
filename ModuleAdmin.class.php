@@ -1590,6 +1590,8 @@ class ModuleAdmin {
 		$this->createExcelAttachments = array();
 		$this->createExcelLatestFlush = time();
 		
+		// @todo 엑셀을 누가 왜 어떤걸 만드는지 디비에 기록한다. (개인정보보호법 관련)
+		
 		return $mPHPExcel;
 	}
 	
