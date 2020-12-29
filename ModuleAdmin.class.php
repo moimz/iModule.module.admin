@@ -1547,6 +1547,11 @@ class ModuleAdmin {
 	 * @return PHPExcel $PHPExcel
 	 */
 	function createExcel($filename,$templet=null,$progress=false,$rate=1) {
+		$mAttachment = $this->IM->getModule('attachment');
+		if ($this->createExcelFileHash !== null && is_file($mAttachment->getTempPath(true).'/'.$this->createExcelFileHash) == true) {
+			@unlink($mAttachment->getTempPath(true).'/'.$this->createExcelFileHash);
+		}
+		
 		if ($progress === 0) {
 			header("X-Excel-File:");
 			exit;
@@ -1555,7 +1560,6 @@ class ModuleAdmin {
 		/**
 		 * 엑셀파일을 저장할 임시파일을 생성한다.
 		 */
-		$mAttachment = $this->IM->getModule('attachment');
 		while (true) {
 			$hash = md5(time().rand(10000000,99999999));
 			if (is_file($mAttachment->getTempPath(true).'/'.$hash) == false) break;
@@ -1637,6 +1641,9 @@ class ModuleAdmin {
 		
 		// 엑셀파일생성에 실패하였을 경우
 		if (is_file($path) == false || filesize($path) == 0) {
+			if (is_file($path) == true) {
+				@unlink($path);
+			}
 			echo '0';
 		} else {
 			// 첨부파일이 없는 경우
