@@ -1533,6 +1533,7 @@ class ModuleAdmin {
 	private $createExcelFileHash = null;
 	private $createExcelProgress = null;
 	private $createExcelRate = 1;
+	private $createExcelPrinted = 0;
 	private $createExcelProgressPercent = 0;
 	private $createExcelProgressCount = 0;
 	private $createExcelAttachments = array();
@@ -1585,6 +1586,7 @@ class ModuleAdmin {
 		$this->createExcelClass = $mPHPExcel;
 		$this->createExcelProgress = $progress;
 		$this->createExcelRate = $rate;
+		$this->createExcelPrinted = 0;
 		$this->createExcelProgressPercent = 0;
 		$this->createExcelProgressCount = 0;
 		$this->createExcelAttachments = array();
@@ -1600,13 +1602,15 @@ class ModuleAdmin {
 	 */
 	function createExcelProgress() {
 		if ($this->createExcelProgress === false) {
-			echo '.';
+			echo $this->createExcelPrinted % 100 == 99 ? "\n" : '.';
+			$this->createExcelPrinted++;
 			return;
 		}
 		
 		$percent = round(($this->createExcelProgressCount / ($this->createExcelProgress * $this->createExcelRate)) * 100);
 		if ($this->createExcelProgressCount % $this->createExcelRate == 0) {
-			echo '.';
+			echo $this->createExcelPrinted % 100 == 99 ? "\n" : '.';
+			$this->createExcelPrinted++;
 			
 			// 마지막 버퍼를 비운시각으로부터 1초이상 경과하였거나, 전체진행율의 퍼센트가 변경되었다면, 버퍼를 비운다.
 			if ($this->createExcelLatestFlush < time() - 1 || $percent != $this->createExcelProgressPercent) {
@@ -1627,32 +1631,38 @@ class ModuleAdmin {
 		
 		ForceFlush();
 		
-		$mPHPExcelWriter = new PHPExcelWriter($this->createExcelClass);
-		$path = $mPHPExcelWriter->WriteExcel($this->createExcelFileHash);
+		try {
+			$mPHPExcelWriter = new PHPExcelWriter($this->createExcelClass);
+			$path = $mPHPExcelWriter->WriteExcel($this->createExcelFileHash);
+		
+			sleep(1);
+			
+			// 엑셀파일생성에 실패하였을 경우
+			if (is_file($path) == false || filesize($path) == 0) {
+				if (is_file($path) == true) {
+					@unlink($path);
+				}
+				echo '0';
+			} else {
+				// 첨부파일이 없는 경우
+				if (count($this->createExcelAttachments) == 0) {
+					echo '1';
+				}
+			}
+		} catch(Exception $e) {
+			file_put_contents($this->IM->getModule('attachment')->getTempPath().'/PHPExcel.error.log',$e->getMessage());
+			echo '0';
+		}
 		
 		// 관련변수를 초기화한다.
 		$this->createExcelClass = null;
 		$this->createExcelFileHash = null;
 		$this->createExcelProgress = null;
 		$this->createExcelRate = 1;
+		$this->createExcelPrinted = 0;
 		$this->createExcelProgressPercent = 0;
 		$this->createExcelProgressCount = 0;
 		$this->createExcelAttachments = array();
-		
-		sleep(1);
-		
-		// 엑셀파일생성에 실패하였을 경우
-		if (is_file($path) == false || filesize($path) == 0) {
-			if (is_file($path) == true) {
-				@unlink($path);
-			}
-			echo '0';
-		} else {
-			// 첨부파일이 없는 경우
-			if (count($this->createExcelAttachments) == 0) {
-				echo '1';
-			}
-		}
 		
 		ForceFlush();
 		exit;
