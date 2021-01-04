@@ -1574,7 +1574,7 @@ class ModuleAdmin {
 		header("X-Excel-File:".$hash);
 		header("X-Excel-Title:".urlencode($filename));
 		if ($progress !== false) {
-			header("Content-Length:".($progress + 1));
+			header("Content-Length:".($progress + 10));
 		}
 		
 		$mPHPExcel = new PHPExcel();
@@ -1602,14 +1602,14 @@ class ModuleAdmin {
 	 */
 	function createExcelProgress() {
 		if ($this->createExcelProgress === false) {
-			echo $this->createExcelPrinted % 100 == 99 ? "\n" : '.';
+			echo $this->createExcelPrinted % 100 == 0 ? floor($this->createExcelPrinted / 100) % 10 : ($this->createExcelPrinted % 100 == 99 ? "\n" : '.');
 			$this->createExcelPrinted++;
 			return;
 		}
 		
 		$percent = round(($this->createExcelProgressCount / ($this->createExcelProgress * $this->createExcelRate)) * 100);
 		if ($this->createExcelProgressCount % $this->createExcelRate == 0) {
-			echo $this->createExcelPrinted % 100 == 99 ? "\n" : '.';
+			echo $this->createExcelPrinted % 100 == 0 ? floor($this->createExcelPrinted / 100) % 10 : ($this->createExcelPrinted % 100 == 99 ? "\n" : '.');
 			$this->createExcelPrinted++;
 			
 			// 마지막 버퍼를 비운시각으로부터 1초이상 경과하였거나, 전체진행율의 퍼센트가 변경되었다면, 버퍼를 비운다.
@@ -1634,7 +1634,7 @@ class ModuleAdmin {
 		try {
 			$mPHPExcelWriter = new PHPExcelWriter($this->createExcelClass);
 			$path = $mPHPExcelWriter->WriteExcel($this->createExcelFileHash);
-		
+			
 			sleep(1);
 			
 			// 엑셀파일생성에 실패하였을 경우

@@ -2715,6 +2715,7 @@ var Admin = {
 			modal:true,
 			bodyPadding:5,
 			closable:false,
+			resizable:false,
 			items:[
 				new Ext.ProgressBar({
 					id:"ModuleAdminExcelProgressBar"
@@ -2734,11 +2735,25 @@ var Admin = {
 							
 							xhr.addEventListener("progress",function(e) {
 								if (e.lengthComputable) {
-									var total = e.total - 1; // 마지막 문자열은 파일생성여부 확인용 byte 므로 제외한다.
+									var total = e.total - 10; // 마지막 문자열은 파일생성여부 확인용 byte 므로 제외한다.
 									var loaded = Math.min(e.loaded,total);
 									
-									if (e.loaded >= e.total - 1) {
-										Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(1,"엑셀파일을 생성하고 있습니다. 잠시만 기다려주십시오.",true);
+									if (e.loaded >= e.total - 10) {
+										var step = e.loaded - total;
+										
+										if (step == 1) {
+											Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(1,"엑셀파일을 준비하고 있습니다. 잠시만 기다려주십시오.",true);
+										} else if (step == 3) {
+											Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(1,"엑셀파일 기본 문서 데이터를 작성중입니다. 잠시만 기다려주십시오.",true);
+										} else if (step == 5) {
+											Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(1,"엑셀파일 시트정보를 작성중입니다. 잠시만 기다려주십시오.",true);
+										} else if (step == 7) {
+											Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(1,"엑셀파일 시트데이터를 작성중입니다. 잠시만 기다려주십시오.",true);
+										} else if (step == 9) {
+											Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(1,"엑셀파일 미디어파일을 작성중입니다. 잠시만 기다려주십시오.",true);
+										} else {
+											Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(1,"엑셀파일을 생성하고 있습니다. 잠시만 기다려주십시오.",true);
+										}
 									} else {
 										Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(loaded/total,Ext.util.Format.number(loaded,"0,000")+" / "+Ext.util.Format.number(total,"0,000")+" ("+(loaded / total * 100).toFixed(2)+"%)",true);
 									}
@@ -2762,9 +2777,11 @@ var Admin = {
 								
 								Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(1,"엑셀파일을 생성하였습니다. 곧 다운로드가 시작됩니다.",true);
 								setTimeout(function() {
-									Ext.getCmp("ModuleAdminExcelProgressWindow").close();
+									setTimeout(function() {
+										Ext.getCmp("ModuleAdminExcelProgressWindow").close();
+									},1000);
 									downloadFrame.location.replace(ENV.getProcessUrl("admin","downloadExcel")+"?hash="+hash+"&title="+title+"&mime="+mime);
-								},2000);
+								},1000);
 							} else {
 								if (result.message) {
 									Ext.Msg.show({title:Admin.getText("alert/error"),msg:result.message,buttons:Ext.Msg.OK,icon:Ext.Msg.ERROR});
