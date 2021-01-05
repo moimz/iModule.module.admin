@@ -2742,17 +2742,15 @@ var Admin = {
 										var step = e.loaded - total;
 										
 										if (step == 1) {
-											Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(1,"엑셀파일을 준비하고 있습니다. 잠시만 기다려주십시오.",true);
+											Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(1,"엑셀파일을 준비하고 있습니다. 잠시만 기다려주십시오. (1/5)",true);
 										} else if (step == 3) {
-											Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(1,"엑셀파일 기본 문서 데이터를 작성중입니다. 잠시만 기다려주십시오.",true);
-										} else if (step == 5) {
-											Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(1,"엑셀파일 시트정보를 작성중입니다. 잠시만 기다려주십시오.",true);
+											Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(1,"엑셀파일 기본 문서 데이터를 작성중입니다. 잠시만 기다려주십시오. (2/5)",true);
+										} else if (step == 4) {
+											Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(1,"엑셀파일 시트정보를 작성중입니다. 잠시만 기다려주십시오. (3/5)",true);
 										} else if (step == 7) {
-											Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(1,"엑셀파일 시트데이터를 작성중입니다. 잠시만 기다려주십시오.",true);
-										} else if (step == 9) {
-											Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(1,"엑셀파일 미디어파일을 작성중입니다. 잠시만 기다려주십시오.",true);
+											Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(1,"엑셀파일 시트데이터를 작성중입니다. 잠시만 기다려주십시오. (4/5)",true);
 										} else {
-											Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(1,"엑셀파일을 생성하고 있습니다. 잠시만 기다려주십시오.",true);
+											Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(1,"엑셀파일을 생성하고 있습니다. 잠시만 기다려주십시오. (5/5)",true);
 										}
 									} else {
 										Ext.getCmp("ModuleAdminExcelProgressBar").updateProgress(loaded/total,Ext.util.Format.number(loaded,"0,000")+" / "+Ext.util.Format.number(total,"0,000")+" ("+(loaded / total * 100).toFixed(2)+"%)",true);
@@ -2779,7 +2777,7 @@ var Admin = {
 								setTimeout(function() {
 									setTimeout(function() {
 										Ext.getCmp("ModuleAdminExcelProgressWindow").close();
-									},1000);
+									},2000);
 									downloadFrame.location.replace(ENV.getProcessUrl("admin","downloadExcel")+"?hash="+hash+"&title="+title+"&mime="+mime);
 								},1000);
 							} else {
