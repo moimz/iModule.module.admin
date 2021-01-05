@@ -1530,6 +1530,7 @@ class ModuleAdmin {
 	 * 관리자에서 엑셀을 다운로드하는데 필요한 변수
 	 */
 	private $createExcelClass = null;
+	private $createExcelName = null;
 	private $createExcelFileHash = null;
 	private $createExcelProgress = null;
 	private $createExcelRate = 1;
@@ -1569,6 +1570,9 @@ class ModuleAdmin {
 		$success = file_put_contents($mAttachment->getTempPath(true).'/'.$hash,'');
 		if ($success === false) return false;
 		
+		$filename = $mAttachment->getSafeFileName($filename);
+		
+		$this->createExcelName = $filename;
 		$this->createExcelFileHash = $hash;
 		
 		header("X-Excel-File:".$hash);
@@ -1624,6 +1628,16 @@ class ModuleAdmin {
 	}
 	
 	/**
+	 * 엑셀파일 생성시 추가할 파일을 기록한다.
+	 *
+	 * @param string $filename 파일명 (압축파일내 경로포함)
+	 * @param string $filepath 파일실제경로
+	 */
+	function createExcelAttachment($filename,$filepath) {
+		$this->createExcelAttachments[$filename] = $filepath;
+	}
+	
+	/**
 	 * 엑셀파일 생성을 완료한다.
 	 */
 	function createExcelComplete() {
@@ -1647,6 +1661,18 @@ class ModuleAdmin {
 				// 첨부파일이 없는 경우
 				if (count($this->createExcelAttachments) == 0) {
 					echo '1';
+				} else {
+					$excel = file_get_contents($path);
+					@unlink($path);
+					$mZip = new ZipArchive();
+					$mZip->open($this->IM->getModule('attachment')->getTempPath(true).'/'.$this->createExcelFileHash,ZipArchive::CREATE);
+					$mZip->addFromString($this->createExcelName.'.xlsx',$excel);
+					foreach ($this->createExcelAttachments as $path=>$file) {
+						$mZip->addFile($file,$path);
+					}
+					$mZip->close();
+					
+					echo '2';
 				}
 			}
 		} catch(Exception $e) {
@@ -1656,6 +1682,7 @@ class ModuleAdmin {
 		
 		// 관련변수를 초기화한다.
 		$this->createExcelClass = null;
+		$this->createExcelName = null;
 		$this->createExcelFileHash = null;
 		$this->createExcelProgress = null;
 		$this->createExcelRate = 1;
