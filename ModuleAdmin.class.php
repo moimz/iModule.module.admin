@@ -1647,7 +1647,7 @@ class ModuleAdmin {
 		
 		try {
 			$mPHPExcelWriter = new PHPExcelWriter($this->createExcelClass);
-			$path = $mPHPExcelWriter->WriteExcel($this->createExcelFileHash);
+			$path = $mPHPExcelWriter->writeExcelFlush($this->createExcelFileHash);
 			
 			sleep(1);
 			
