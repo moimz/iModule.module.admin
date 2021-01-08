@@ -2644,6 +2644,79 @@ var Admin = {
 					});
 				}
 			}});
+		},
+		run:function() {
+			var query = btoa(Ext.getCmp("TableQuery").getValue());
+			Ext.Msg.show({title:Admin.getText("alert/info"),msg:"아래의 쿼리문을 전체 실행하시겠습니까?",buttons:Ext.Msg.OKCANCEL,icon:Ext.Msg.QUESTION,fn:function(button) {
+				if (button == "ok") {
+					Ext.Msg.wait(Admin.getText("action/working"),Admin.getText("action/wait"));
+					$.send(ENV.getProcessUrl("admin","@runQuery"),{q:query},function(result) {
+						if (result.success == true) {
+							Ext.getCmp("TableConsole").removeAll();
+							for (var i=0, loop=result.runs.length;i<loop;i++) {
+								var run = result.runs[i];
+								if (run.type == "console") {
+									Ext.getCmp("TableConsole").add(
+										new Ext.Panel({
+											title:"Query #" + (i+1),
+											border:false,
+											padding:5,
+											html:run.message
+										})
+									);
+								} else {
+									Ext.getCmp("TableConsole").add(
+										new Ext.grid.Panel({
+											title:"Query #" + (i + 1),
+											border:false,
+											store:new Ext.data.ArrayStore({
+												fields:(function(fields) {
+													var datas = [];
+													for (var i=0, loop=fields.length;i<loop;i++) {
+														var type = "string";
+														if ($.inArray(fields[i].type,[16,1,2,9,3,8,246,246,246]) === -1) type = "int";
+														if ($.inArray(fields[i].type,[4,5]) === -1) type = "float";
+														datas.push({name:fields[i].name,type:type});
+														datas.push(fields[i].name);
+													}
+													return datas;
+												})(run.fields),
+												data:[]
+											}),
+											datas:run.datas,
+											columns:(function(fields) {
+												var columns = [];
+												for (var i=0, loop=fields.length;i<loop;i++) {
+													columns.push({
+														text:fields[i].name,
+														dataIndex:fields[i].name,
+														sortable:true
+													});
+												}
+												return columns;
+											})(run.fields),
+											listeners:{
+												render:function(grid) {
+													grid.getStore().add(grid.datas);
+//													console.log(run.datas);
+												}
+											}
+										})
+									);
+								}
+							}
+							
+							Ext.getCmp("TableConsole").setActiveTab(0);
+							Ext.Msg.hide();
+							
+//							Ext.Msg.show({title:Admin.getText("alert/info"),msg:Admin.getText("action/worked"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO,fn:function() {
+								
+//								if (Ext.getCmp("TableList")) Ext.getCmp("TableList").getStore().reload();
+//							}});
+						}
+					});
+				}
+			}});
 		}
 	},
 	module:{

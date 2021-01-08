@@ -267,7 +267,6 @@ Ext.onReady(function () { Ext.tip.QuickTipManager.init(); Ext.getCmp("iModuleAdm
 				layout:"border",
 				border:false,
 				items:[
-					
 					new Ext.form.Panel({
 						height:"40%",
 						region:"north",
@@ -278,15 +277,16 @@ Ext.onReady(function () { Ext.tip.QuickTipManager.init(); Ext.getCmp("iModuleAdm
 						split:true,
 						tbar:[
 							new Ext.Button({
-								text:"전체 쿼리실행",
+								text:"쿼리실행",
 								iconCls:"xi xi-play",
 								handler:function() {
-									
+									Admin.database.run();
 								}
 							})
 						],
 						items:[
 							new Ext.form.TextArea({
+								id:"TableQuery",
 								border:false,
 								style:{margin:"-1px"},
 								layout:"fit"
@@ -296,12 +296,14 @@ Ext.onReady(function () { Ext.tip.QuickTipManager.init(); Ext.getCmp("iModuleAdm
 					new Ext.Panel({
 						region:"center",
 						border:false,
+						layout:"fit",
 						items:[
 							new Ext.TabPanel({
+								id:"TableConsole",
+								border:false,
 								items:[
 									new Ext.Panel({
-										title:"콘솔",
-										layout:"fit"
+										title:"콘솔"
 									})
 								]
 							})
