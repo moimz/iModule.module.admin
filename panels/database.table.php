@@ -303,7 +303,9 @@ Ext.onReady(function () { Ext.tip.QuickTipManager.init(); Ext.getCmp("iModuleAdm
 								border:false,
 								items:[
 									new Ext.Panel({
-										title:"콘솔"
+										title:"console",
+										border:false,
+										padding:5
 									})
 								]
 							})
