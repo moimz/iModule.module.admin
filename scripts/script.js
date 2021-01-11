@@ -4016,7 +4016,7 @@ var Admin = {
 										$input.data("button").setDisabled(false);
 										Ext.getCmp($input.data("parent")).start();
 									});
-								})
+								});
 							}
 						}
 					})
