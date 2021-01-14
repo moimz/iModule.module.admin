@@ -3728,6 +3728,7 @@ var Admin = {
 		options.fieldLabel = (label ? label : "");
 		options.width = options.width ? options.width : "100%";
 		options.lastHeight = 0;
+		options.allowBlank = options.allowBlank ? options.allowBlank : false;
 		options.resizer = function(id) {
 			if (Ext.getCmp(id)) {
 				if (Ext.getCmp(id).isVisible() == true) {
