@@ -3724,11 +3724,12 @@ var Admin = {
 	 */
 	wysiwygField:function(label,name,options) {
 		var options = typeof options == "object" ? options : {};
+		var toolbar = options.toolbar ? options.toolbar : ["html","|","bold","italic","underline","align","|","paragraphFormat","formatUL","fontSize","color","|","insertImage","insertFile","insertVideo","insertLink","insertTable"];
 		options.name = name;
 		options.fieldLabel = (label ? label : "");
 		options.width = options.width ? options.width : "100%";
 		options.lastHeight = 0;
-		options.allowBlank = options.allowBlank ? options.allowBlank : false;
+		options.allowBlank = options.allowBlank === true ? true : false;
 		options.resizer = function(id) {
 			if (Ext.getCmp(id)) {
 				if (Ext.getCmp(id).isVisible() == true) {
@@ -3788,7 +3789,7 @@ var Admin = {
 			
 			$textarea.froalaEditor({
 				key:"1G4C2A10A6E5B4gC3E3G3C2B7D5B3F4D2C1zHMDUGENKACTMXQL==",
-				toolbarButtons:["html","|","bold","italic","underline","strikeThrough","align","|","paragraphFormat","fontSize","color","|","insertImage","insertFile","insertVideo","insertLink","insertTable"],
+				toolbarButtons:toolbar,
 				fontSize:["8","9","10","11","12","14","18","24"],
 				heightMin:300,
 				zIndex:1000000,
