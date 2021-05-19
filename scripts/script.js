@@ -7,7 +7,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.1.0
- * @modified 2020. 3. 26.
+ * @modified 2021. 5. 19.
  */
 var Admin = {
 	/**
@@ -3743,7 +3743,7 @@ var Admin = {
 				setTimeout(Ext.getCmp(id).resizer,500,id);
 			}
 		};
-		options.cls = "x-form-wysiwyg";
+		options.cls = "x-form-wysiwyg x-selectable";
 		options.listeners = options.listeners ? options.listeners : {};
 		options.listeners.render = function(form) {
 			var $textarea = $("textarea",$("#"+form.getId()));
