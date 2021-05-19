@@ -9,7 +9,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.1.0
- * @modified 2020. 4. 13.
+ * @modified 2021. 5. 19.
  */
 class ModuleAdmin {
 	/**
@@ -393,7 +393,10 @@ class ModuleAdmin {
 		 */
 		if ($this->checkPermission() === false) return $this->getLoginContext();
 		
-		$this->IM->addHeadResource('meta',array('name'=>'viewport','content'=>'width=1200'));
+		/**
+		 * 뷰포트 설정
+		 */
+		$this->IM->setViewport('width=1200, maximum-scale=10, user-scalable=yes');
 		
 		/**
 		 * ExtJS 라이브러리와 관리자 언어셋을 불러온다.
