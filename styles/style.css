@@ -90,8 +90,9 @@ div[data-module=attachment].wysiwyg > ul[data-role=files] > li > button {border:
 div[data-module=attachment].wysiwyg > ul[data-role=files] > li > button:hover {color:#000;}
 
 /* ExtJS 스타일시트 추가 */
-.x-visible-panel {overflow:visible !important;}
-.x-visible-panel > .x-panel-body {overflow:visible !important;}
+.x-visible-panel {overflow:visible !important; z-index:10;}
+.x-visible-panel .x-panel-body {overflow:visible !important;}
+.x-visible-panel .x-panel-bodyWrap {overflow:visible !important;}
 
 .im-icon-default div[data-ref=innerCt] {border:1px solid #ccc; background:#fff; width:100%; height:118px; line-height:118px; text-align:center; border-radius:5px;}
 .im-icon-default div[data-ref=innerCt] i {font-size:64px; vertical-align:middle;}
