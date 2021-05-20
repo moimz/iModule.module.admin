@@ -7,7 +7,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.1.0
- * @modified 2021. 5. 19.
+ * @modified 2021. 5. 20.
  */
 var Admin = {
 	/**
@@ -394,7 +394,7 @@ var Admin = {
 							Ext.Msg.wait(Admin.getText("action/working"),Admin.getText("action/wait"));
 							$.send(ENV.getProcessUrl("admin","@saveModuleSort"),{updated:JSON.stringify(updated)},function(result) {
 								if (result.success == true) {
-									Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getText("action/saved"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO,fn:function() {
+									Ext.Msg.show({title:Admin.getText("alert/info"),msg:Admin.getText("action/saved"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO,fn:function() {
 										location.replace(location.href);
 									}});
 								} else {
@@ -833,7 +833,7 @@ var Admin = {
 							Ext.Msg.wait(Admin.getText("action/working"),Admin.getText("action/wait"));
 							$.send(ENV.getProcessUrl("admin","@savePluginSort"),{updated:JSON.stringify(updated)},function(result) {
 								if (result.success == true) {
-									Ext.Msg.show({title:Admin.getText("alert/error"),msg:Admin.getText("action/saved"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO,fn:function() {
+									Ext.Msg.show({title:Admin.getText("alert/info"),msg:Admin.getText("action/saved"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO,fn:function() {
 										Ext.getCmp("PluginSortWindow").close();
 									}});
 								} else {
@@ -2698,7 +2698,6 @@ var Admin = {
 											listeners:{
 												render:function(grid) {
 													grid.getStore().add(grid.datas);
-//													console.log(run.datas);
 												}
 											}
 										})
@@ -2708,11 +2707,6 @@ var Admin = {
 							
 							Ext.getCmp("TableConsole").setActiveTab(0);
 							Ext.Msg.hide();
-							
-//							Ext.Msg.show({title:Admin.getText("alert/info"),msg:Admin.getText("action/worked"),buttons:Ext.Msg.OK,icon:Ext.Msg.INFO,fn:function() {
-								
-//								if (Ext.getCmp("TableList")) Ext.getCmp("TableList").getStore().reload();
-//							}});
 						}
 					});
 				}
