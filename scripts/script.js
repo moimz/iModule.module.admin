@@ -3416,12 +3416,22 @@ var Admin = {
 			]
 		});
 	},
-	tagField:function(label,name,value,searchUrl,params) {
+	/**
+	 * 태그입력필드를 추가한다.
+	 *
+	 * @param string label 라벨명
+	 * @param string name 필드명
+	 * @param string value 기본값
+	 * @param string searchUrl 태그검색 URL
+	 * @param object options 필드옵션
+	 */
+	tagField:function(label,name,value,searchUrl,options) {
 		if (typeof label == "string") {
-			var params = typeof params != "object" ? {} : params;
+			var options = typeof options != "object" ? {} : options;
 			var searchUrl = searchUrl ? searchUrl : "";
-			params.fieldLabel = label;
-			params.items = [
+			options.fieldLabel = label;
+			options.cls = "x-form-tags";
+			options.items = [
 				new Ext.form.Hidden({
 					name:name,
 					value:value ? value : "",
@@ -3443,7 +3453,7 @@ var Admin = {
 					}
 				})
 			];
-			return new Ext.form.FieldContainer(params);
+			return new Ext.form.FieldContainer(options);
 		} else {
 			var panel = label;
 			var $container = name;
@@ -3621,12 +3631,12 @@ var Admin = {
 					});
 					
 					$input.on("focus",function(e) {
-						panel.ownerCt.items.items[0].getPanel().addCls("x-form-tags");
+						panel.ownerCt.items.items[0].getPanel().addCls("x-panel-tags");
 					});
 					
 					$input.on("blur",function(e) {
 						setTimeout(function($input) {
-							panel.ownerCt.items.items[0].getPanel().removeCls("x-form-tags");
+							panel.ownerCt.items.items[0].getPanel().removeCls("x-panel-tags");
 							var tag = $input.val().replace(/(#| )/,"");
 							
 							if (tag.length > 0) {
@@ -3786,7 +3796,6 @@ var Admin = {
 				toolbarButtons:toolbar,
 				fontSize:["8","9","10","11","12","14","18","24"],
 				heightMin:300,
-				zIndex:1000000,
 				imageDefaultWidth:0,
 				imageUploadURL:ENV.getProcessUrl("attachment","wysiwyg"),
 				imageUploadParams:{module:"admin",target:form.getName("name")},
