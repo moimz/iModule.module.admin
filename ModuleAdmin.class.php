@@ -1146,7 +1146,7 @@ class ModuleAdmin {
 	 * @param string $target 타겟명
 	 * @return int[] $files 정리된 파일고유번호
 	 */
-	function getWysiwygContent($field,$module,$target) {
+	function getWysiwygContent($field,$module,$target,$is_inserted_only=false) {
 		$mAttachment = $this->IM->getModule('attachment');
 		
 		$text = Request($field) ? Request($field) : '';
@@ -1160,10 +1160,23 @@ class ModuleAdmin {
 			$mAttachment->fileDelete($delete_files[$i]);
 		}
 		
+		$inserts = array();
+		if ($is_inserted_only == true) {
+			for ($i=0, $loop=count($files);$i<$loop;$i++) {
+				if (preg_match('/<(a|img)(.*?)data-idx="'.$files[$i].'"(.*?)>/',$text) == true) {
+					$inserts[] = $files[$i];
+				}
+			}
+		}
+		
 		for ($i=0, $loop=count($files);$i<$loop;$i++) {
-			if ($mAttachment->getFileInfo($files[$i]) != null) {
-				$mAttachment->filePublish($files[$i],$module,$target);
-				$content->files[] = $files[$i];
+			if ($is_inserted_only == false || in_array($files[$i],$inserts) == true) {
+				if ($mAttachment->getFileInfo($files[$i]) != null) {
+					$mAttachment->filePublish($files[$i],$module,$target);
+					$content->files[] = $files[$i];
+				}
+			} else {
+				$mAttachment->fileDelete($files[$i]);
 			}
 		}
 		
