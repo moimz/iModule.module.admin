@@ -7,7 +7,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.1.0
- * @modified 2021. 5. 20.
+ * @modified 2021. 5. 24.
  */
 var Admin = {
 	/**
@@ -3732,6 +3732,8 @@ var Admin = {
 		options.name = name;
 		options.fieldLabel = (label ? label : "");
 		options.width = options.width ? options.width : "100%";
+		options.minHeight = options.minHeight ? options.minHeight : 300;
+		options.maxHeight = options.maxHeight ? options.maxHeight : null;
 		options.lastHeight = 0;
 		options.allowBlank = options.allowBlank === true ? true : false;
 		options.resizer = function(id) {
@@ -3795,7 +3797,8 @@ var Admin = {
 				key:"1G4C2A10A6E5B4gC3E3G3C2B7D5B3F4D2C1zHMDUGENKACTMXQL==",
 				toolbarButtons:toolbar,
 				fontSize:["8","9","10","11","12","14","18","24"],
-				heightMin:300,
+				heightMin:options.minHeight,
+				heightMax:options.maxHeight,
 				imageDefaultWidth:0,
 				imageUploadURL:ENV.getProcessUrl("attachment","wysiwyg"),
 				imageUploadParams:{module:"admin",target:form.getName("name")},
