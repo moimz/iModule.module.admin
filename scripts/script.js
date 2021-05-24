@@ -3737,6 +3737,7 @@ var Admin = {
 		options.lastHeight = 0;
 		options.allowBlank = options.allowBlank === true ? true : false;
 		options.visibleFiles = options.visibleFiles === false ? false : true;
+		options.insertFile = options.insertFile === true ? true : false;
 		options.resizer = function(id) {
 			if (Ext.getCmp(id)) {
 				if (Ext.getCmp(id).isVisible() == true) {
@@ -3791,7 +3792,12 @@ var Admin = {
 				if (response) {
 					var result = typeof response == "object" ? response : JSON.parse(response);
 					if (result.idx) {
-						$file.attr("data-idx",result.idx);
+						if (options.insertFile == true) {
+							$file.attr("data-idx",result.idx);
+							$file.attr("data-code",null);
+						} else {
+							$file.remove();
+						}
 					}
 				}
 			});
