@@ -3736,6 +3736,7 @@ var Admin = {
 		options.maxHeight = options.maxHeight ? options.maxHeight : null;
 		options.lastHeight = 0;
 		options.allowBlank = options.allowBlank === true ? true : false;
+		options.visibleFiles = options.visibleFiles === false ? false : true;
 		options.resizer = function(id) {
 			if (Ext.getCmp(id)) {
 				if (Ext.getCmp(id).isVisible() == true) {
@@ -3822,6 +3823,7 @@ var Admin = {
 						border:0,
 						style:{paddingLeft:(label ? (form.labelWidth + 5)+"px" : "0px")},
 						html:'<div data-module="attachment" class="wysiwyg"><ul data-role="files"></ul>',
+						hidden:options.visibleFiles === false,
 						listeners:{
 							render:function(panel) {
 								var form = Ext.getCmp(panel.getId().replace(/-lists$/,"-files"));
