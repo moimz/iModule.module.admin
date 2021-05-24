@@ -3750,7 +3750,7 @@ var Admin = {
 				setTimeout(Ext.getCmp(id).resizer,500,id);
 			}
 		};
-		options.cls = "x-form-wysiwyg x-selectable";
+		options.cls = options.cls ? options.cls + " x-form-wysiwyg x-selectable" : "x-form-wysiwyg x-selectable";
 		options.listeners = options.listeners ? options.listeners : {};
 		options.listeners.render = function(form) {
 			var $textarea = $("textarea",$("#"+form.getId()));
