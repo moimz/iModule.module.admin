@@ -3789,7 +3789,9 @@ var Admin = {
 			$textarea.on("froalaEditor.file.inserted",function(e,editor,$file,response) {
 				if (response) {
 					var result = typeof response == "object" ? response : JSON.parse(response);
-					$file.remove();
+					if (result.idx) {
+						$file.attr("data-idx",result.idx);
+					}
 				}
 			});
 			
