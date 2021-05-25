@@ -7,7 +7,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license GPLv3
  * @version 3.1.0
- * @modified 2021. 5. 24.
+ * @modified 2021. 5. 25.
  */
 var Admin = {
 	/**
@@ -3795,6 +3795,12 @@ var Admin = {
 						if (options.insertFile == true) {
 							$file.attr("data-idx",result.idx);
 							$file.attr("data-code",null);
+							$file.attr("contenteditable","false");
+							$file.addClass("fr-deletable");
+							
+							if (result.size) {
+								$file.append($("<span>").html(iModule.getFileSize(result.size)));
+							}
 						} else {
 							$file.remove();
 						}
@@ -3874,9 +3880,9 @@ var Admin = {
 												var $wysiwyg = $("textarea",$("#"+$(this).attr("data-wysiwyg")));
 												
 												if (file.type == "image") {
-													$wysiwyg.froalaEditor("image.insert",file.path,false,{"idx":file.idx});
+													$wysiwyg.froalaEditor("image.insert",file.path,false,{idx:file.idx});
 												} else {
-													$wysiwyg.froalaEditor("file.insert",file.path,file.name,{idx:file.idx});
+													$wysiwyg.froalaEditor("file.insert",file.path,file.name,{idx:file.idx,size:file.size});
 												}
 											});
 											
