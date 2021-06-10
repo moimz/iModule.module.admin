@@ -3753,7 +3753,7 @@ var Admin = {
 		};
 		options.cls = options.cls ? options.cls + " x-form-wysiwyg x-selectable" : "x-form-wysiwyg x-selectable";
 		options.listeners = options.listeners ? options.listeners : {};
-		options.listeners.render = function(form) {
+		options.listeners.afterrender = function(form) {
 			var $textarea = $("textarea",$("#"+form.getId()));
 			$textarea.data("panel",form.getPanel());
 			
@@ -3808,6 +3808,14 @@ var Admin = {
 				}
 			});
 			
+			$textarea.on("froalaEditor.focus",function(e,editor) {
+				if (editor.opts.zIndex == 0) {
+					var zIndex = 0;
+					$("*[style*=z-index]").each(function() { zIndex = Math.max(zIndex,parseInt($(this).css("z-index"),10)); });
+					editor.opts.zIndex = zIndex + 1;
+				}
+			});
+			
 			$textarea.froalaEditor({
 				key:"1G4C2A10A6E5B4gC3E3G3C2B7D5B3F4D2C1zHMDUGENKACTMXQL==",
 				toolbarButtons:toolbar,
@@ -3822,7 +3830,7 @@ var Admin = {
 				imageEditButtons:["imageAlign","imageLink","linkOpen","linkEdit","linkRemove","imageDisplay","imageStyle","imageAlt","imageSize"],
 				paragraphFormat:{N:"Normal",H1:"Heading 1",H2:"Heading 2",H3:"Heading 3"},
 				toolbarSticky:false,
-				zIndex:1000000,
+				zIndex:0,
 				pluginsEnabled:["align","codeView","colors","file","fontSize","image","lineBreaker","link","lists","paragraphFormat","insertCode","table","url","video"]
 			});
 			
