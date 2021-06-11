@@ -9,7 +9,7 @@
  * @author Arzz (arzz@arzz.com)
  * @license MIT License
  * @version 3.1.0
- * @modified 2021. 5. 19.
+ * @modified 2021. 6. 11.
  */
 class ModuleAdmin {
 	/**
@@ -1323,6 +1323,15 @@ class ModuleAdmin {
 			header("HTTP/1.1 301 Moved Permanently");
 			header("location:".$redirectUrl);
 			exit;
+		}
+		
+		/**
+		 * 아이모듈 코어 데이터베이스 구조가 변경되었을 경우, 데이터베이스 구조를 업데이트한다.
+		 */
+		if ($this->IM->cache()->get('core','package','hash') != md5_file(__IM_PATH__.'/package.json')) {
+			$package = json_decode(file_get_contents(__IM_PATH__.'/package.json'));
+			if (CreateDatabase($this->db(),$package->databases) !== true) return $this->IM->printError('DATABASE_AUTO_UPDATE_FAIL');
+			$this->IM->cache()->store('core','package','hash',md5_file(__IM_PATH__.'/package.json'));
 		}
 		
 		$this->IM->fireEvent('beforeDoLayout','admin','*');
