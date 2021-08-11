@@ -1410,6 +1410,102 @@ class ModuleAdmin {
 	}
 	
 	/**
+	 * 위지윅에디터에서 넘어온 내용을 가져온다. (Form.submit)
+	 *
+	 * @param string $name 위지윅에디터 이름
+	 * @param boolean $is_publish 파일 출판여부
+	 * @return string $content 정리된 위지윅에디터 내용 HTML
+	 */
+	function getExtFroalaEditorContent($name,$is_publish=false) {
+		$content = json_decode(Request($name));
+		$text = $content->text;
+		$files = $content->files;
+		$deleteFiles = $content->delete_files;
+		$files = array();
+		foreach ($content->files as $file) {
+			if (in_array($file,$deleteFiles) == false) $files[] = $file;
+		}
+
+		$data = new stdClass();
+		$data->text = $this->IM->getModule('wysiwyg')->encodeContent($text,$files,false);
+		$data->files = $files;
+		
+		if ($is_publish == true) {
+			$mAttachment = $this->IM->getModule('attachment');
+			foreach ($content->files as $file) {
+				if (in_array($file,$files) == true) {
+					$mAttachment->filePublish($file);
+				}
+			}
+			
+			foreach ($content->delete_files as $file) {
+				$mAttachment->fileDelete($file);
+			}
+		} else {
+			$content->text = $data->text;
+			$content->files = $files;
+			$_REQUEST[$name] = json_encode($content,JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK | JSON_UNESCAPED_SLASHES);
+		}
+
+		return json_encode($data,JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK | JSON_UNESCAPED_SLASHES);
+	}
+	
+	/**
+	 * Ext.form.FroalaEditor 콘텐츠를 설정한다. (Form.load)
+	 *
+	 * @param string $content
+	 * @return object $data
+	 */
+	function setExtFroalaEditorContent($content,$is_fullurl=false) {
+		$data = json_decode($content);
+		if ($data == null) {
+			$data = new stdClass();
+			$data->text = '';
+			$data->files = array();
+		}
+		
+		if (isset($data->files) == true && is_array($data->files) == true) {
+			$mAttachment = $this->IM->getModule('attachment');
+			$files = array();
+			foreach ($data->files as $file) {
+				$file = $mAttachment->getFileInfo($file,false,$is_fullurl);
+				if ($file != null) $files[] = $file;
+			}
+			$data->files = $files;
+		} else {
+			$data->files = array();
+		}
+		
+		return $data;
+	}
+	
+	/**
+	 * 위지윅에디터에서 첨부된 파일을 출판한다.
+	 *
+	 * @param string $name 위지윅에디터 이름
+	 * @return int[] $files 출판된 파일 고유값
+	 */
+	function publishExtFroalaEditorContent($name,$is_publish=false) {
+		$content = json_decode(Request($name));
+		$files = $content->files;
+		$deleteFiles = $content->delete_files;
+		
+		$published = array();
+		foreach ($content->files as $file) {
+			if (in_array($file,$deleteFiles) == false) {
+				$mAttachment->filePublish($file);
+				$published[] = $file;
+			}
+		}
+		
+		foreach ($deleteFiles as $file) {
+			$mAttachment->fileDelete($file);
+		}
+		
+		return $published;
+	}
+	
+	/**
 	 * 사이트관련 이미지파일을 업로드하고 저장한다.
 	 *
 	 * @param string $domain 사이트도메인
