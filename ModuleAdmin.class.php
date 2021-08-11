@@ -1486,6 +1486,8 @@ class ModuleAdmin {
 	 * @return int[] $files 출판된 파일 고유값
 	 */
 	function publishExtFroalaEditorContent($name,$is_publish=false) {
+		$mAttachment = $this->IM->getModule('attachment');
+		
 		$content = json_decode(Request($name));
 		$files = $content->files;
 		$deleteFiles = $content->delete_files;
