@@ -1421,13 +1421,14 @@ class ModuleAdmin {
 		$text = $content->text;
 		$files = $content->files;
 		$deleteFiles = $content->delete_files;
+		$visibleFiles = $content->visible_files;
 		$files = array();
 		foreach ($content->files as $file) {
 			if (in_array($file,$deleteFiles) == false) $files[] = $file;
 		}
 
 		$data = new stdClass();
-		$data->text = $this->IM->getModule('wysiwyg')->encodeContent($text,$files,false);
+		$data->text = $this->IM->getModule('wysiwyg')->encodeContent($text,$files,$visibleFiles == true ? false : true);
 		$data->files = $files;
 		
 		if ($is_publish == true) {
@@ -1448,6 +1449,25 @@ class ModuleAdmin {
 		}
 
 		return json_encode($data,JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK | JSON_UNESCAPED_SLASHES);
+	}
+	
+	/**
+	 * 위지윅에디터 내용을 출력한다.
+	 *
+	 * @param string $content 위지윅에디터 컨텐츠
+	 * @return string $html 위지윅에디터 내용
+	 */
+	function printExtFroalaEditorContent($content,$is_fullurl=false) {
+		$data = json_decode($content);
+		if ($data == null) {
+			$data = new stdClass();
+			$data->text = '';
+			$data->files = array();
+		}
+		
+		$text = $this->IM->getModule('wysiwyg')->decodeContent($data->text,true,$is_fullurl);
+		
+		return $text;
 	}
 	
 	/**
@@ -1475,6 +1495,8 @@ class ModuleAdmin {
 		} else {
 			$data->files = array();
 		}
+		
+		$data->text = $this->IM->getModule('wysiwyg')->decodeContent($data->text,false,$is_fullurl);
 		
 		return $data;
 	}
