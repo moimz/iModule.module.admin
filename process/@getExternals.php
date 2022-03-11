@@ -21,35 +21,38 @@ $language = Request('language');
 $lists = array();
 $lists[] = array('path'=>'','display'=>'선택안함');
 $externalsPath = @opendir(__IM_PATH__.'/externals');
-while ($external = @readdir($externalsPath)) {
-	if ($external != '.' && $external != '..' && is_file(__IM_PATH__.'/externals/'.$external) == true) {
-		$lists[] = array(
-			'path'=>__IM_DIR__.'/externals/'.$external,
-			'display'=>__IM_DIR__.'/externals/'.$external
-		);
-	}
+if ($externalsPath) {
+    while ($external = @readdir($externalsPath)) {
+        if ($external != '.' && $external != '..' && is_file(__IM_PATH__ . '/externals/' . $external) == true) {
+            $lists[] = array(
+                'path' => __IM_DIR__ . '/externals/' . $external,
+                'display' => __IM_DIR__ . '/externals/' . $external
+            );
+        }
+    }
+    @closedir($externalsPath);
 }
-@closedir($externalsPath);
-
 /**
  * 사이트템플릿의 외부파일폴더를 탐색한다.
  */
 $templetsPath = @opendir(__IM_PATH__.'/templets');
-while ($templet = @readdir($templetsPath)) {
-	if ($templet != '.' && $templet != '..' && is_dir(__IM_PATH__.'/templets/'.$templet) == true) {
-		$externalsPath = @opendir(__IM_PATH__.'/templets/'.$templet.'/externals');
-		while ($external = @readdir($externalsPath)) {
-			if ($external != '.' && $external != '..' && is_file(__IM_PATH__.'/templets/'.$templet.'/externals/'.$external) == true) {
-				$lists[] = array(
-					'path'=>__IM_DIR__.'/templets/'.$templet.'/externals/'.$external,
-					'display'=>__IM_DIR__.'/templets/'.$templet.'/externals/'.$external
-				);
-			}
-		}
-		@closedir($externalsPath);
-	}
+if ($templetsPath) {
+    while ($templet = @readdir($templetsPath)) {
+        if ($templet != '.' && $templet != '..' && is_dir(__IM_PATH__ . '/templets/' . $templet) == true) {
+            $externalsPath = @opendir(__IM_PATH__ . '/templets/' . $templet . '/externals');
+            while ($external = @readdir($externalsPath)) {
+                if ($external != '.' && $external != '..' && is_file(__IM_PATH__ . '/templets/' . $templet . '/externals/' . $external) == true) {
+                    $lists[] = array(
+                        'path' => __IM_DIR__ . '/templets/' . $templet . '/externals/' . $external,
+                        'display' => __IM_DIR__ . '/templets/' . $templet . '/externals/' . $external
+                    );
+                }
+            }
+            @closedir($externalsPath);
+        }
+    }
+    @closedir($templetsPath);
 }
-@closedir($templetsPath);
 
 /**
  * 사이트 탬플릿을 사용하거나 외부파일을 가지고 있는 모듈의 템플릿파일에서 탐색한다.
